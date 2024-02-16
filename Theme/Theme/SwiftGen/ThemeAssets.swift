@@ -64,6 +64,7 @@ public enum ThemeAssets {
   public static let progressSkip = ColorAsset(name: "ProgressSkip")
   public static let selectedAndDone = ColorAsset(name: "SelectedAndDone")
   public static let appLogo = ImageAsset(name: "appLogo")
+  public static let appLogoLight = ImageAsset(name: "appLogoLight")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 

@@ -44,6 +44,11 @@
 		07D5DA3528D075AA00752FD9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D5DA3428D075AA00752FD9 /* AppDelegate.swift */; };
 		07D5DA3E28D075AB00752FD9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07D5DA3D28D075AB00752FD9 /* Assets.xcassets */; };
 		07D5DA4128D075AB00752FD9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 07D5DA3F28D075AB00752FD9 /* LaunchScreen.storyboard */; };
+		1428798B2B7F9BFC009560C2 /* Segment in Frameworks */ = {isa = PBXBuildFile; productRef = 1428798A2B7F9BFC009560C2 /* Segment */; };
+		1428798E2B7F9DE2009560C2 /* SegmentFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = 1428798D2B7F9DE2009560C2 /* SegmentFirebase */; };
+		14AE22812B7FA33A0033D5E0 /* SegmentBraze in Frameworks */ = {isa = PBXBuildFile; productRef = 14AE22802B7FA33A0033D5E0 /* SegmentBraze */; };
+		14AE22832B7FA33A0033D5E0 /* SegmentBrazeUI in Frameworks */ = {isa = PBXBuildFile; productRef = 14AE22822B7FA33A0033D5E0 /* SegmentBrazeUI */; };
+		14AE22852B7FA9BA0033D5E0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 14AE22842B7FA9BA0033D5E0 /* GoogleService-Info.plist */; };
 		95C140F3BDF778364986E83B /* Pods_App_OpenEdX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F138C15C3A2515F8F94DAA8B /* Pods_App_OpenEdX.framework */; };
 		A500668B2B613ED10024680B /* PushNotificationsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A500668A2B613ED10024680B /* PushNotificationsManager.swift */; };
 		A500668D2B6143000024680B /* FCMProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A500668C2B6143000024680B /* FCMProvider.swift */; };
@@ -121,6 +126,7 @@
 		07D5DA3D28D075AB00752FD9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		07D5DA4028D075AB00752FD9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		1499CCAD7A0D8A3E6AF39794 /* Pods-App-OpenEdX.debugprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App-OpenEdX.debugprod.xcconfig"; path = "Target Support Files/Pods-App-OpenEdX/Pods-App-OpenEdX.debugprod.xcconfig"; sourceTree = "<group>"; };
+		14AE22842B7FA9BA0033D5E0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F54C19C823A769E18923FA8 /* Pods-App-OpenEdX.debugstage.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App-OpenEdX.debugstage.xcconfig"; path = "Target Support Files/Pods-App-OpenEdX/Pods-App-OpenEdX.debugstage.xcconfig"; sourceTree = "<group>"; };
 		8284179FC05AEE2591573E20 /* Pods-App-OpenEdX.debugdev.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App-OpenEdX.debugdev.xcconfig"; path = "Target Support Files/Pods-App-OpenEdX/Pods-App-OpenEdX.debugdev.xcconfig"; sourceTree = "<group>"; };
 		A24D6A8E1BC4DF46AD68904C /* Pods-App-OpenEdX.releaseprod.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-App-OpenEdX.releaseprod.xcconfig"; path = "Target Support Files/Pods-App-OpenEdX/Pods-App-OpenEdX.releaseprod.xcconfig"; sourceTree = "<group>"; };
@@ -150,11 +156,15 @@
 				025DE1A428DB4DAE0053E0F4 /* Profile.framework in Frameworks */,
 				0770DE4B28D0A462006D8A5D /* Authorization.framework in Frameworks */,
 				BA3042792B1F7147009B64B7 /* MSAL in Frameworks */,
+				1428798B2B7F9BFC009560C2 /* Segment in Frameworks */,
 				072787B128D34D83002E9142 /* Discovery.framework in Frameworks */,
 				0218196428F734FA00202564 /* Discussion.framework in Frameworks */,
+				1428798E2B7F9DE2009560C2 /* SegmentFirebase in Frameworks */,
 				0219C67728F4347600D64452 /* Course.framework in Frameworks */,
 				027DB33028D8A063002B6862 /* Dashboard.framework in Frameworks */,
 				95C140F3BDF778364986E83B /* Pods_App_OpenEdX.framework in Frameworks */,
+				14AE22812B7FA33A0033D5E0 /* SegmentBraze in Frameworks */,
+				14AE22832B7FA33A0033D5E0 /* SegmentBrazeUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -225,6 +235,7 @@
 				07D5DA3D28D075AB00752FD9 /* Assets.xcassets */,
 				07D5DA3F28D075AB00752FD9 /* LaunchScreen.storyboard */,
 				02450ABD29C35FF20094E2D0 /* Info.plist */,
+				14AE22842B7FA9BA0033D5E0 /* GoogleService-Info.plist */,
 				02ED50DA29A66007008341CD /* languages.json */,
 				02ED50D629A6554E008341CD /* сountries.json */,
 				0770DE6628D0BCC7006D8A5D /* Localizable.strings */,
@@ -362,6 +373,10 @@
 			name = OpenEdX;
 			packageProductDependencies = (
 				BA3042782B1F7147009B64B7 /* MSAL */,
+				1428798A2B7F9BFC009560C2 /* Segment */,
+				1428798D2B7F9DE2009560C2 /* SegmentFirebase */,
+				14AE22802B7FA33A0033D5E0 /* SegmentBraze */,
+				14AE22822B7FA33A0033D5E0 /* SegmentBrazeUI */,
 			);
 			productName = OpenEdX;
 			productReference = 07D5DA3128D075AA00752FD9 /* OpenEdX.app */;
@@ -394,6 +409,9 @@
 			mainGroup = 07D5DA2828D075AA00752FD9;
 			packageReferences = (
 				BA3042772B1F7147009B64B7 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */,
+				142879892B7F9BFC009560C2 /* XCRemoteSwiftPackageReference "analytics-swift" */,
+				1428798C2B7F9DE2009560C2 /* XCRemoteSwiftPackageReference "analytics-swift-firebase" */,
+				14AE227F2B7FA33A0033D5E0 /* XCRemoteSwiftPackageReference "braze-segment-swift" */,
 			);
 			productRefGroup = 07D5DA3228D075AA00752FD9 /* Products */;
 			projectDirPath = "";
@@ -414,6 +432,7 @@
 				02ED50D829A66007008341CD /* languages.json in Resources */,
 				0770DE6428D0BCC7006D8A5D /* Localizable.strings in Resources */,
 				07D5DA3E28D075AB00752FD9 /* Assets.xcassets in Resources */,
+				14AE22852B7FA9BA0033D5E0 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1151,6 +1170,30 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		142879892B7F9BFC009560C2 /* XCRemoteSwiftPackageReference "analytics-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "git@github.com:segmentio/analytics-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.3;
+			};
+		};
+		1428798C2B7F9DE2009560C2 /* XCRemoteSwiftPackageReference "analytics-swift-firebase" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/segment-integrations/analytics-swift-firebase";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.5;
+			};
+		};
+		14AE227F2B7FA33A0033D5E0 /* XCRemoteSwiftPackageReference "braze-segment-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/braze-inc/braze-segment-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.2.0;
+			};
+		};
 		BA3042772B1F7147009B64B7 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AzureAD/microsoft-authentication-library-for-objc";
@@ -1162,6 +1205,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1428798A2B7F9BFC009560C2 /* Segment */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 142879892B7F9BFC009560C2 /* XCRemoteSwiftPackageReference "analytics-swift" */;
+			productName = Segment;
+		};
+		1428798D2B7F9DE2009560C2 /* SegmentFirebase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1428798C2B7F9DE2009560C2 /* XCRemoteSwiftPackageReference "analytics-swift-firebase" */;
+			productName = SegmentFirebase;
+		};
+		14AE22802B7FA33A0033D5E0 /* SegmentBraze */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14AE227F2B7FA33A0033D5E0 /* XCRemoteSwiftPackageReference "braze-segment-swift" */;
+			productName = SegmentBraze;
+		};
+		14AE22822B7FA33A0033D5E0 /* SegmentBrazeUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 14AE227F2B7FA33A0033D5E0 /* XCRemoteSwiftPackageReference "braze-segment-swift" */;
+			productName = SegmentBrazeUI;
+		};
 		BA3042782B1F7147009B64B7 /* MSAL */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BA3042772B1F7147009B64B7 /* XCRemoteSwiftPackageReference "microsoft-authentication-library-for-objc" */;
