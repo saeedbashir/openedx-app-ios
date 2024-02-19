@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import FirebaseCore
 
 private enum FirebaseKeys: String {
     case enabled = "ENABLED"

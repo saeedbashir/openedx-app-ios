@@ -8,14 +8,12 @@
 import UIKit
 import Core
 import Swinject
-import FirebaseCore
-import FirebaseAnalytics
-import FirebaseCrashlytics
 import Profile
 import GoogleSignIn
 import FacebookCore
 import MSAL
 import Theme
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -40,7 +38,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             Theme.Shapes.isRoundedCorners = config.theme.isRoundedCorners
             if config.firebase.isAnalyticsSourceFirebase {
                 FirebaseApp.configure()
-                Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
             }
             
             if config.facebook.enabled {

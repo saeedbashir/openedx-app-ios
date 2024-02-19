@@ -7,7 +7,7 @@
 
 import Foundation
 import Core
-import FirebaseAnalytics
+import Firebase
 import Authorization
 import Discovery
 import Dashboard
