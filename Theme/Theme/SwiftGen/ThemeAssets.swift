@@ -64,6 +64,7 @@ public enum ThemeAssets {
   public static let textSecondary = ColorAsset(name: "TextSecondary")
   public static let textSecondaryLight = ColorAsset(name: "TextSecondaryLight")
   public static let textInputBackground = ColorAsset(name: "TextInputBackground")
+  public static let textInputPlaceholderColor = ColorAsset(name: "TextInputPlaceholderColor")
   public static let textInputStroke = ColorAsset(name: "TextInputStroke")
   public static let textInputTextColor = ColorAsset(name: "TextInputTextColor")
   public static let textInputUnfocusedBackground = ColorAsset(name: "TextInputUnfocusedBackground")

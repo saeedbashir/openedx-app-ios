@@ -60,6 +60,7 @@ public struct Theme {
         public private(set) static var primaryButtonTextColor = ThemeAssets.primaryButtonTextColor.swiftUIColor
         public private(set) static var toggleSwitchColor = ThemeAssets.toggleSwitchColor.swiftUIColor
         public private(set) static var textInputTextColor = ThemeAssets.textInputTextColor.swiftUIColor
+        public private(set) static var textInputPlaceholderColor = ThemeAssets.textInputPlaceholderColor.swiftUIColor
         
         public static func update(
             accentColor: Color = ThemeAssets.accentColor.swiftUIColor,
@@ -103,7 +104,8 @@ public struct Theme {
             tabbarColor: Color = ThemeAssets.tabbarColor.swiftUIColor,
             primaryButtonTextColor: Color = ThemeAssets.primaryButtonTextColor.swiftUIColor,
             toggleSwitchColor: Color = ThemeAssets.toggleSwitchColor.swiftUIColor,
-            textInputTextColor: Color = ThemeAssets.textInputTextColor.swiftUIColor
+            textInputTextColor: Color = ThemeAssets.textInputTextColor.swiftUIColor,
+            textInputPlaceholderColor: Color = ThemeAssets.textInputPlaceholderColor.swiftUIColor
         ) {
             self.accentColor = accentColor
             self.accentXColor = accentXColor
@@ -147,6 +149,7 @@ public struct Theme {
             self.primaryButtonTextColor = primaryButtonTextColor
             self.toggleSwitchColor = toggleSwitchColor
             self.textInputTextColor = textInputTextColor
+            self.textInputPlaceholderColor = textInputPlaceholderColor
         }
     }
     
@@ -263,7 +266,7 @@ public struct Theme {
         public init(
             placeHolder: String,
             text: String,
-            color: Color = Theme.Colors.textInputTextColor,
+            color: Color = Theme.Colors.textInputPlaceholderColor,
             font: Font = Theme.Fonts.bodyLarge,
             padding: CGFloat = 8
         ) {
