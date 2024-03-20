@@ -53,7 +53,7 @@ public struct FlexibleKeyboardInputView: View {
                                 .overlay(
                                     TextEditor(text: $commentText)
                                         .padding(.horizontal, 8)
-                                        .foregroundColor(Theme.Colors.textPrimary)
+                                        .foregroundColor(Theme.Colors.textInputTextColor)
                                         .hideScrollContentBackground()
                                         .frame(maxHeight: commentSize)
                                         .background(

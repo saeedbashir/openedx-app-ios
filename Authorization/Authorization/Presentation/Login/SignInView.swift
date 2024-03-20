@@ -64,11 +64,6 @@ public struct SignInView: View {
                                 .foregroundColor(Theme.Colors.textPrimary)
                                 .padding(.bottom, 4)
                                 .accessibilityIdentifier("signin_text")
-                            Text(AuthLocalization.SignIn.welcomeBack)
-                                .font(Theme.Fonts.titleSmall)
-                                .foregroundColor(Theme.Colors.textPrimary)
-                                .padding(.bottom, 20)
-                                .accessibilityIdentifier("welcome_back_text")
                             
                             Text(AuthLocalization.SignIn.emailOrUsername)
                                 .font(Theme.Fonts.labelLarge)
@@ -76,7 +71,7 @@ public struct SignInView: View {
                                 .accessibilityIdentifier("username_text")
                             TextField(AuthLocalization.SignIn.emailOrUsername, text: $email)
                                 .font(Theme.Fonts.bodyLarge)
-                                .foregroundColor(Theme.Colors.textPrimary)
+                                .foregroundColor(Theme.Colors.textInputTextColor)
                                 .keyboardType(.emailAddress)
                                 .textContentType(.emailAddress)
                                 .autocapitalization(.none)
@@ -100,7 +95,7 @@ public struct SignInView: View {
                                 .accessibilityIdentifier("password_text")
                             SecureField(AuthLocalization.SignIn.password, text: $password)
                                 .font(Theme.Fonts.bodyLarge)
-                                .foregroundColor(Theme.Colors.textPrimary)
+                                .foregroundColor(Theme.Colors.textInputTextColor)
                                 .padding(.all, 14)
                                 .background(
                                     Theme.Shapes.textInputShape
@@ -114,7 +109,7 @@ public struct SignInView: View {
                                 .accessibilityIdentifier("password_textfield")
                             HStack {
                                 if !viewModel.config.features.startupScreenEnabled {
-                                    Button(CoreLocalization.SignIn.registerBtn) {
+                                    Button(CoreLocalization.register) {
                                         viewModel.router.showRegisterScreen(sourceScreen: viewModel.sourceScreen)
                                     }
                                     .foregroundColor(Theme.Colors.accentColor)

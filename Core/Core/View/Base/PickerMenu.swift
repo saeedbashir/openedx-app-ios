@@ -80,7 +80,7 @@ public struct PickerMenu: View {
                     Spacer()
                     VStack {
                         Text(titleText)
-                            .foregroundColor(Theme.Colors.textPrimary)
+                            .foregroundColor(Theme.Colors.textInputTextColor)
                             .accessibilityIdentifier("picker_title_text")
                             .font(Theme.Fonts.bodyMedium)
                         TextField(CoreLocalization.Picker.search, text: $search)
@@ -88,10 +88,11 @@ public struct PickerMenu: View {
                             .font(Theme.Fonts.bodySmall)
                             .background(Theme.Colors.textInputStroke.cornerRadius(6))
                             .accessibilityIdentifier("picker_search_textfield")
+                            .foregroundColor(Theme.Colors.textInputTextColor)
                         Picker("", selection: $selectedItem) {
                             ForEach(filteredItems, id: \.self) { item in
                                 Text(item.value)
-                                    .foregroundColor(Theme.Colors.textPrimary)
+                                    .foregroundColor(Theme.Colors.textInputTextColor)
                                     .font(Theme.Fonts.bodyMedium)
                             }
                         }
@@ -118,7 +119,7 @@ public struct PickerMenu: View {
                     }) {
                         Text(CoreLocalization.Picker.accept)
                             .font(Theme.Fonts.bodyMedium)
-                            .foregroundColor(Theme.Colors.textPrimary)
+                            .foregroundColor(Theme.Colors.textInputTextColor)
                             .frame(minWidth: 0,
                                    maxWidth: (idiom == .pad || (idiom == .phone && isHorizontal))
                                    ? ipadPickerWidth

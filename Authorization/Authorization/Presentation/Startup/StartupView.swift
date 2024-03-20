@@ -68,7 +68,7 @@ public struct StartupView: View {
                             .frame(minHeight: 50)
                             .submitLabel(.search)
                             .font(Theme.Fonts.bodyLarge)
-                            .foregroundColor(Theme.Colors.textPrimary)
+                            .foregroundColor(Theme.Colors.textInputTextColor)
                             .accessibilityIdentifier("explore_courses_textfield")
                             
                         }.overlay(
@@ -82,7 +82,7 @@ public struct StartupView: View {
                         )
                         
                         Button {
-                            viewModel.router.showDiscoveryScreen (
+                            viewModel.router.showDiscoveryScreen(
                                 searchQuery: searchQuery,
                                 sourceScreen: .startup
                             )

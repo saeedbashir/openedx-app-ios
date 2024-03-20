@@ -34,7 +34,7 @@ public struct LogistrationBottomView: View {
     public var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: 24) {
-                StyledButton(CoreLocalization.SignIn.registerBtn) {
+                StyledButton(CoreLocalization.register) {
                     action(.register)
                 }
                 .frame(maxWidth: .infinity)
@@ -45,7 +45,7 @@ public struct LogistrationBottomView: View {
                     action: {
                         action(.signIn)
                     },
-                    color: Theme.Colors.white,
+                    color: Theme.Colors.background,
                     textColor: Theme.Colors.secondaryButtonTextColor,
                     borderColor: Theme.Colors.secondaryButtonBorderColor
                 )

@@ -93,7 +93,7 @@ public struct ResetPasswordView: View {
                                     .accessibilityIdentifier("email_text")
                                 TextField(AuthLocalization.SignIn.email, text: $email)
                                     .font(Theme.Fonts.bodyLarge)
-                                    .foregroundColor(Theme.Colors.textPrimary)
+                                    .foregroundColor(Theme.Colors.textInputTextColor)
                                     .keyboardType(.emailAddress)
                                     .textContentType(.emailAddress)
                                     .autocapitalization(.none)

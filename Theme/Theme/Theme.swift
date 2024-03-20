@@ -59,7 +59,8 @@ public struct Theme {
         public private(set) static var tabbarColor = ThemeAssets.tabbarColor.swiftUIColor
         public private(set) static var primaryButtonTextColor = ThemeAssets.primaryButtonTextColor.swiftUIColor
         public private(set) static var toggleSwitchColor = ThemeAssets.toggleSwitchColor.swiftUIColor
-
+        public private(set) static var textInputTextColor = ThemeAssets.textInputTextColor.swiftUIColor
+        
         public static func update(
             accentColor: Color = ThemeAssets.accentColor.swiftUIColor,
             accentXColor: Color = ThemeAssets.accentXColor.swiftUIColor,
@@ -101,7 +102,8 @@ public struct Theme {
             success: Color = ThemeAssets.success.swiftUIColor,
             tabbarColor: Color = ThemeAssets.tabbarColor.swiftUIColor,
             primaryButtonTextColor: Color = ThemeAssets.primaryButtonTextColor.swiftUIColor,
-            toggleSwitchColor: Color = ThemeAssets.toggleSwitchColor.swiftUIColor
+            toggleSwitchColor: Color = ThemeAssets.toggleSwitchColor.swiftUIColor,
+            textInputTextColor: Color = ThemeAssets.textInputTextColor.swiftUIColor
         ) {
             self.accentColor = accentColor
             self.accentXColor = accentXColor
@@ -144,6 +146,7 @@ public struct Theme {
             self.tabbarColor = tabbarColor
             self.primaryButtonTextColor = primaryButtonTextColor
             self.toggleSwitchColor = toggleSwitchColor
+            self.textInputTextColor = textInputTextColor
         }
     }
     

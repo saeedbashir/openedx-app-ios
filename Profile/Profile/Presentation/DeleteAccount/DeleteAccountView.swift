@@ -65,7 +65,7 @@ public struct DeleteAccountView: View {
                             SecureField(ProfileLocalization.DeleteAccount.passwordDescription,
                                         text: $viewModel.password)
                             .font(Theme.Fonts.labelLarge)
-                            .foregroundColor(Theme.Colors.textPrimary)
+                            .foregroundColor(Theme.Colors.textInputTextColor)
                             .accessibilityIdentifier("password_textfield")
                         }
                         .padding(.horizontal, 14)

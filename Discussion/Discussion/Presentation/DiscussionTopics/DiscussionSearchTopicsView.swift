@@ -52,7 +52,7 @@ public struct DiscussionSearchTopicsView: View {
                         .onAppear {
                             self.focused = true
                         }
-                    .foregroundColor(Theme.Colors.textPrimary)
+                    .foregroundColor(Theme.Colors.textInputTextColor)
                     .font(Theme.Fonts.bodyMedium)
                     Spacer()
                     if !viewModel.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -66,7 +66,6 @@ public struct DiscussionSearchTopicsView: View {
                         .foregroundColor(Theme.Colors.styledButtonText)
                     }
                 }
-//                .padding(.top, -7)
                 .frame(minHeight: 48)
                 .frame(maxWidth: 532)
                 .background(
