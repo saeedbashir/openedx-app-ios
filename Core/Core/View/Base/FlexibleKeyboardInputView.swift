@@ -60,10 +60,11 @@ public struct FlexibleKeyboardInputView: View {
                                             ZStack(alignment: .leading) {
                                                 Theme.Shapes.textInputShape
                                                     .fill(Theme.Colors.textInputBackground)
-                                                Text(commentText.count == 0 ? hint : "")
-                                                    .foregroundColor(Theme.Colors.textSecondary)
-                                                    .font(Theme.Fonts.labelLarge)
-                                                    .padding(.leading, 14)
+                                                Theme.CustomePalceHolder(
+                                                    placeHolder: commentText.count == 0 ? hint : "",
+                                                    text: commentText,
+                                                    padding: 14
+                                                )
                                             }
                                         )
                                         .overlay(

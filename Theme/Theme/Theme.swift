@@ -253,6 +253,39 @@ public struct Theme {
         public static let snackbarMessageLongTimeout: TimeInterval = 5
     }
     
+    public struct CustomePalceHolder: View {
+        public let placeHolder: String
+        public let text: String
+        public let color: Color
+        public let padding: CGFloat
+        public let font: Font
+        
+        public init(
+            placeHolder: String,
+            text: String,
+            color: Color = Theme.Colors.textInputTextColor,
+            font: Font = Theme.Fonts.bodyLarge,
+            padding: CGFloat = 8
+        ) {
+            self.placeHolder = placeHolder
+            self.color = color
+            self.text = text
+            self.padding = padding
+            self.font = font
+        }
+        
+        public var body: some View {
+            ZStack {
+                if text.count == 0 {
+                    Text(placeHolder)
+                        .foregroundColor(color)
+                        .padding(.leading, padding)
+                        .font(font)
+                }
+            }
+        }
+    }
+    
 }
 
 public extension Theme.Fonts {

@@ -55,8 +55,8 @@ public struct StartupView: View {
                             Image(systemName: "magnifyingglass")
                                 .padding(.leading, 16)
                                 .padding(.top, 1)
-                                .foregroundColor(Theme.Colors.textPrimary)
-                            TextField(AuthLocalization.Startup.searchPlaceholder, text: $searchQuery, onCommit: {
+                                .foregroundColor(Theme.Colors.textInputTextColor)
+                            TextField("", text: $searchQuery, onCommit: {
                                 if searchQuery.isEmpty { return }
                                 viewModel.router.showDiscoveryScreen(
                                     searchQuery: searchQuery,
@@ -77,8 +77,15 @@ public struct StartupView: View {
                                 .fill(Theme.Colors.textInputStroke)
                         )
                         .background(
-                            Theme.Shapes.textInputShape
-                                .fill(Theme.Colors.textInputBackground)
+                            ZStack(alignment: .leading) {
+                                Theme.Shapes.textInputShape
+                                    .fill(Theme.Colors.textInputBackground)
+                                Theme.CustomePalceHolder(
+                                    placeHolder: AuthLocalization.Startup.searchPlaceholder,
+                                    text: searchQuery,
+                                    padding: 48
+                                )
+                            }
                         )
                         
                         Button {

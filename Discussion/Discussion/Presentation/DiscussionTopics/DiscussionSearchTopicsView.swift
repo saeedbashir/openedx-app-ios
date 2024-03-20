@@ -31,19 +31,15 @@ public struct DiscussionSearchTopicsView: View {
                 .padding(.bottom, -7)
                 HStack(spacing: 11) {
                     Image(systemName: "magnifyingglass")
-                        .foregroundColor(Theme.Colors.textPrimary)
+                        .foregroundColor(Theme.Colors.textInputTextColor)
                         .padding(.leading, 16)
                         .padding(.top, -1)
                         .foregroundColor(
-                            viewModel.isSearchActive
-                            ? Theme.Colors.accentColor
-                            : Theme.Colors.textPrimary
+                            Theme.Colors.textInputTextColor
                         )
                     
                     TextField(
-                        !viewModel.isSearchActive
-                        ? DiscussionLocalization.search
-                        : "",
+                        "",
                         text: $viewModel.searchText,
                         onEditingChanged: { editing in
                             viewModel.isSearchActive = editing
@@ -69,16 +65,23 @@ public struct DiscussionSearchTopicsView: View {
                 .frame(minHeight: 48)
                 .frame(maxWidth: 532)
                 .background(
-                    Theme.Shapes.textInputShape
-                        .fill(viewModel.isSearchActive
-                              ? Theme.Colors.textInputBackground
-                              : Theme.Colors.textInputUnfocusedBackground)
+                    ZStack(alignment: .leading) {
+                        Theme.Shapes.textInputShape
+                            .fill(Theme.Colors.textInputBackground)
+                        Theme.CustomePalceHolder(
+                            placeHolder: !viewModel.isSearchActive
+                            ? DiscussionLocalization.search
+                            : "",
+                            text: viewModel.searchText,
+                            padding: 48
+                        )
+                    }   
                 )
                 .overlay(
                     Theme.Shapes.textInputShape
                         .stroke(lineWidth: 1)
                         .fill(viewModel.isSearchActive
-                              ? Theme.Colors.accentColor
+                              ? Theme.Colors.textInputTextColor
                               : Theme.Colors.textInputUnfocusedStroke)
                 )
                 .padding(.horizontal, 24)

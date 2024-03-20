@@ -62,7 +62,7 @@ public struct DeleteAccountView: View {
                             .accessibilityIdentifier("password_text")
                         
                         HStack(spacing: 11) {
-                            SecureField(ProfileLocalization.DeleteAccount.passwordDescription,
+                            SecureField("",
                                         text: $viewModel.password)
                             .font(Theme.Fonts.labelLarge)
                             .foregroundColor(Theme.Colors.textInputTextColor)
@@ -72,8 +72,15 @@ public struct DeleteAccountView: View {
                         .frame(minHeight: 48)
                         .frame(maxWidth: .infinity)
                         .background(
-                            Theme.Shapes.textInputShape
-                                .fill(Theme.Colors.textInputBackground)
+                            ZStack(alignment: .leading) {
+                                Theme.Shapes.textInputShape
+                                    .fill(Theme.Colors.textInputBackground)
+                                Theme.CustomePalceHolder(
+                                    placeHolder: ProfileLocalization.DeleteAccount.passwordDescription,
+                                    text: viewModel.password,
+                                    padding: 15
+                                )
+                            }
                         )
                         .overlay(
                             Theme.Shapes.textInputShape

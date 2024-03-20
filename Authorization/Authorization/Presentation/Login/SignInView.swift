@@ -69,7 +69,7 @@ public struct SignInView: View {
                                 .font(Theme.Fonts.labelLarge)
                                 .foregroundColor(Theme.Colors.textPrimary)
                                 .accessibilityIdentifier("username_text")
-                            TextField(AuthLocalization.SignIn.emailOrUsername, text: $email)
+                            TextField("", text: $email)
                                 .font(Theme.Fonts.bodyLarge)
                                 .foregroundColor(Theme.Colors.textInputTextColor)
                                 .keyboardType(.emailAddress)
@@ -78,8 +78,15 @@ public struct SignInView: View {
                                 .autocorrectionDisabled()
                                 .padding(.all, 14)
                                 .background(
-                                    Theme.Shapes.textInputShape
-                                        .fill(Theme.Colors.textInputBackground)
+                                    ZStack(alignment: .leading) {
+                                        Theme.Shapes.textInputShape
+                                            .fill(Theme.Colors.textInputBackground)
+                                        Theme.CustomePalceHolder(
+                                            placeHolder: AuthLocalization.SignIn.emailOrUsername,
+                                            text: email,
+                                            padding: 15
+                                        )
+                                    }
                                 )
                                 .overlay(
                                     Theme.Shapes.textInputShape
@@ -93,13 +100,22 @@ public struct SignInView: View {
                                 .foregroundColor(Theme.Colors.textPrimary)
                                 .padding(.top, 18)
                                 .accessibilityIdentifier("password_text")
-                            SecureField(AuthLocalization.SignIn.password, text: $password)
+                            SecureField("", text: $password)
                                 .font(Theme.Fonts.bodyLarge)
                                 .foregroundColor(Theme.Colors.textInputTextColor)
                                 .padding(.all, 14)
                                 .background(
-                                    Theme.Shapes.textInputShape
-                                        .fill(Theme.Colors.textInputBackground)
+                                    ZStack(alignment: .leading) {
+                                        Theme.Shapes.textInputShape
+                                            .fill(Theme.Colors.textInputBackground)
+                                        
+                                        Theme.CustomePalceHolder(
+                                            placeHolder: AuthLocalization.SignIn.password,
+                                            text: password,
+                                            padding: 15
+                                        )
+                                    }
+                                    
                                 )
                                 .overlay(
                                     Theme.Shapes.textInputShape
