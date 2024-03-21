@@ -96,7 +96,7 @@ public struct StartupView: View {
                         } label: {
                             Text(AuthLocalization.Startup.exploreAllCourses)
                                 .underline()
-                                .foregroundColor(Theme.Colors.accentXColor)
+                                .foregroundColor(Theme.Colors.infoColor)
                                 .font(Theme.Fonts.bodyLarge)
                         }
                         .padding(.top, isHorizontal ? 0 : 5)
