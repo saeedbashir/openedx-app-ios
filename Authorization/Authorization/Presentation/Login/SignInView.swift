@@ -139,7 +139,7 @@ public struct SignInView: View {
                                     viewModel.router.showForgotPasswordScreen()
                                 }
                                 .font(Theme.Fonts.bodyLarge)
-                                .foregroundColor(Theme.Colors.accentXColor)
+                                .foregroundColor(Theme.Colors.infoColor)
                                 .padding(.top, 0)
                                 .accessibilityIdentifier("forgot_password_button")
                             }
@@ -230,7 +230,7 @@ public struct SignInView: View {
                 policy
             )
             Text(.init(text))
-                .tint(Theme.Colors.accentXColor)
+                .tint(Theme.Colors.infoColor)
                 .foregroundStyle(Theme.Colors.textSecondaryLight)
                 .font(Theme.Fonts.labelSmall)
                 .padding(.top, viewModel.socialAuthEnabled ? 0 : 15)
