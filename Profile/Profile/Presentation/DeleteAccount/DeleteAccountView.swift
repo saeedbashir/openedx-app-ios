@@ -38,7 +38,7 @@ public struct DeleteAccountView: View {
                             Text(ProfileLocalization.DeleteAccount.areYouSure)
                                 .foregroundColor(Theme.Colors.navigationBarTintColor)
                             + Text(ProfileLocalization.DeleteAccount.wantToDelete)
-                                .foregroundColor(Theme.Colors.alert)
+                                .foregroundColor(Theme.Colors.irreversibleAlert)
                         }
                         .accessibilityIdentifier("are_you_sure_text")
 
@@ -90,7 +90,7 @@ public struct DeleteAccountView: View {
                         Text(viewModel.incorrectPassword
                              ? ProfileLocalization.DeleteAccount.incorrectPassword
                              : " ")
-                        .foregroundColor(Theme.Colors.alert)
+                        .foregroundColor(Theme.Colors.irreversibleAlert)
                         .font(Theme.Fonts.labelLarge)
                         .multilineTextAlignment(.leading)
                         .padding(.top, 0)
@@ -117,8 +117,8 @@ public struct DeleteAccountView: View {
                                 }
                             },
                             color: .clear,
-                            textColor: Theme.Colors.alert,
-                            borderColor: Theme.Colors.alert,
+                            textColor: Theme.Colors.irreversibleAlert,
+                            borderColor: Theme.Colors.irreversibleAlert,
                             isActive: viewModel.password.count >= 2
                         )
                         .padding(.top, 18)

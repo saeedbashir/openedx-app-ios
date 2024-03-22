@@ -44,6 +44,7 @@ public enum ThemeAssets {
   public static let upcomingTimelineColor = ColorAsset(name: "UpcomingTimelineColor")
   public static let pastDueTimelineColor = ColorAsset(name: "pastDueTimelineColor")
   public static let infoColor = ColorAsset(name: "InfoColor")
+  public static let irreversibleAlert = ColorAsset(name: "IrreversibleAlert")
   public static let loginBackground = ColorAsset(name: "LoginBackground")
   public static let loginNavigationText = ColorAsset(name: "LoginNavigationText")
   public static let primaryButtonTextColor = ColorAsset(name: "PrimaryButtonTextColor")

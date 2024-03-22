@@ -62,6 +62,7 @@ public struct Theme {
         public private(set) static var textInputTextColor = ThemeAssets.textInputTextColor.swiftUIColor
         public private(set) static var textInputPlaceholderColor = ThemeAssets.textInputPlaceholderColor.swiftUIColor
         public private(set) static var infoColor = ThemeAssets.infoColor.swiftUIColor
+        public private(set) static var irreversibleAlert = ThemeAssets.irreversibleAlert.swiftUIColor
         
         public static func update(
             accentColor: Color = ThemeAssets.accentColor.swiftUIColor,
@@ -107,7 +108,8 @@ public struct Theme {
             toggleSwitchColor: Color = ThemeAssets.toggleSwitchColor.swiftUIColor,
             textInputTextColor: Color = ThemeAssets.textInputTextColor.swiftUIColor,
             textInputPlaceholderColor: Color = ThemeAssets.textInputPlaceholderColor.swiftUIColor,
-            infoColor: Color = ThemeAssets.infoColor.swiftUIColor
+            infoColor: Color = ThemeAssets.infoColor.swiftUIColor,
+            irreversibleAlert: Color = ThemeAssets.irreversibleAlert.swiftUIColor
         ) {
             self.accentColor = accentColor
             self.accentXColor = accentXColor
@@ -153,6 +155,7 @@ public struct Theme {
             self.textInputTextColor = textInputTextColor
             self.textInputPlaceholderColor = textInputPlaceholderColor
             self.infoColor = infoColor
+            self.irreversibleAlert = irreversibleAlert
         }
     }
     
