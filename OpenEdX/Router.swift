@@ -814,7 +814,21 @@ extension Router {
         navigationController.setViewControllers(viewControllers, animated: true)
     }
 }
-// swiftlint:enable file_length type_body_length
+
+// MARK: Native alerts
+extension Router {
+    public func presentNativeAlert(title: String?, message: String?, actions: [UIAlertAction]) {
+        guard let topController = UIApplication.topViewController() else { return }
+        
+        let alertController = UIAlertController().showAlert(
+            withTitle: title,
+            message: message,
+            onViewController: topController) { _, _, _ in }
+        for action in actions {
+            alertController.addAction(action)
+        }
+    }
+}
 
 // MARK: Payments
 extension Router {
@@ -875,7 +889,8 @@ extension Router {
     @MainActor
     public func hideUpgradeLoaderView(animated: Bool) async {
         await withCheckedContinuation { continuation in
-            if let controller = navigationController.presentedViewController as? UIHostingController<CourseUpgradeUnlockView> {
+            let presentedController = navigationController.presentedViewController
+            if let controller = presentedController as? UIHostingController<CourseUpgradeUnlockView> {
                 controller.dismiss(animated: animated) {
                     continuation.resume()
                 }
@@ -885,3 +900,4 @@ extension Router {
         }
     }
 }
+// swiftlint:enable file_length type_body_length

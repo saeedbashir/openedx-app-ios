@@ -98,6 +98,7 @@ public class UpgradeInfoViewModel: ObservableObject {
     let handler: CourseUpgradeHandlerProtocol
     let pacing: String
     let analytics: CoreAnalytics
+    let router: BaseRouter
     
     @Published var isLoading: Bool = false
     @Published var product: StoreProductInfo?
@@ -115,7 +116,8 @@ public class UpgradeInfoViewModel: ObservableObject {
         screen: CourseUpgradeScreen,
         handler: CourseUpgradeHandlerProtocol,
         pacing: String,
-        analytics: CoreAnalytics
+        analytics: CoreAnalytics,
+        router: BaseRouter
     ) {
         self.productName = productName
         self.sku = sku
@@ -124,6 +126,7 @@ public class UpgradeInfoViewModel: ObservableObject {
         self.handler = handler
         self.pacing = pacing
         self.analytics = analytics
+        self.router = router
     }
     
     @MainActor
@@ -139,17 +142,16 @@ public class UpgradeInfoViewModel: ObservableObject {
     
     @MainActor
     private func showPriceLoadError(error: Error) {
-        guard let topController = UIApplication.topViewController(),
-        let error = error as? UpgradeError else { return }
+        guard let error = error as? UpgradeError else { return }
 
-        let alertController = UIAlertController().showAlert(
-            withTitle: CoreLocalization.CourseUpgrade.FailureAlert.alertTitle,
-            message: CoreLocalization.CourseUpgrade.FailureAlert.priceFetchErrorMessage,
-            onViewController: topController) { _, _, _ in }
-
+        var actions: [UIAlertAction] = []
+        
         if error != .productNotExist {
-            alertController.addButton(
-                withTitle: CoreLocalization.CourseUpgrade.FailureAlert.priceFetchError) { [weak self] _ in
+            actions.append(
+                UIAlertAction(
+                    title: CoreLocalization.CourseUpgrade.FailureAlert.priceFetchError,
+                    style: .default
+                ) {[weak self] _ in
                     guard let self else { return }
                     Task {
                         await self.fetchProduct()
@@ -166,23 +168,34 @@ public class UpgradeInfoViewModel: ObservableObject {
                         flowType: UpgradeMode.userInitiated.rawValue
                     )
                 }
+            )
         }
 
         let cancelButtonTitle = error == .productNotExist ? CoreLocalization.ok : CoreLocalization.Alert.cancel
-        alertController.addButton(withTitle: cancelButtonTitle, style: .default) { [weak self] _ in
-            guard let self else { return }
-            self.error = error
-            self.analytics.trackCourseUpgradeErrorAction(
-                courseID: self.courseID,
-                blockID: "",
-                pacing: pacing,
-                coursePrice: "",
-                screen: self.screen,
-                errorAction: UpgradeErrorAction.close.rawValue,
-                error: "price",
-                flowType: UpgradeMode.userInitiated.rawValue
-            )
-        }
+        actions.append(
+            UIAlertAction(
+                title: cancelButtonTitle,
+                style: .default
+            ) { [weak self] _ in
+                guard let self else { return }
+                self.error = error
+                self.analytics.trackCourseUpgradeErrorAction(
+                    courseID: self.courseID,
+                    blockID: "",
+                    pacing: pacing,
+                    coursePrice: "",
+                    screen: self.screen,
+                    errorAction: UpgradeErrorAction.close.rawValue,
+                    error: "price",
+                    flowType: UpgradeMode.userInitiated.rawValue
+                )
+            }
+        )
+        router.presentNativeAlert(
+            title: CoreLocalization.CourseUpgrade.FailureAlert.alertTitle,
+            message: CoreLocalization.CourseUpgrade.FailureAlert.priceFetchErrorMessage,
+            actions: actions
+        )
     }
 
     public func purchase() async {
@@ -354,7 +367,8 @@ public struct UpgradeInfoView: View {
             screen: .dashboard,
             handler: CourseUpgradeHandlerProtocolMock(),
             pacing: "self",
-            analytics: CoreAnalyticsMock()
+            analytics: CoreAnalyticsMock(),
+            router: BaseRouterMock()
         )
     )
 }

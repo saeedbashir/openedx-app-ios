@@ -503,7 +503,8 @@ class ScreenAssembly: Assembly {
                 screen: screen,
                 handler: r.resolve(CourseUpgradeHandlerProtocol.self)!,
                 pacing: pacing,
-                analytics: r.resolve(CoreAnalytics.self)!
+                analytics: r.resolve(CoreAnalytics.self)!,
+                router: r.resolve(CourseRouter.self)!
             )
         }
     }
