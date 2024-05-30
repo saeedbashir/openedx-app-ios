@@ -79,7 +79,8 @@ final class UpgradeInfoViewModelTests: XCTestCase {
             screen: .dashboard,
             handler: handler,
             pacing: Pacing.selfPace.rawValue,
-            analytics: CoreAnalyticsMock()
+            analytics: CoreAnalyticsMock(),
+            router: BaseRouterMock()
         )
     }
     
