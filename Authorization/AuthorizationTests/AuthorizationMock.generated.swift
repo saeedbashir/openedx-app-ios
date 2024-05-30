@@ -932,6 +932,12 @@ open class AuthorizationRouterMock: AuthorizationRouter, Mock {
 		perform?(`transitionStyle`, `animated`, `content`)
     }
 
+    open func presentNativeAlert(title: String?, message: String?, actions: [UIAlertAction]) {
+        addInvocation(.m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>.value(`title`), Parameter<String?>.value(`message`), Parameter<[UIAlertAction]>.value(`actions`)))
+		let perform = methodPerformValue(.m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>.value(`title`), Parameter<String?>.value(`message`), Parameter<[UIAlertAction]>.value(`actions`))) as? (String?, String?, [UIAlertAction]) -> Void
+		perform?(`title`, `message`, `actions`)
+    }
+
     @MainActor
 	open func showUpgradeInfo(productName: String, sku: String, courseID: String, screen: CourseUpgradeScreen, pacing: String) {
         addInvocation(.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`)))
@@ -979,6 +985,7 @@ open class AuthorizationRouterMock: AuthorizationRouter, Mock {
         case m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped(Parameter<String>, Parameter<String>, Parameter<String?>, Parameter<String>, Parameter<SwiftUI.Image>, Parameter<() -> Void>, Parameter<() -> Void>, Parameter<() -> Void>)
         case m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(Parameter<UIModalTransitionStyle>, Parameter<any View>, Parameter<(() -> Void)?>)
         case m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(Parameter<UIModalTransitionStyle>, Parameter<Bool>, Parameter<() -> any View>)
+        case m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>, Parameter<String?>, Parameter<[UIAlertAction]>)
         case m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>, Parameter<String>, Parameter<String>, Parameter<CourseUpgradeScreen>, Parameter<String>)
         case m_hideUpgradeInfo__animated_animated(Parameter<Bool>)
         case m_showUpgradeLoaderView__animated_animated(Parameter<Bool>)
@@ -1080,6 +1087,13 @@ open class AuthorizationRouterMock: AuthorizationRouter, Mock {
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsContent, rhs: rhsContent, with: matcher), lhsContent, rhsContent, "content"))
 				return Matcher.ComparisonResult(results)
 
+            case (.m_presentNativeAlert__title_titlemessage_messageactions_actions(let lhsTitle, let lhsMessage, let lhsActions), .m_presentNativeAlert__title_titlemessage_messageactions_actions(let rhsTitle, let rhsMessage, let rhsActions)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsTitle, rhs: rhsTitle, with: matcher), lhsTitle, rhsTitle, "title"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsMessage, rhs: rhsMessage, with: matcher), lhsMessage, rhsMessage, "message"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsActions, rhs: rhsActions, with: matcher), lhsActions, rhsActions, "actions"))
+				return Matcher.ComparisonResult(results)
+
             case (.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let lhsProductname, let lhsSku, let lhsCourseid, let lhsScreen, let lhsPacing), .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let rhsProductname, let rhsSku, let rhsCourseid, let rhsScreen, let rhsPacing)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsProductname, rhs: rhsProductname, with: matcher), lhsProductname, rhsProductname, "productName"))
@@ -1126,6 +1140,7 @@ open class AuthorizationRouterMock: AuthorizationRouter, Mock {
             case let .m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped(p0, p1, p2, p3, p4, p5, p6, p7): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue + p5.intValue + p6.intValue + p7.intValue
             case let .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
+            case let .m_presentNativeAlert__title_titlemessage_messageactions_actions(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(p0, p1, p2, p3, p4): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue
             case let .m_hideUpgradeInfo__animated_animated(p0): return p0.intValue
             case let .m_showUpgradeLoaderView__animated_animated(p0): return p0.intValue
@@ -1151,6 +1166,7 @@ open class AuthorizationRouterMock: AuthorizationRouter, Mock {
             case .m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped: return ".presentAlert(alertTitle:alertMessage:nextSectionName:action:image:onCloseTapped:okTapped:nextSectionTapped:)"
             case .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion: return ".presentView(transitionStyle:view:completion:)"
             case .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content: return ".presentView(transitionStyle:animated:content:)"
+            case .m_presentNativeAlert__title_titlemessage_messageactions_actions: return ".presentNativeAlert(title:message:actions:)"
             case .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing: return ".showUpgradeInfo(productName:sku:courseID:screen:pacing:)"
             case .m_hideUpgradeInfo__animated_animated: return ".hideUpgradeInfo(animated:)"
             case .m_showUpgradeLoaderView__animated_animated: return ".showUpgradeLoaderView(animated:)"
@@ -1190,6 +1206,7 @@ open class AuthorizationRouterMock: AuthorizationRouter, Mock {
         public static func presentAlert(alertTitle: Parameter<String>, alertMessage: Parameter<String>, nextSectionName: Parameter<String?>, action: Parameter<String>, image: Parameter<SwiftUI.Image>, onCloseTapped: Parameter<() -> Void>, okTapped: Parameter<() -> Void>, nextSectionTapped: Parameter<() -> Void>) -> Verify { return Verify(method: .m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped(`alertTitle`, `alertMessage`, `nextSectionName`, `action`, `image`, `onCloseTapped`, `okTapped`, `nextSectionTapped`))}
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, view: Parameter<any View>, completion: Parameter<(() -> Void)?>) -> Verify { return Verify(method: .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(`transitionStyle`, `view`, `completion`))}
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, animated: Parameter<Bool>, content: Parameter<() -> any View>) -> Verify { return Verify(method: .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(`transitionStyle`, `animated`, `content`))}
+        public static func presentNativeAlert(title: Parameter<String?>, message: Parameter<String?>, actions: Parameter<[UIAlertAction]>) -> Verify { return Verify(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`))}
         @MainActor
 		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>) -> Verify { return Verify(method: .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `sku`, `courseID`, `screen`, `pacing`))}
         @MainActor
@@ -1254,6 +1271,9 @@ open class AuthorizationRouterMock: AuthorizationRouter, Mock {
         }
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, animated: Parameter<Bool>, content: Parameter<() -> any View>, perform: @escaping (UIModalTransitionStyle, Bool, () -> any View) -> Void) -> Perform {
             return Perform(method: .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(`transitionStyle`, `animated`, `content`), performs: perform)
+        }
+        public static func presentNativeAlert(title: Parameter<String?>, message: Parameter<String?>, actions: Parameter<[UIAlertAction]>, perform: @escaping (String?, String?, [UIAlertAction]) -> Void) -> Perform {
+            return Perform(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`), performs: perform)
         }
         @MainActor
 		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>, perform: @escaping (String, String, String, CourseUpgradeScreen, String) -> Void) -> Perform {
@@ -1486,6 +1506,12 @@ open class BaseRouterMock: BaseRouter, Mock {
 		perform?(`transitionStyle`, `animated`, `content`)
     }
 
+    open func presentNativeAlert(title: String?, message: String?, actions: [UIAlertAction]) {
+        addInvocation(.m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>.value(`title`), Parameter<String?>.value(`message`), Parameter<[UIAlertAction]>.value(`actions`)))
+		let perform = methodPerformValue(.m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>.value(`title`), Parameter<String?>.value(`message`), Parameter<[UIAlertAction]>.value(`actions`))) as? (String?, String?, [UIAlertAction]) -> Void
+		perform?(`title`, `message`, `actions`)
+    }
+
     @MainActor
 	open func showUpgradeInfo(productName: String, sku: String, courseID: String, screen: CourseUpgradeScreen, pacing: String) {
         addInvocation(.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`)))
@@ -1532,6 +1558,7 @@ open class BaseRouterMock: BaseRouter, Mock {
         case m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped(Parameter<String>, Parameter<String>, Parameter<String?>, Parameter<String>, Parameter<SwiftUI.Image>, Parameter<() -> Void>, Parameter<() -> Void>, Parameter<() -> Void>)
         case m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(Parameter<UIModalTransitionStyle>, Parameter<any View>, Parameter<(() -> Void)?>)
         case m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(Parameter<UIModalTransitionStyle>, Parameter<Bool>, Parameter<() -> any View>)
+        case m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>, Parameter<String?>, Parameter<[UIAlertAction]>)
         case m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>, Parameter<String>, Parameter<String>, Parameter<CourseUpgradeScreen>, Parameter<String>)
         case m_hideUpgradeInfo__animated_animated(Parameter<Bool>)
         case m_showUpgradeLoaderView__animated_animated(Parameter<Bool>)
@@ -1628,6 +1655,13 @@ open class BaseRouterMock: BaseRouter, Mock {
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsContent, rhs: rhsContent, with: matcher), lhsContent, rhsContent, "content"))
 				return Matcher.ComparisonResult(results)
 
+            case (.m_presentNativeAlert__title_titlemessage_messageactions_actions(let lhsTitle, let lhsMessage, let lhsActions), .m_presentNativeAlert__title_titlemessage_messageactions_actions(let rhsTitle, let rhsMessage, let rhsActions)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsTitle, rhs: rhsTitle, with: matcher), lhsTitle, rhsTitle, "title"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsMessage, rhs: rhsMessage, with: matcher), lhsMessage, rhsMessage, "message"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsActions, rhs: rhsActions, with: matcher), lhsActions, rhsActions, "actions"))
+				return Matcher.ComparisonResult(results)
+
             case (.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let lhsProductname, let lhsSku, let lhsCourseid, let lhsScreen, let lhsPacing), .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let rhsProductname, let rhsSku, let rhsCourseid, let rhsScreen, let rhsPacing)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsProductname, rhs: rhsProductname, with: matcher), lhsProductname, rhsProductname, "productName"))
@@ -1673,6 +1707,7 @@ open class BaseRouterMock: BaseRouter, Mock {
             case let .m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped(p0, p1, p2, p3, p4, p5, p6, p7): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue + p5.intValue + p6.intValue + p7.intValue
             case let .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
+            case let .m_presentNativeAlert__title_titlemessage_messageactions_actions(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(p0, p1, p2, p3, p4): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue
             case let .m_hideUpgradeInfo__animated_animated(p0): return p0.intValue
             case let .m_showUpgradeLoaderView__animated_animated(p0): return p0.intValue
@@ -1697,6 +1732,7 @@ open class BaseRouterMock: BaseRouter, Mock {
             case .m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped: return ".presentAlert(alertTitle:alertMessage:nextSectionName:action:image:onCloseTapped:okTapped:nextSectionTapped:)"
             case .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion: return ".presentView(transitionStyle:view:completion:)"
             case .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content: return ".presentView(transitionStyle:animated:content:)"
+            case .m_presentNativeAlert__title_titlemessage_messageactions_actions: return ".presentNativeAlert(title:message:actions:)"
             case .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing: return ".showUpgradeInfo(productName:sku:courseID:screen:pacing:)"
             case .m_hideUpgradeInfo__animated_animated: return ".hideUpgradeInfo(animated:)"
             case .m_showUpgradeLoaderView__animated_animated: return ".showUpgradeLoaderView(animated:)"
@@ -1735,6 +1771,7 @@ open class BaseRouterMock: BaseRouter, Mock {
         public static func presentAlert(alertTitle: Parameter<String>, alertMessage: Parameter<String>, nextSectionName: Parameter<String?>, action: Parameter<String>, image: Parameter<SwiftUI.Image>, onCloseTapped: Parameter<() -> Void>, okTapped: Parameter<() -> Void>, nextSectionTapped: Parameter<() -> Void>) -> Verify { return Verify(method: .m_presentAlert__alertTitle_alertTitlealertMessage_alertMessagenextSectionName_nextSectionNameaction_actionimage_imageonCloseTapped_onCloseTappedokTapped_okTappednextSectionTapped_nextSectionTapped(`alertTitle`, `alertMessage`, `nextSectionName`, `action`, `image`, `onCloseTapped`, `okTapped`, `nextSectionTapped`))}
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, view: Parameter<any View>, completion: Parameter<(() -> Void)?>) -> Verify { return Verify(method: .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(`transitionStyle`, `view`, `completion`))}
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, animated: Parameter<Bool>, content: Parameter<() -> any View>) -> Verify { return Verify(method: .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(`transitionStyle`, `animated`, `content`))}
+        public static func presentNativeAlert(title: Parameter<String?>, message: Parameter<String?>, actions: Parameter<[UIAlertAction]>) -> Verify { return Verify(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`))}
         @MainActor
 		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>) -> Verify { return Verify(method: .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `sku`, `courseID`, `screen`, `pacing`))}
         @MainActor
@@ -1796,6 +1833,9 @@ open class BaseRouterMock: BaseRouter, Mock {
         }
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, animated: Parameter<Bool>, content: Parameter<() -> any View>, perform: @escaping (UIModalTransitionStyle, Bool, () -> any View) -> Void) -> Perform {
             return Perform(method: .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(`transitionStyle`, `animated`, `content`), performs: perform)
+        }
+        public static func presentNativeAlert(title: Parameter<String?>, message: Parameter<String?>, actions: Parameter<[UIAlertAction]>, perform: @escaping (String?, String?, [UIAlertAction]) -> Void) -> Perform {
+            return Perform(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`), performs: perform)
         }
         @MainActor
 		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>, perform: @escaping (String, String, String, CourseUpgradeScreen, String) -> Void) -> Perform {
