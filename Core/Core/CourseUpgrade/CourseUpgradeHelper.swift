@@ -9,6 +9,9 @@ import Foundation
 import StoreKit
 import SwiftUI
 import MessageUI
+import Alamofire
+
+private let InProgressIAPKey = "InProgressIAPKey"
 
 public struct CourseUpgradeHelperModel {
     let courseID: String
@@ -97,6 +100,8 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
         self.delegate = delegate
         self.upgradeHadler = upgradeHadler
         
+        updateInProgressIAP()
+        
         switch state {
         case .fulfillment(let show):
             if show {
@@ -143,7 +148,7 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
                     coursePrice: localizedCoursePrice ?? "",
                     screen: screen,
                     error: error.formattedError,
-                    flowType: upgradeHadler.upgradeMode.rawValue
+                    flowType: upgradeHadler.upgradeMode
                 )
             }
             
@@ -161,8 +166,37 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
         }
     }
     
-    private func postSuccessNotification() {
-        NotificationCenter.default.post(name: .courseUpgradeCompletionNotification, object: nil)
+    private func updateInProgressIAP() {
+        guard let state = upgradeHadler?.state,
+              let courseID = courseID,
+              let upgradeMode = upgradeHadler?.upgradeMode,
+              let sku = upgradeHadler?.courseSku, sku.isEmpty == false
+        else { return }
+        
+        switch state {
+        case .basket:
+            saveInProgressIAP(courseID: courseID, sku: sku)
+        case .complete:
+            removeInProgressIAP()
+        case .error(let upgradeError):
+            if case .verifyReceiptError(let error) = upgradeError, error.errorCode == 409 {
+                removeInProgressIAP()
+            }
+            
+            if upgradeError != .verifyReceiptError(upgradeError), upgradeMode == .userInitiated {
+                removeInProgressIAP()
+            }
+        default:
+            break
+        }
+    }
+    
+    private func postSuccessNotification(showLoader: Bool = false) {
+        NotificationCenter.default.post(name: .courseUpgradeCompletionNotification, object: showLoader)
+    }
+    
+    private func showDashboardScreen() {
+        router.backToRoot(animated: true)
     }
     
     public func resetUpgradeModel() {
@@ -197,7 +231,7 @@ extension CourseUpgradeHelper {
             pacing: pacing ?? "",
             coursePrice: localizedCoursePrice ?? "",
             screen: screen,
-            flowType: upgradeHadler?.upgradeMode.rawValue ?? ""
+            flowType: upgradeHadler?.upgradeMode ?? .userInitiated
         )
         reset()
     }
@@ -332,9 +366,8 @@ extension CourseUpgradeHelper {
                 title: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertRefresh,
                 style: .default
             ) { [weak self] _ in
-                self?.showLoader(animated: false)
-                //                self?.showLoader(forceShow: true)
-                //            self?.popToEnrolledCourses()
+                self?.showDashboardScreen()
+                self?.postSuccessNotification()
             }
         )
         
@@ -365,7 +398,7 @@ extension CourseUpgradeHelper {
             screen: screen,
             errorAction: errorAction.rawValue,
             error: error.formattedError,
-            flowType: upgradeHadler?.upgradeMode.rawValue ?? ""
+            flowType: upgradeHadler?.upgradeMode ?? .userInitiated
         )
     }
 }
@@ -393,8 +426,60 @@ extension CourseUpgradeHelper {
     }
 }
 
-extension Error {
-    var errorCode: Int {
-        return (self as NSError).code
+// Save course upgrade data in user deualts for unfulfilled cases if any
+// Enrollments API is paginated so it's not sure the course will be available in first response
+
+extension CourseUpgradeHelper {
+    private func saveInProgressIAP(courseID: String, sku: String) {
+        let IAP = InProgressIAP(courseID: courseID, sku: sku, pacing: pacing ?? "")
+        
+        if let data = try? NSKeyedArchiver.archivedData(withRootObject: IAP, requiringSecureCoding: true) {
+            UserDefaults.standard.set(data, forKey: InProgressIAPKey)
+            UserDefaults.standard.synchronize()
+        }
+    }
+    
+    public class func getInProgressIAP() -> InProgressIAP? {
+        guard let data = UserDefaults.standard.object(forKey: InProgressIAPKey) as? Data else {
+            return nil
+        }
+        
+        let IAP = try? NSKeyedUnarchiver.unarchivedObject(ofClass: InProgressIAP.self, from: data)
+        
+        return IAP
+    }
+    
+    private func removeInProgressIAP() {
+        UserDefaults.standard.removeObject(forKey: InProgressIAPKey)
+        UserDefaults.standard.synchronize()
+    }
+}
+
+public class InProgressIAP: NSObject, NSCoding, NSSecureCoding {
+    
+    public var courseID: String = ""
+    public var sku: String = ""
+    public var pacing: String = ""
+    
+    init(courseID: String, sku: String, pacing: String) {
+        self.courseID = courseID
+        self.sku = sku
+        self.pacing = pacing
+    }
+    
+    public func encode(with coder: NSCoder) {
+        coder.encode(courseID, forKey: "courseID")
+        coder.encode(sku, forKey: "sku")
+        coder.encode(pacing, forKey: "pacing")
+    }
+    
+    public required init?(coder: NSCoder) {
+        courseID = coder.decodeObject(forKey: "courseID") as? String ?? ""
+        sku = coder.decodeObject(forKey: "sku") as? String ?? ""
+        pacing = coder.decodeObject(forKey: "pacing") as? String ?? ""
+    }
+    
+    public static var supportsSecureCoding: Bool {
+        return true
     }
 }

@@ -15,6 +15,7 @@ public class DashboardViewModel: ObservableObject {
     public var nextPage = 1
     public var totalPages = 1
     @Published public private(set) var fetchInProgress = false
+    @Published public private(set) var showLoader = false
     
     @Published var courses: [CourseItem] = []
     @Published var showError: Bool = false
@@ -30,18 +31,28 @@ public class DashboardViewModel: ObservableObject {
     private let interactor: DashboardInteractorProtocol
     private let analytics: DashboardAnalytics
     private var cancellations: [AnyCancellable] = []
+    private let upgradehandler: CourseUpgradeHandlerProtocol
+    private let coreAnalytics: CoreAnalytics
     
     public init(interactor: DashboardInteractorProtocol,
                 connectivity: ConnectivityProtocol,
-                analytics: DashboardAnalytics) {
+                analytics: DashboardAnalytics,
+                upgradehandler: CourseUpgradeHandlerProtocol,
+                coreAnalytics: CoreAnalytics) {
         self.interactor = interactor
         self.connectivity = connectivity
         self.analytics = analytics
+        self.upgradehandler = upgradehandler
+        self.coreAnalytics = coreAnalytics
         
+        addObservers()
+    }
+    
+    private func addObservers() {
         NotificationCenter.default
             .publisher(for: .onCourseEnrolled)
             .sink { [weak self] _ in
-                guard let self = self else { return }
+                guard let self else { return }
                 Task {
                     await self.getMyCourses(page: 1, refresh: true)
                 }
@@ -50,20 +61,28 @@ public class DashboardViewModel: ObservableObject {
 
         NotificationCenter.default
             .publisher(for: .courseUpgradeCompletionNotification)
-            .sink { [weak self] _ in
-                guard let self = self else { return }
+            .sink { [weak self] object in
+                
+                let showLoader = object.object as? Bool ?? false
+                guard let self else { return }
                 Task {
-                    await self.getMyCourses(page: 1, refresh: true)
+                    await self.getMyCourses(page: 1, refresh: true, showLoader: showLoader)
                 }
             }
             .store(in: &cancellations)
     }
     
     @MainActor
-    public func getMyCourses(page: Int, refresh: Bool = false) async {
+    public func getMyCourses(
+        page: Int,
+        refresh: Bool = false,
+        showLoader: Bool = false
+    ) async {
         do {
+            self.showLoader = showLoader
             fetchInProgress = true
             if connectivity.isInternetAvaliable {
+                
                 if refresh {
                     courses = try await interactor.getMyCourses(page: page)
                     self.totalPages = 1
@@ -108,5 +127,41 @@ public class DashboardViewModel: ObservableObject {
     
     func trackDashboardCourseClicked(courseID: String, courseName: String) {
         analytics.dashboardCourseClicked(courseID: courseID, courseName: courseName)
+    }
+}
+
+// Course upgrade
+extension DashboardViewModel {
+    
+    @MainActor
+    func resolveUnfinishedPayment() async {
+        guard let inprogressIAP = CourseUpgradeHelper.getInProgressIAP() else { return }
+        
+        do {
+            let product = try await upgradehandler.fetchProduct(sku: inprogressIAP.sku)
+            await fulfillPurchase(inprogressIAP: inprogressIAP, product: product)
+        } catch _ {
+            
+        }
+    }
+    
+    public func fulfillPurchase(inprogressIAP: InProgressIAP, product: StoreProductInfo) async {
+        
+        coreAnalytics.trackCourseUnfulfilledPurchaseInitiated(
+            courseID: inprogressIAP.courseID,
+            pacing: inprogressIAP.pacing,
+            screen: .dashboard,
+            flowType: .silent)
+        
+        await upgradehandler.upgradeCourse(
+            sku: inprogressIAP.sku,
+            mode: .silent,
+            productInfo: product,
+            pacing: inprogressIAP.pacing,
+            courseID: inprogressIAP.courseID,
+            componentID: nil,
+            screen: .dashboard,
+            completion: nil
+        )
     }
 }

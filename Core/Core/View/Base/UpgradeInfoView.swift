@@ -144,6 +144,13 @@ public class UpgradeInfoViewModel: ObservableObject {
     private func showPriceLoadError(error: Error) {
         guard let error = error as? UpgradeError else { return }
 
+        analytics.trackCourseUpgradeLoadError(
+            courseID: courseID,
+            blockID: "",
+            pacing: pacing,
+            screen: screen
+        )
+        
         var actions: [UIAlertAction] = []
         
         if error != .productNotExist {
@@ -165,7 +172,7 @@ public class UpgradeInfoViewModel: ObservableObject {
                         screen: self.screen,
                         errorAction: UpgradeErrorAction.reloadPrice.rawValue,
                         error: "price",
-                        flowType: UpgradeMode.userInitiated.rawValue
+                        flowType: .userInitiated
                     )
                 }
             )
@@ -187,7 +194,7 @@ public class UpgradeInfoViewModel: ObservableObject {
                     screen: self.screen,
                     errorAction: UpgradeErrorAction.close.rawValue,
                     error: "price",
-                    flowType: UpgradeMode.userInitiated.rawValue
+                    flowType: .userInitiated
                 )
             }
         )

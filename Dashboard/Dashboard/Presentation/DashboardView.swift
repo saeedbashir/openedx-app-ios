@@ -99,7 +99,7 @@ public struct DashboardView: View {
                                         .accessibilityIdentifier("course_item")
                                     }
                                     // MARK: - ProgressBar
-                                    if viewModel.nextPage <= viewModel.totalPages {
+                                    if viewModel.nextPage <= viewModel.totalPages || viewModel.showLoader {
                                         VStack(alignment: .center) {
                                             ProgressBar(size: 40, lineWidth: 8)
                                                 .padding(.top, 20)
@@ -139,6 +139,7 @@ public struct DashboardView: View {
             .onFirstAppear {
                 Task {
                     await viewModel.getMyCourses(page: 1)
+                    await viewModel.resolveUnfinishedPayment()
                 }
             }
             .background(
@@ -156,7 +157,9 @@ struct DashboardView_Previews: PreviewProvider {
         let vm = DashboardViewModel(
             interactor: DashboardInteractor.mock,
             connectivity: Connectivity(),
-            analytics: DashboardAnalyticsMock()
+            analytics: DashboardAnalyticsMock(),
+            upgradehandler: CourseUpgradeHandlerProtocolMock(),
+            coreAnalytics: CoreAnalyticsMock()
         )
         let router = DashboardRouterMock()
         
