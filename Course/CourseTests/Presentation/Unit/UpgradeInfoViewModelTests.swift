@@ -80,7 +80,7 @@ final class UpgradeInfoViewModelTests: XCTestCase {
             handler: handler,
             pacing: Pacing.selfPace.rawValue,
             analytics: CoreAnalyticsMock(),
-            router: BaseRouterMock()
+            router: router ?? BaseRouterMock()
         )
     }
     
@@ -121,6 +121,8 @@ final class UpgradeInfoViewModelTests: XCTestCase {
         await viewModel.fetchProduct()
         try verifyFetchProduct()
         XCTAssertTrue(viewModel.product == nil)
+        guard let router else { throw UpgradeInfoViewModelTestsError.routerIsNil }
+        Verify(router, 1, .presentNativeAlert(title: .any, message: .any, actions: .any))
     }
     
     typealias FlowData = (sku: String, product: StoreProductInfo, basketID: Int, symbol: String, receipt: String )
