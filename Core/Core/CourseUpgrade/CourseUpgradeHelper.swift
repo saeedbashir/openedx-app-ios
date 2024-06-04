@@ -342,14 +342,13 @@ extension CourseUpgradeHelper {
         if removeView == true {
             Task {@MainActor in
                 await router.hideUpgradeLoaderView(animated: true)
-            }
-            
-            helperModel = nil
-            
-            if success == true {
-                showSuccess()
-            } else {
-                showError()
+                helperModel = nil
+                
+                if success == true {
+                    showSuccess()
+                } else {
+                    showError()
+                }
             }
         } else if success == false {
             showError()

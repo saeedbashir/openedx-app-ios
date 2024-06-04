@@ -18,7 +18,15 @@ final class DashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = DashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let upgradeHandler = CourseUpgradeHandlerProtocolMock()
+        let coreAnalytics = CoreAnalyticsMock()
+        let viewModel = DashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: upgradeHandler,
+            coreAnalytics: coreAnalytics
+        )
         
         let items = [
             CourseItem(name: "Test",
@@ -65,7 +73,15 @@ final class DashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = DashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let upgradeHandler = CourseUpgradeHandlerProtocolMock()
+        let coreAnalytics = CoreAnalyticsMock()
+        let viewModel = DashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: upgradeHandler,
+            coreAnalytics: coreAnalytics
+        )
         
         let items = [
             CourseItem(name: "Test",
@@ -112,7 +128,15 @@ final class DashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = DashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let upgradeHandler = CourseUpgradeHandlerProtocolMock()
+        let coreAnalytics = CoreAnalyticsMock()
+        let viewModel = DashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: upgradeHandler,
+            coreAnalytics: coreAnalytics
+        )
         
         Given(connectivity, .isInternetAvaliable(getter: true))
         Given(interactor, .getMyCourses(page: .any, willThrow: NoCachedDataError()) )
@@ -130,7 +154,15 @@ final class DashboardViewModelTests: XCTestCase {
         let interactor = DashboardInteractorProtocolMock()
         let connectivity = ConnectivityProtocolMock()
         let analytics = DashboardAnalyticsMock()
-        let viewModel = DashboardViewModel(interactor: interactor, connectivity: connectivity, analytics: analytics)
+        let upgradeHandler = CourseUpgradeHandlerProtocolMock()
+        let coreAnalytics = CoreAnalyticsMock()
+        let viewModel = DashboardViewModel(
+            interactor: interactor,
+            connectivity: connectivity,
+            analytics: analytics,
+            upgradehandler: upgradeHandler,
+            coreAnalytics: coreAnalytics
+        )
         
         Given(connectivity, .isInternetAvaliable(getter: true))
         Given(interactor, .getMyCourses(page: .any, willThrow: NSError()) )
