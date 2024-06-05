@@ -128,6 +128,31 @@ public class CoursePersistence: CoursePersistenceProtocol {
             result[block.id] = block
         } ?? [:]
         
+        var coursewareAccessDetails: DataLayer.CoursewareAccessDetails?
+        if let accessDetails = structure.coursewareAccessDetails {
+            var coursewareAccess: DataLayer.CoursewareAccess?
+            if let access = accessDetails.coursewareAccess {
+                var errorCode: DataLayer.CourseAccessError?
+                if let error = access.errorCode {
+                    errorCode = DataLayer.CourseAccessError(rawValue: error) ?? .unknown
+                }
+                coursewareAccess = DataLayer.CoursewareAccess(
+                    hasAccess: access.hasAccess,
+                    errorCode: errorCode,
+                    developerMessage: access.developerMessage,
+                    userMessage: access.userMessage,
+                    additionalContextUserMessage: access.additionalContextUserMessage,
+                    userFragment: access.userFragment
+                )
+            }
+            coursewareAccessDetails = DataLayer.CoursewareAccessDetails(
+                hasUNMETPrerequisites: accessDetails.hasUNMETPrerequisites,
+                isTooEarly: accessDetails.isTooEarly,
+                auditAccessExpires: accessDetails.auditAccessExpires,
+                coursewareAccess: coursewareAccess
+            )
+        }
+        
         return DataLayer.CourseStructure(
             rootItem: structure.rootItem ?? "",
             dict: dictionary,
@@ -144,7 +169,8 @@ public class CoursePersistence: CoursePersistenceProtocol {
             isSelfPaced: structure.isSelfPaced,
             courseStart: structure.courseStart,
             courseSKU: structure.courseSKU,
-            courseMode: DataLayer.Mode(rawValue: structure.mode ?? "")
+            courseMode: DataLayer.Mode(rawValue: structure.mode ?? ""),
+            coursewareAccessDetails: coursewareAccessDetails
         )
     }
     
@@ -161,6 +187,24 @@ public class CoursePersistence: CoursePersistenceProtocol {
             newStructure.courseStart = structure.courseStart
             newStructure.courseSKU = structure.courseSKU
             newStructure.mode = structure.courseMode?.rawValue
+            
+            if let accessDetails = structure.coursewareAccessDetails {
+                let newAccessDetails = CDCoursewareAccessDetails(context: self.context)
+                newAccessDetails.hasUNMETPrerequisites = accessDetails.hasUNMETPrerequisites
+                newAccessDetails.isTooEarly = accessDetails.isTooEarly
+                newAccessDetails.auditAccessExpires = accessDetails.auditAccessExpires
+                if let access = accessDetails.coursewareAccess {
+                    let newAccess = CDCoursewareAccess(context: self.context)
+                    newAccess.hasAccess = access.hasAccess
+                    newAccess.errorCode = access.errorCode?.rawValue
+                    newAccess.developerMessage = access.developerMessage
+                    newAccess.userMessage = access.userMessage
+                    newAccess.additionalContextUserMessage = access.additionalContextUserMessage
+                    newAccess.userFragment = access.userFragment
+                    newAccessDetails.coursewareAccess = newAccess
+                }
+                newStructure.coursewareAccessDetails = newAccessDetails
+            }
             
             for block in Array(structure.dict.values) {
                 let courseDetail = CDCourseBlock(context: self.context)

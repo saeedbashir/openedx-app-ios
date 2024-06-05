@@ -57,7 +57,8 @@ public class CourseInteractor: CourseInteractorProtocol {
             org: course.org,
             isSelfPaced: course.isSelfPaced,
             isUpgradeable: course.isUpgradeable,
-            sku: course.sku
+            sku: course.sku,
+            coursewareAccessDetails: course.coursewareAccessDetails
         )
     }
     

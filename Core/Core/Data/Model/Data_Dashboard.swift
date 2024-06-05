@@ -235,6 +235,22 @@ public extension DataLayer {
             case additionalContextUserMessage = "additional_context_user_message"
             case userFragment = "user_fragment"
         }
+        
+        public init(
+            hasAccess: Bool,
+            errorCode: CourseAccessError?,
+            developerMessage: String?,
+            userMessage: String?,
+            additionalContextUserMessage: String?,
+            userFragment: String?
+        ) {
+            self.hasAccess = hasAccess
+            self.errorCode = errorCode
+            self.developerMessage = developerMessage
+            self.userMessage = userMessage
+            self.additionalContextUserMessage = additionalContextUserMessage
+            self.userFragment = userFragment
+        }
     }
     
     enum CourseAccessError: String, Codable {
