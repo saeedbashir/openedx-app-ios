@@ -17,6 +17,7 @@ public protocol DashboardRouter: BaseRouter {
                            enrollmentStart: Date?,
                            enrollmentEnd: Date?,
                            title: String,
+                           org: String?,
                            courseRawImage: String?
     )
     
@@ -34,6 +35,7 @@ public class DashboardRouterMock: BaseRouterMock, DashboardRouter {
                                   enrollmentStart: Date?,
                                   enrollmentEnd: Date?,
                                   title: String,
+                                  org: String?,
                                   courseRawImage: String?
     ) {}
 }

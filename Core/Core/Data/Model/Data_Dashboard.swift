@@ -308,7 +308,7 @@ public extension DataLayer.CourseEnrollments {
                 dynamicUpgradeDeadline: dynamicUpgradeDeadline,
                 mode: result.mode,
                 isSelfPaced: course.isSelfPaced,
-                courseRawImage: course.media.image?.raw
+                courseRawImage: course.media.courseImage?.url
             )
         }, configs)
     }

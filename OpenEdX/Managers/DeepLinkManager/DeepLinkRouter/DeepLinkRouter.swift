@@ -113,6 +113,7 @@ extension Router: DeepLinkRouter {
                     enrollmentStart: courseDetails.enrollmentStart,
                     enrollmentEnd: courseDetails.enrollmentEnd,
                     title: courseDetails.courseTitle,
+                    org: courseDetails.org,
                     courseRawImage: courseDetails.courseRawImage
                 )
             } else {

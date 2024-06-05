@@ -281,6 +281,7 @@ private struct CourseStateView: View {
                         enrollmentStart: courseDetails.enrollmentStart,
                         enrollmentEnd: courseDetails.enrollmentEnd,
                         title: title,
+                        org: courseDetails.org,
                         courseRawImage: courseDetails.courseRawImage
                     )
                 }

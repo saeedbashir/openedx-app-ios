@@ -94,6 +94,7 @@ public struct DashboardView: View {
                                                 enrollmentStart: course.enrollmentStart,
                                                 enrollmentEnd: course.enrollmentEnd,
                                                 title: course.name,
+                                                org: course.org,
                                                 courseRawImage: course.courseRawImage
                                             )
                                         }

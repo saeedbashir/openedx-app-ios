@@ -35,10 +35,12 @@ struct CourseHeaderView: View {
         case blurPrimaryBg
         case blurBg
     }
+    private let org: String?
     
     init(
         viewModel: CourseContainerViewModel,
         title: String,
+        org: String?,
         collapsed: Binding<Bool>,
         containerWidth: CGFloat,
         animationNamespace: Namespace.ID,
@@ -54,6 +56,7 @@ struct CourseHeaderView: View {
         self._isAnimatingForTap = isAnimatingForTap
         self.courseRawImage = courseRawImage
         self.upgradeAction = upgradeAction
+        self.org = org
     }
     
     var body: some View {
@@ -116,7 +119,7 @@ struct CourseHeaderView: View {
                 } else {
                     ZStack(alignment: .bottomLeading) {
                         VStack {
-                            if let org = viewModel.courseStructure?.org {
+                            if let org = viewModel.courseStructure?.org ?? org {
                                 Text(org)
                                     .font(Theme.Fonts.labelLarge)
                                     .foregroundStyle(Theme.Colors.textPrimary)
