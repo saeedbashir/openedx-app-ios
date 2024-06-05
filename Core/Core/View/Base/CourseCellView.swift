@@ -172,7 +172,9 @@ struct CourseCellView_Previews: PreviewProvider {
         courseID: "1",
         numPages: 1,
         coursesCount: 10,
-        isSelfPaced: false)
+        isSelfPaced: false,
+        courseRawImage: nil
+    )
     
     static var previews: some View {
         ZStack {

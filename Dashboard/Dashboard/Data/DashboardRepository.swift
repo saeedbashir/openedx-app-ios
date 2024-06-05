@@ -88,7 +88,8 @@ class DashboardRepositoryMock: DashboardRepositoryProtocol {
                     courseID: "course_id_\(i)",
                     numPages: 1,
                     coursesCount: 0,
-                    isSelfPaced: false
+                    isSelfPaced: false,
+                    courseRawImage: nil
                 )
             )
         }

@@ -24,6 +24,7 @@ public struct CourseItem: Hashable {
     public let dynamicUpgradeDeadline: Date?
     public let mode: DataLayer.Mode
     public let isSelfPaced: Bool?
+    public let courseRawImage: String?
     
     public init(name: String,
                 org: String,
@@ -40,7 +41,9 @@ public struct CourseItem: Hashable {
                 sku: String = "",
                 dynamicUpgradeDeadline: Date? = nil,
                 mode: DataLayer.Mode = .audit,
-                isSelfPaced: Bool?) {
+                isSelfPaced: Bool?,
+                courseRawImage: String?
+    ) {
         self.name = name
         self.org = org
         self.shortDescription = shortDescription
@@ -57,6 +60,7 @@ public struct CourseItem: Hashable {
         self.dynamicUpgradeDeadline = dynamicUpgradeDeadline
         self.mode = mode
         self.isSelfPaced = isSelfPaced
+        self.courseRawImage = courseRawImage
     }
 }
 

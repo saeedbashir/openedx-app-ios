@@ -11,8 +11,15 @@ import Discussion
 import Swinject
 import Theme
 
-public struct CourseContainerView: View {
+struct UpgradeCourseView: View {
+    let type: CourseAccessErrorHelperType
     
+    var body: some View {
+        Text("hello")
+    }
+}
+
+public struct CourseContainerView: View {
     @ObservedObject
     public var viewModel: CourseContainerViewModel
     @ObservedObject
@@ -30,6 +37,7 @@ public struct CourseContainerView: View {
     
     private let coordinateBoundaryLower: CGFloat = -115
     private let coordinateBoundaryHigher: CGFloat = 40
+    private let courseRawImage: String?
     
     private struct GeometryName {
         static let backButton = "backButton"
@@ -43,13 +51,14 @@ public struct CourseContainerView: View {
         viewModel: CourseContainerViewModel,
         courseDatesViewModel: CourseDatesViewModel,
         courseID: String,
-        title: String
+        title: String,
+        courseRawImage: String?
     ) {
         self.viewModel = viewModel
         self.courseID = courseID
         self.title = title
         self.courseDatesViewModel = courseDatesViewModel
-        
+        self.courseRawImage = courseRawImage
         Task {
             await viewModel.reload(courseID: courseID)
         }
@@ -70,47 +79,54 @@ public struct CourseContainerView: View {
     @ViewBuilder
     private var content: some View {
         if let courseStart = viewModel.courseStart {
-            if courseStart > Date() {
-                CourseOutlineView(
-                    viewModel: viewModel,
-                    title: title,
-                    courseID: courseID,
-                    isVideo: false,
-                    selection: $viewModel.selection,
-                    coordinate: $coordinate,
-                    collapsed: $collapsed,
-                    dateTabIndex: CourseTab.dates.rawValue
-                )
-            } else {
-                ZStack(alignment: .top) {
-                    tabs
-                    GeometryReader { proxy in
-                        VStack(spacing: 0) {
-                            CourseHeaderView(
-                                viewModel: viewModel,
-                                title: title,
-                                collapsed: $collapsed,
-                                containerWidth: proxy.size.width,
-                                animationNamespace: animationNamespace,
-                                isAnimatingForTap: $isAnimatingForTap,
-                                upgradeAction: {
-                                    viewModel.showPaymentsInfo()
-                                }
-                            )
-                        }
-                        .offset(
-                            y: ignoreOffset
-                            ? (collapsed ? coordinateBoundaryLower : .zero)
-                            : ((coordinateBoundaryLower...coordinateBoundaryHigher).contains(coordinate)
-                               ? coordinate
-                               : (collapsed ? coordinateBoundaryLower : .zero))
+            ZStack(alignment: .top) {
+                if courseStart > Date() {
+                    CourseOutlineView(
+                        viewModel: viewModel,
+                        title: title,
+                        courseID: courseID,
+                        isVideo: false,
+                        selection: $viewModel.selection,
+                        coordinate: $coordinate,
+                        collapsed: $collapsed,
+                        dateTabIndex: CourseTab.dates.rawValue
+                    )
+                } else {
+                    
+                    if let type = viewModel.type {
+                        UpgradeCourseView(type: type)
+                    } else {
+                        tabs
+                    }
+                }
+                GeometryReader { proxy in
+                    VStack(spacing: 0) {
+                        CourseHeaderView(
+                            viewModel: viewModel,
+                            title: title,
+                            collapsed: $collapsed,
+                            containerWidth: proxy.size.width,
+                            animationNamespace: animationNamespace,
+                            isAnimatingForTap: $isAnimatingForTap,
+                            courseRawImage: courseRawImage,
+                            upgradeAction: {
+                                viewModel.showPaymentsInfo()
+                            }
                         )
-                        backButton(containerWidth: proxy.size.width)
                     }
-                }.ignoresSafeArea(edges: idiom == .pad ? .leading : .top)
-                    .onAppear {
-                        self.collapsed = isHorizontal
-                    }
+                    .offset(
+                        y: ignoreOffset
+                        ? (collapsed ? coordinateBoundaryLower : .zero)
+                        : ((coordinateBoundaryLower...coordinateBoundaryHigher).contains(coordinate)
+                           ? coordinate
+                           : (collapsed ? coordinateBoundaryLower : .zero))
+                    )
+                    backButton(containerWidth: proxy.size.width)
+                }
+            }
+            .ignoresSafeArea(edges: idiom == .pad ? .leading : .top)
+            .onAppear {
+                self.collapsed = isHorizontal
             }
         }
         
@@ -210,7 +226,7 @@ public struct CourseContainerView: View {
                         coordinate: $coordinate,
                         collapsed: $collapsed,
                         viewModel: courseDatesViewModel,
-                        isUpgradeable: $viewModel.isUpgradeable
+                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
                     )
                     .tabItem {
                         tab.image
@@ -226,7 +242,7 @@ public struct CourseContainerView: View {
                         viewModel: Container.shared.resolve(DiscussionTopicsViewModel.self,
                                                             argument: title)!,
                         router: Container.shared.resolve(DiscussionRouter.self)!,
-                        isUpgradeable: $viewModel.isUpgradeable
+                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
                     )
                     .tabItem {
                         tab.image
@@ -240,7 +256,7 @@ public struct CourseContainerView: View {
                         coordinate: $coordinate,
                         collapsed: $collapsed,
                         viewModel: Container.shared.resolve(HandoutsViewModel.self, argument: courseID)!,
-                        isUpgradeable: $viewModel.isUpgradeable
+                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
                     )
                     .tabItem {
                         tab.image
@@ -350,7 +366,9 @@ struct CourseScreensView_Previews: PreviewProvider {
                 courseName: "a",
                 analytics: CourseAnalyticsMock()
             ),
-            courseID: "", title: "Title of Course"
+            courseID: "",
+            title: "Title of Course",
+            courseRawImage: nil
         )
     }
 }

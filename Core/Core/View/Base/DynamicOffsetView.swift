@@ -13,11 +13,11 @@ public struct DynamicOffsetView: View {
     private var collapsedHorizontalHeight: CGFloat = 120
     private let collapsedVerticalHeight: CGFloat = 100
     private var expandedHeight: CGFloat {
-        240 + (isUpgradeable ? 42+20 : 0)
+        240 + (shouldShowUpgradeButton ? 42+20 : 0)
     }
     private let coordinateBoundaryLower: CGFloat = -115
     private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
-    @Binding private var isUpgradeable: Bool
+    @Binding private var shouldShowUpgradeButton: Bool
     
     @Binding private var coordinate: CGFloat
     @Binding private var collapsed: Bool
@@ -28,11 +28,11 @@ public struct DynamicOffsetView: View {
     public init(
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
-        isUpgradeable: Binding<Bool>
+        shouldShowUpgradeButton: Binding<Bool>
     ) {
         self._coordinate = coordinate
         self._collapsed = collapsed
-        self._isUpgradeable = isUpgradeable
+        self._shouldShowUpgradeButton = shouldShowUpgradeButton
     }
     
     public var body: some View {
@@ -57,7 +57,7 @@ public struct DynamicOffsetView: View {
         .onAppear {
             changeCollapsedHeight()
         }
-        .onChange(of: isUpgradeable) { _ in
+        .onChange(of: shouldShowUpgradeButton) { _ in
             changeCollapsedHeight()
         }
         .onChange(of: collapsed) { collapsed in

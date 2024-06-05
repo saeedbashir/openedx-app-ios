@@ -52,6 +52,13 @@ public enum CourseTab: Int, CaseIterable, Identifiable {
     }
 }
 
+enum CourseAccessErrorHelperType {
+    case isEndDateOld
+    case startDateError
+    case auditExpired
+    case upgradeable
+}
+
 public class CourseContainerViewModel: BaseCourseViewModel {
 
     @Published public var selection: Int = CourseTab.course.rawValue
@@ -76,7 +83,14 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         }
     }
     
-    @Published var isUpgradeable: Bool = false
+    @Published var shouldShowUpgradeButton: Bool = false
+    
+    var hasAccess: Bool {
+        if let accessDetails = courseStructure?.coursewareAccessDetails {
+            return accessDetails.coursewareAccess?.hasAccess ?? true
+        }
+        return true
+    }
     
     var sku: String? {
         courseStructure?.sku
@@ -101,7 +115,38 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     let coreAnalytics: CoreAnalytics
     private(set) var storage: CourseStorage
     private var courseID: String?
-
+    
+    var type: CourseAccessErrorHelperType? {
+        guard
+            let courseStructure,
+            let details = courseStructure.coursewareAccessDetails,
+            let access = details.coursewareAccess,
+            !access.hasAccess
+        else {
+            return nil
+        }
+        
+        if let courseEnd, Date().compare(courseEnd) == .orderedDescending {
+            if courseStructure.isUpgradeable {
+                return .upgradeable
+            } else {
+                return .isEndDateOld
+            }
+        } else {
+            guard let errorCode = details.coursewareAccess?.errorCode else { return nil }
+            
+            switch errorCode {
+            case .notStarted:
+                return .startDateError
+            case .auditExpired:
+                return .auditExpired
+            
+            default:
+                return nil
+            }
+        }
+    }
+    
     public init(
         interactor: CourseInteractorProtocol,
         authInteractor: AuthInteractorProtocol,
@@ -154,14 +199,18 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     
     @MainActor
     func getCourseBlocks(courseID: String, withProgress: Bool = true) async {
-        guard let courseStart, courseStart < Date() else { return }
+        guard let courseStart, courseStart < Date() else {
+            isShowProgress = false
+            isShowRefresh = false
+            return
+        }
         
         isShowProgress = withProgress
         isShowRefresh = !withProgress
         do {
             if isInternetAvaliable {
                 courseStructure = try await interactor.getCourseBlocks(courseID: courseID)
-                isUpgradeable = courseStructure?.isUpgradeable ?? false
+                shouldShowUpgradeButton = type == nil && courseStructure?.isUpgradeable ?? false
                 NotificationCenter.default.post(name: .getCourseDates, object: courseID)
                 isShowProgress = false
                 isShowRefresh = false
@@ -176,7 +225,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                 }
             } else {
                 courseStructure = try await interactor.getLoadedCourseBlocks(courseID: courseID)
-                isUpgradeable = courseStructure?.isUpgradeable ?? false
+                shouldShowUpgradeButton = courseStructure?.isUpgradeable ?? false
             }
             courseVideosStructure = interactor.getCourseVideoBlocks(fullStructure: courseStructure!)
             await setDownloadsStates()
@@ -186,6 +235,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         } catch let error {
             isShowProgress = false
             isShowRefresh = false
+            shouldShowUpgradeButton = false
             if error.isInternetError || error is NoCachedDataError {
                 errorMessage = CoreLocalization.Error.slowOrNoInternetConnection
             } else {
@@ -196,6 +246,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     
     @MainActor
     func getCourseDeadlineInfo(courseID: String, withProgress: Bool = true) async {
+        guard let courseStart, courseStart < Date() else { return }
         do {
             let courseDeadlineInfo = try await interactor.getCourseDeadlineInfo(courseID: courseID)
             withAnimation {

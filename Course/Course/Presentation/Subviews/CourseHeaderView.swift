@@ -24,10 +24,10 @@ struct CourseHeaderView: View {
     private var collapsedVerticalHeight: CGFloat = 260
 
     private var expandedHeight: CGFloat {
-        300 + (viewModel.isUpgradeable ? 42+20 : 0)
+        300 + (viewModel.shouldShowUpgradeButton ? 42+20 : 0)
     }
     private var upgradeAction: (() -> Void)?
-    
+    private let courseRawImage: String?
     private enum GeometryName {
         case backButton
         case topTabBar
@@ -43,6 +43,7 @@ struct CourseHeaderView: View {
         containerWidth: CGFloat,
         animationNamespace: Namespace.ID,
         isAnimatingForTap: Binding<Bool>,
+        courseRawImage: String?,
         upgradeAction: (() -> Void)? = nil
     ) {
         self.viewModel = viewModel
@@ -51,13 +52,14 @@ struct CourseHeaderView: View {
         self.containerWidth = containerWidth
         self.animationNamespace = animationNamespace
         self._isAnimatingForTap = isAnimatingForTap
+        self.courseRawImage = courseRawImage
         self.upgradeAction = upgradeAction
     }
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             ScrollView {
-                if let banner = viewModel.courseStructure?.media.image.raw
+                if let banner = (viewModel.courseStructure?.media.image.raw ?? courseRawImage)?
                     .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
                     KFImage(URL(string: viewModel.config.baseURL.absoluteString + banner))
                         .onFailureImage(CoreAssets.noCourseImage.image)
@@ -134,7 +136,7 @@ struct CourseHeaderView: View {
                                 .padding(.horizontal, 24)
                                 .allowsHitTesting(false)
                                 .frameLimit(width: containerWidth)
-                            if viewModel.isUpgradeable {
+                            if viewModel.shouldShowUpgradeButton {
                                 upgradeButton
                                     .padding(.horizontal, 24)
                                     .frameLimit(width: containerWidth)

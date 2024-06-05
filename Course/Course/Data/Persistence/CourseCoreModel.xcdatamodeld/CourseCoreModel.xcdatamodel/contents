@@ -61,6 +61,7 @@
         <attribute name="courseCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="courseEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="courseID" optional="YES" attributeType="String"/>
+        <attribute name="courseRawImage" optional="YES" attributeType="String"/>
         <attribute name="courseStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="desc" optional="YES" attributeType="String"/>
         <attribute name="enrollmentEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

@@ -20,22 +20,26 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
     
     public func loadMyCourses() throws -> [CourseItem] {
         let result = try? context.fetch(CDDashboardCourse.fetchRequest())
-            .map { CourseItem(name: $0.name ?? "",
-                              org: $0.org ?? "",
-                              shortDescription: $0.desc ?? "",
-                              imageURL: $0.imageURL ?? "",
-                              isActive: nil,
-                              courseStart: $0.courseStart,
-                              courseEnd: $0.courseEnd,
-                              enrollmentStart: $0.enrollmentStart,
-                              enrollmentEnd: $0.enrollmentEnd,
-                              courseID: $0.courseID ?? "",
-                              numPages: Int($0.numPages),
-                              coursesCount: Int($0.courseCount),
-                              sku: $0.courseSku ?? "",
-                              dynamicUpgradeDeadline: $0.dynamicUpgradeDeadline,
-                              mode: DataLayer.Mode(rawValue: $0.mode ?? "") ?? .unknown,
-                              isSelfPaced: $0.isSelfPaced)
+            .map { 
+                CourseItem(
+                    name: $0.name ?? "",
+                    org: $0.org ?? "",
+                    shortDescription: $0.desc ?? "",
+                    imageURL: $0.imageURL ?? "",
+                    isActive: nil,
+                    courseStart: $0.courseStart,
+                    courseEnd: $0.courseEnd,
+                    enrollmentStart: $0.enrollmentStart,
+                    enrollmentEnd: $0.enrollmentEnd,
+                    courseID: $0.courseID ?? "",
+                    numPages: Int($0.numPages),
+                    coursesCount: Int($0.courseCount),
+                    sku: $0.courseSku ?? "",
+                    dynamicUpgradeDeadline: $0.dynamicUpgradeDeadline,
+                    mode: DataLayer.Mode(rawValue: $0.mode ?? "") ?? .unknown,
+                    isSelfPaced: $0.isSelfPaced,
+                    courseRawImage: $0.courseRawImage
+                )
             }
         if let result, !result.isEmpty {
             return result
@@ -62,6 +66,7 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                 newItem.courseSku = item.sku
                 newItem.dynamicUpgradeDeadline = item.dynamicUpgradeDeadline
                 newItem.mode = item.mode.rawValue
+                newItem.courseRawImage = item.courseRawImage
                 do {
                     try context.save()
                 } catch {

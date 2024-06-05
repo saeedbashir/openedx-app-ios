@@ -364,7 +364,8 @@ public class Router: AuthorizationRouter,
         courseEnd: Date?,
         enrollmentStart: Date?,
         enrollmentEnd: Date?,
-        title: String
+        title: String,
+        courseRawImage: String?
     ) {
         let controller = getCourseScreensController(
             courseID: courseID,
@@ -373,7 +374,8 @@ public class Router: AuthorizationRouter,
             courseEnd: courseEnd,
             enrollmentStart: enrollmentStart,
             enrollmentEnd: enrollmentEnd,
-            title: title
+            title: title,
+            courseRawImage: courseRawImage
         )
         navigationController.pushViewController(controller, animated: true)
     }
@@ -385,7 +387,8 @@ public class Router: AuthorizationRouter,
         courseEnd: Date?,
         enrollmentStart: Date?,
         enrollmentEnd: Date?,
-        title: String
+        title: String,
+        courseRawImage: String?
     ) -> UIHostingController<CourseContainerView> {
         let vm = Container.shared.resolve(
             CourseContainerViewModel.self,
@@ -406,7 +409,8 @@ public class Router: AuthorizationRouter,
             viewModel: vm,
             courseDatesViewModel: datesVm,
             courseID: courseID,
-            title: title
+            title: title,
+            courseRawImage: courseRawImage
         )
         
         return UIHostingController(rootView: screensView)

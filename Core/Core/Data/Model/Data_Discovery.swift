@@ -111,7 +111,8 @@ public extension DataLayer.DiscoveryResponce {
                        courseID: $0.courseID ?? "",
                        numPages: pagination.numPages,
                        coursesCount: pagination.count,
-                       isSelfPaced: $0.isSelfPaced
+                       isSelfPaced: $0.isSelfPaced,
+                       courseRawImage: $0.media.image?.raw
             )
         })
         return listReady
