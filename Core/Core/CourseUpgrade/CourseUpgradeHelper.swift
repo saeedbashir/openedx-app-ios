@@ -32,7 +32,7 @@ public enum UpgradeErrorAction: String {
     case refreshToRetry = "refresh"
     case reloadPrice = "reload_price"
     case emailSupport = "get_help"
-    case close = "close"
+    case close
 }
 
 // These alert actions are used to send in analytics
@@ -216,15 +216,6 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
 
 extension CourseUpgradeHelper {
     func showSuccess() {
-        //TODO: show snack bar via router
-        
-//        topController.showBottomActionSnackBar(
-//            message: CoreLocalization.CourseUpgrade.successMessage,
-//            textSize: .xSmall,
-//            autoDismiss: true,
-//            duration: 3
-//        )
-
         analytics.trackCourseUpgradeSuccess(
             courseID: courseID ?? "",
             blockID: blockID,
@@ -366,7 +357,7 @@ extension CourseUpgradeHelper {
                 style: .default
             ) { [weak self] _ in
                 self?.showDashboardScreen()
-                self?.postSuccessNotification()
+                self?.postSuccessNotification(showLoader: true)
             }
         )
         
@@ -385,10 +376,28 @@ extension CourseUpgradeHelper {
             actions: actions
         )
     }
+    
+    public func showRestorePurchasesAlert() {
+        guard let topController = UIApplication.topViewController() else { return }
+        let alertController = UIAlertController().showAlert(
+            withTitle: CoreLocalization.CourseUpgrade.Restore.alertTitle,
+            message: CoreLocalization.CourseUpgrade.Restore.alertMessage,
+            onViewController: topController) { _, _, _ in }
+
+        alertController.addButton(
+            withTitle: CoreLocalization.CourseUpgrade.FailureAlert.getHelp) { [weak self] _ in
+                self?.launchEmailComposer(errorMessage: "Error: restore_purchases")
+                self?.trackUpgradeErrorAction(errorAction: .emailSupport)
+            }
+
+        alertController.addButton(withTitle: CoreLocalization.close, style: .default) { [weak self] _ in
+            self?.trackUpgradeErrorAction(errorAction: .close)
+        }
+    }
 }
 
 extension CourseUpgradeHelper {
-    private func trackUpgradeErrorAction(errorAction: UpgradeErrorAction, error: UpgradeError) {
+    private func trackUpgradeErrorAction(errorAction: UpgradeErrorAction, error: UpgradeError? = nil) {
         analytics.trackCourseUpgradeErrorAction(
             courseID: courseID ?? "",
             blockID: blockID,
@@ -396,7 +405,7 @@ extension CourseUpgradeHelper {
             coursePrice: localizedCoursePrice,
             screen: screen,
             errorAction: errorAction.rawValue,
-            error: error.formattedError,
+            error: error?.formattedError ?? "",
             flowType: upgradeHadler?.upgradeMode ?? .userInitiated
         )
     }
@@ -410,14 +419,14 @@ extension CourseUpgradeHelper {
             errorMessage: errorMessage
         ), UIApplication.shared.canOpenURL(emailURL) else {
             
-            router.presentAlert(
-                alertTitle: CoreLocalization.CourseUpgrade.emailNotSetupTitle,
-                alertMessage: CoreLocalization.Error.cannotSendEmail,
-                positiveAction: "",
-                onCloseTapped: {},
-                okTapped: {},
-                type: .paymentError(buttons: [AlertViewButton(title: CoreLocalization.ok, block: {})])
-            )
+            if let topController = UIApplication.topViewController() {
+                UIAlertController().showAlert(
+                    withTitle: CoreLocalization.CourseUpgrade.emailNotSetupTitle,
+                    message: CoreLocalization.Error.cannotSendEmail,
+                    cancelButtonTitle: CoreLocalization.ok,
+                    onViewController: topController) { _, _, _ in }
+            }
+            
             return
         }
         
