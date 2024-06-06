@@ -39,6 +39,7 @@ public struct CourseContainerView: View {
     private let coordinateBoundaryHigher: CGFloat = 40
     private let courseRawImage: String?
     private let org: String?
+    private let coursewareAccess: CoursewareAccess?
     
     private struct GeometryName {
         static let backButton = "backButton"
@@ -54,7 +55,8 @@ public struct CourseContainerView: View {
         courseID: String,
         title: String,
         org: String?,
-        courseRawImage: String?
+        courseRawImage: String?,
+        coursewareAccess: CoursewareAccess?
     ) {
         self.viewModel = viewModel
         self.courseID = courseID
@@ -62,6 +64,7 @@ public struct CourseContainerView: View {
         self.courseDatesViewModel = courseDatesViewModel
         self.courseRawImage = courseRawImage
         self.org = org
+        self.coursewareAccess = coursewareAccess
         Task {
             await viewModel.reload(courseID: courseID)
         }
@@ -373,7 +376,8 @@ struct CourseScreensView_Previews: PreviewProvider {
             courseID: "",
             title: "Title of Course",
             org: "Org",
-            courseRawImage: nil
+            courseRawImage: nil,
+            coursewareAccess: nil
         )
     }
 }

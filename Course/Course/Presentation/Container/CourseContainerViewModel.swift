@@ -115,6 +115,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     let coreAnalytics: CoreAnalytics
     private(set) var storage: CourseStorage
     private var courseID: String?
+    private var coursewareAccessDetails: CoursewareAccessDetails?
     
     var type: CourseAccessErrorHelperType? {
         guard
@@ -356,7 +357,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         Task {@MainActor in
             await router.showUpgradeInfo(
                 productName: structure.displayName,
-                sku: sku, 
+                sku: sku,
                 courseID: structure.id,
                 screen: .courseDashboard,
                 pacing: structure.isSelfPaced ? Pacing.selfPace.rawValue : Pacing.instructor.rawValue

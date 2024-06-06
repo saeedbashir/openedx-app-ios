@@ -112,7 +112,8 @@ public extension DataLayer.DiscoveryResponce {
                        numPages: pagination.numPages,
                        coursesCount: pagination.count,
                        isSelfPaced: $0.isSelfPaced,
-                       courseRawImage: $0.media.image?.raw
+                       courseRawImage: $0.media.image?.raw,
+                       coursewareAccessDetails: nil
             )
         })
         return listReady

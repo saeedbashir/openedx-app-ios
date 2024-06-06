@@ -56,28 +56,6 @@
         <attribute name="missedGatedContent" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="verifiedUpgradeLink" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="CDCourseItem" representedClassName=".CDCourseItem" syncable="YES" codeGenerationType="class">
-        <attribute name="certificate" optional="YES" attributeType="String"/>
-        <attribute name="courseCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="courseEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="courseID" optional="YES" attributeType="String"/>
-        <attribute name="courseRawImage" optional="YES" attributeType="String"/>
-        <attribute name="courseStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="desc" optional="YES" attributeType="String"/>
-        <attribute name="enrollmentEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="enrollmentStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="imageURL" optional="YES" attributeType="String"/>
-        <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="isSelfPaced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="numPages" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="org" optional="YES" attributeType="String"/>
-        <uniquenessConstraints>
-            <uniquenessConstraint>
-                <constraint value="courseID"/>
-            </uniquenessConstraint>
-        </uniquenessConstraints>
-    </entity>
     <entity name="CDCourseStructure" representedClassName="CDCourseStructure" syncable="YES" codeGenerationType="class">
         <attribute name="certificate" optional="YES" attributeType="String"/>
         <attribute name="courseSKU" optional="YES" attributeType="String"/>

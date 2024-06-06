@@ -89,7 +89,8 @@ class DashboardRepositoryMock: DashboardRepositoryProtocol {
                     numPages: 1,
                     coursesCount: 0,
                     isSelfPaced: false,
-                    courseRawImage: nil
+                    courseRawImage: nil,
+                    coursewareAccessDetails: nil
                 )
             )
         }

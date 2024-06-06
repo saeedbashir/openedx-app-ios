@@ -27,7 +27,8 @@ public protocol DiscoveryRouter: BaseRouter {
         enrollmentEnd: Date?,
         title: String,
         org: String?,
-        courseRawImage: String?
+        courseRawImage: String?,
+        coursewareAccess: CoursewareAccess?
     )
     
     func showWebProgramDetails(
@@ -60,7 +61,8 @@ public class DiscoveryRouterMock: BaseRouterMock, DiscoveryRouter {
         enrollmentEnd: Date?,
         title: String,
         org: String?,
-        courseRawImage: String?
+        courseRawImage: String?,
+        coursewareAccess: CoursewareAccess?
     ) {}
     
     public func showWebProgramDetails(

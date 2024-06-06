@@ -139,7 +139,8 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     numPages: 1, 
                     coursesCount: 10,
                     isSelfPaced: false,
-                    courseRawImage: nil
+                    courseRawImage: nil,
+                    coursewareAccessDetails: nil
                 )
             )
         }
@@ -164,7 +165,8 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     numPages: 1, 
                     coursesCount: 10,
                     isSelfPaced: false,
-                    courseRawImage: nil
+                    courseRawImage: nil,
+                    coursewareAccessDetails: nil
                 )
             )
         }
@@ -189,7 +191,8 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     numPages: 1,
                     coursesCount: 10,
                     isSelfPaced: false,
-                    courseRawImage: nil
+                    courseRawImage: nil,
+                    coursewareAccessDetails: nil
                 )
             )
         }

@@ -173,7 +173,8 @@ struct CourseCellView_Previews: PreviewProvider {
         numPages: 1,
         coursesCount: 10,
         isSelfPaced: false,
-        courseRawImage: nil
+        courseRawImage: nil,
+        coursewareAccessDetails: nil
     )
     
     static var previews: some View {

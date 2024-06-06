@@ -36,11 +36,26 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="numPages" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="org" optional="YES" attributeType="String"/>
+        <relationship name="coursewareAccessDetails" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDDiscoveryCoursewareAccessDetails"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="courseID"/>
                 <constraint value="name"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="CDDiscoveryCoursewareAccess" representedClassName="CDDiscoveryCoursewareAccess" syncable="YES" codeGenerationType="class">
+        <attribute name="additionalContextUserMessage" optional="YES" attributeType="String"/>
+        <attribute name="developerMessage" optional="YES" attributeType="String"/>
+        <attribute name="errorCode" optional="YES" attributeType="String"/>
+        <attribute name="hasAccess" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="userFragment" optional="YES" attributeType="String"/>
+        <attribute name="userMessage" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="CDDiscoveryCoursewareAccessDetails" representedClassName="CDDiscoveryCoursewareAccessDetails" syncable="YES" codeGenerationType="class">
+        <attribute name="auditAccessExpires" optional="YES" attributeType="String"/>
+        <attribute name="hasUNMETPrerequisites" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="isTooEarly" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="coursewareAccess" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDDiscoveryCoursewareAccess"/>
     </entity>
 </model>

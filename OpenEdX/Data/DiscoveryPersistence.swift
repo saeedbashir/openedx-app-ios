@@ -21,7 +21,33 @@ public class DiscoveryPersistence: DiscoveryPersistenceProtocol {
     public func loadDiscovery() throws -> [CourseItem] {
         let result = try? context.fetch(CDDiscoveryCourse.fetchRequest())
             .map {
-                CourseItem(
+                var coursewareAccessDetails: CoursewareAccessDetails?
+                if let details = $0.coursewareAccessDetails {
+                    var coursewareAccess: CoursewareAccess?
+                    if let access = details.coursewareAccess {
+                        var coursewareError: CourseAccessError?
+                        if let error = access.errorCode {
+                            coursewareError = CourseAccessError(rawValue: error) ?? .unknown
+                        }
+                        
+                        coursewareAccess = CoursewareAccess(
+                            hasAccess: access.hasAccess,
+                            errorCode: coursewareError,
+                            developerMessage: access.developerMessage,
+                            userMessage: access.userMessage,
+                            additionalContextUserMessage: access.additionalContextUserMessage,
+                            userFragment: access.userFragment
+                        )
+                    }
+                    coursewareAccessDetails = CoursewareAccessDetails(
+                        hasUNMETPrerequisites: details.hasUNMETPrerequisites,
+                        isTooEarly: details.isTooEarly,
+                        auditAccessExpires: details.auditAccessExpires,
+                        coursewareAccess: coursewareAccess
+                    )
+                }
+                
+                return CourseItem(
                     name: $0.name ?? "",
                     org: $0.org ?? "",
                     shortDescription: $0.desc ?? "",
@@ -35,7 +61,8 @@ public class DiscoveryPersistence: DiscoveryPersistenceProtocol {
                     numPages: Int($0.numPages),
                     coursesCount: Int($0.courseCount),
                     isSelfPaced: $0.isSelfPaced,
-                    courseRawImage: $0.courseRawImage
+                    courseRawImage: $0.courseRawImage,
+                    coursewareAccessDetails: coursewareAccessDetails
                 )
             }
         if let result, !result.isEmpty {
@@ -64,7 +91,24 @@ public class DiscoveryPersistence: DiscoveryPersistenceProtocol {
                 newItem.numPages = Int32(item.numPages)
                 newItem.courseID = item.courseID
                 newItem.courseRawImage = item.courseRawImage
-
+                
+                if let accessDetails = item.coursewareAccessDetails {
+                    let newAccessDetails = CDDiscoveryCoursewareAccessDetails(context: self.context)
+                    newAccessDetails.hasUNMETPrerequisites = accessDetails.hasUNMETPrerequisites
+                    newAccessDetails.isTooEarly = accessDetails.isTooEarly
+                    newAccessDetails.auditAccessExpires = accessDetails.auditAccessExpires
+                    if let access = accessDetails.coursewareAccess {
+                        let newAccess = CDDiscoveryCoursewareAccess(context: self.context)
+                        newAccess.hasAccess = access.hasAccess
+                        newAccess.errorCode = access.errorCode?.rawValue
+                        newAccess.developerMessage = access.developerMessage
+                        newAccess.userMessage = access.userMessage
+                        newAccess.additionalContextUserMessage = access.additionalContextUserMessage
+                        newAccess.userFragment = access.userFragment
+                        newAccessDetails.coursewareAccess = newAccess
+                    }
+                    newItem.coursewareAccessDetails = newAccessDetails
+                }
                 do {
                     try context.save()
                 } catch {

@@ -87,7 +87,7 @@ public struct CourseStructure: Equatable {
     }
 }
 
-public struct CoursewareAccessDetails {
+public struct CoursewareAccessDetails: Hashable {
     public let hasUNMETPrerequisites: Bool
     public let isTooEarly: Bool
     public let auditAccessExpires: String?
@@ -104,24 +104,29 @@ public struct CoursewareAccessDetails {
         self.auditAccessExpires = auditAccessExpires
         self.coursewareAccess = coursewareAccess
     }
+    
+    public static func == (lhs: CoursewareAccessDetails, rhs: CoursewareAccessDetails) -> Bool {
+        lhs.hasUNMETPrerequisites == rhs.hasUNMETPrerequisites &&
+        lhs.isTooEarly == rhs.isTooEarly &&
+        lhs.auditAccessExpires == rhs.auditAccessExpires &&
+        lhs.coursewareAccess == rhs.coursewareAccess
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(hasUNMETPrerequisites)
+        hasher.combine(isTooEarly)
+        hasher.combine(auditAccessExpires)
+        hasher.combine(coursewareAccess)
+    }
 }
 
-public struct CoursewareAccess {
+public struct CoursewareAccess: Hashable {
     public let hasAccess: Bool
     public let errorCode: CourseAccessError?
     public let developerMessage: String?
     public let userMessage: String?
     public let additionalContextUserMessage: String?
     public let userFragment: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case hasAccess = "has_access"
-        case errorCode = "error_code"
-        case developerMessage = "developer_message"
-        case userMessage = "user_message"
-        case additionalContextUserMessage = "additional_context_user_message"
-        case userFragment = "user_fragment"
-    }
     
     public init(
         hasAccess: Bool,
