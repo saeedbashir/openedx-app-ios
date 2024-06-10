@@ -287,6 +287,22 @@ public extension DataLayer.CourseEnrollments {
                 dynamicUpgradeDeadline = Date(iso8601: dynamicDeadline)
             }
             
+            var coursewareError: CourseAccessError?
+            
+            let access = course.coursewareAccess
+            if let error = access.errorCode {
+                coursewareError = CourseAccessError(rawValue: error.rawValue) ?? .unknown
+            }
+            
+            let coursewareAccess = CoursewareAccess(
+                hasAccess: access.hasAccess,
+                errorCode: coursewareError,
+                developerMessage: access.developerMessage,
+                userMessage: access.userMessage,
+                additionalContextUserMessage: access.additionalContextUserMessage,
+                userFragment: access.userFragment
+            )
+            
             return CourseItem(
                 name: course.name,
                 org: course.org,
@@ -309,7 +325,7 @@ public extension DataLayer.CourseEnrollments {
                 mode: result.mode,
                 isSelfPaced: course.isSelfPaced,
                 courseRawImage: course.media.courseImage?.url,
-                coursewareAccessDetails: nil
+                coursewareAccess: coursewareAccess
             )
         }, configs)
     }

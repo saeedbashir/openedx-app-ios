@@ -96,7 +96,7 @@ public struct DashboardView: View {
                                                 title: course.name,
                                                 org: course.org,
                                                 courseRawImage: course.courseRawImage,
-                                                coursewareAccess: course.coursewareAccessDetails?.coursewareAccess
+                                                coursewareAccess: course.coursewareAccess
                                             )
                                         }
                                         .accessibilityIdentifier("course_item")

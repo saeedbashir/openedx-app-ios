@@ -15,7 +15,14 @@ struct UpgradeCourseView: View {
     let type: CourseAccessErrorHelperType
     
     var body: some View {
-        Text("hello")
+        switch type {
+        case .upgradeable, .auditExpired:
+            Text("Upgrade")
+        case .startDateError:
+            Text("Start date error")
+        default:
+            Text("Unknown")
+        }
     }
 }
 
@@ -87,20 +94,73 @@ public struct CourseContainerView: View {
         if let courseStart = viewModel.courseStart {
             ZStack(alignment: .top) {
                 if courseStart > Date() {
-                    CourseOutlineView(
-                        viewModel: viewModel,
-                        title: title,
-                        courseID: courseID,
-                        isVideo: false,
-                        selection: $viewModel.selection,
-                        coordinate: $coordinate,
-                        collapsed: $collapsed,
-                        dateTabIndex: CourseTab.dates.rawValue
-                    )
+                    VStack {
+                        RefreshableScrollViewCompat(action: {
+                            await withTaskGroup(of: Void.self) { group in
+                                group.addTask {
+                                    await viewModel.getCourseBlocks(courseID: courseID, withProgress: false)
+                                }
+                                group.addTask {
+                                    await viewModel.getCourseDeadlineInfo(courseID: courseID, withProgress: false)
+                                }
+                            }
+                        }) {
+                            Spacer()
+                                .frame(height: 10)
+                            DynamicOffsetView(
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
+                            )
+                            RefreshProgressView(isShowRefresh: $viewModel.isShowRefresh)
+                            UpgradeCourseView(type: .startDateError)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .onAppear {
+                                    ignoreOffset = true
+                                }
+                            Spacer(minLength: 1000)
+                        }
+                    }
+//                    CourseOutlineView(
+//                        viewModel: viewModel,
+//                        title: title,
+//                        courseID: courseID,
+//                        isVideo: false,
+//                        selection: $viewModel.selection,
+//                        coordinate: $coordinate,
+//                        collapsed: $collapsed,
+//                        dateTabIndex: CourseTab.dates.rawValue
+//                    )
                 } else {
                     
-                    if let type = viewModel.type {
-                        UpgradeCourseView(type: type)
+                    if let type = viewModel.type(for: coursewareAccess) {
+                        VStack {
+                            RefreshableScrollViewCompat(action: {
+                                await withTaskGroup(of: Void.self) { group in
+                                    group.addTask {
+                                        await viewModel.getCourseBlocks(courseID: courseID, withProgress: false)
+                                    }
+                                    group.addTask {
+                                        await viewModel.getCourseDeadlineInfo(courseID: courseID, withProgress: false)
+                                    }
+                                }
+                            }) {
+                                Spacer()
+                                    .frame(height: 10)
+                                DynamicOffsetView(
+                                    coordinate: $coordinate,
+                                    collapsed: $collapsed,
+                                    shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
+                                )
+                                RefreshProgressView(isShowRefresh: $viewModel.isShowRefresh)
+                                UpgradeCourseView(type: type)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .onAppear {
+                                        ignoreOffset = true
+                                    }
+                                Spacer(minLength: 1000)
+                            }
+                        }
                     } else {
                         tabs
                     }

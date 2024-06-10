@@ -45,7 +45,9 @@ public struct DynamicOffsetView: View {
                     return .clear
                 }
                 guard !isHorizontal else {
-                    coordinate = coordinateBoundaryLower
+                    DispatchQueue.main.async {
+                        coordinate = coordinateBoundaryLower
+                    }
                     return .clear
                 }
                 DispatchQueue.main.async {

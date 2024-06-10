@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22757" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="CDCourseDetails" representedClassName=".CDCourseDetails" syncable="YES" codeGenerationType="class">
         <attribute name="courseBannerURL" attributeType="String"/>
         <attribute name="courseDescription" attributeType="String"/>
@@ -36,7 +36,7 @@
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="numPages" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="org" optional="YES" attributeType="String"/>
-        <relationship name="coursewareAccessDetails" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDDiscoveryCoursewareAccessDetails"/>
+        <relationship name="coursewareAccess" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDDiscoveryCoursewareAccess"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="courseID"/>
@@ -51,11 +51,5 @@
         <attribute name="hasAccess" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="userFragment" optional="YES" attributeType="String"/>
         <attribute name="userMessage" optional="YES" attributeType="String"/>
-    </entity>
-    <entity name="CDDiscoveryCoursewareAccessDetails" representedClassName="CDDiscoveryCoursewareAccessDetails" syncable="YES" codeGenerationType="class">
-        <attribute name="auditAccessExpires" optional="YES" attributeType="String"/>
-        <attribute name="hasUNMETPrerequisites" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <attribute name="isTooEarly" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
-        <relationship name="coursewareAccess" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CDDiscoveryCoursewareAccess"/>
     </entity>
 </model>

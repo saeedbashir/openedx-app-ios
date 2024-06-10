@@ -117,37 +117,6 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     private var courseID: String?
     private var coursewareAccessDetails: CoursewareAccessDetails?
     
-    var type: CourseAccessErrorHelperType? {
-        guard
-            let courseStructure,
-            let details = courseStructure.coursewareAccessDetails,
-            let access = details.coursewareAccess,
-            !access.hasAccess
-        else {
-            return nil
-        }
-        
-        if let courseEnd, Date().compare(courseEnd) == .orderedDescending {
-            if courseStructure.isUpgradeable {
-                return .upgradeable
-            } else {
-                return .isEndDateOld
-            }
-        } else {
-            guard let errorCode = details.coursewareAccess?.errorCode else { return nil }
-            
-            switch errorCode {
-            case .notStarted:
-                return .startDateError
-            case .auditExpired:
-                return .auditExpired
-            
-            default:
-                return nil
-            }
-        }
-    }
-    
     public init(
         interactor: CourseInteractorProtocol,
         authInteractor: AuthInteractorProtocol,
@@ -297,6 +266,30 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                 errorMessage = CoreLocalization.Error.slowOrNoInternetConnection
             } else {
                 errorMessage = CoreLocalization.Error.unknownError
+            }
+        }
+    }
+    
+    func type(for access: CoursewareAccess?) -> CourseAccessErrorHelperType? {
+        guard let access, !access.hasAccess else { return nil }
+        
+        if let courseEnd, Date().compare(courseEnd) == .orderedDescending {
+            if courseStructure?.isUpgradeable == true {
+                return .upgradeable
+            } else {
+                return .isEndDateOld
+            }
+        } else {
+            guard let errorCode = access.errorCode else { return nil }
+            
+            switch errorCode {
+            case .notStarted:
+                return .startDateError
+            case .auditExpired:
+                return .auditExpired
+            
+            default:
+                return nil
             }
         }
     }

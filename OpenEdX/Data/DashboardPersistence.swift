@@ -21,29 +21,20 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
     public func loadMyCourses() throws -> [CourseItem] {
         let result = try? context.fetch(CDDashboardCourse.fetchRequest())
             .map {
-                var coursewareAccessDetails: CoursewareAccessDetails?
-                if let details = $0.coursewareAccessDetails {
-                    var coursewareAccess: CoursewareAccess?
-                    if let access = details.coursewareAccess {
-                        var coursewareError: CourseAccessError?
-                        if let error = access.errorCode {
-                            coursewareError = CourseAccessError(rawValue: error) ?? .unknown
-                        }
-                        
-                        coursewareAccess = CoursewareAccess(
-                            hasAccess: access.hasAccess,
-                            errorCode: coursewareError,
-                            developerMessage: access.developerMessage,
-                            userMessage: access.userMessage,
-                            additionalContextUserMessage: access.additionalContextUserMessage,
-                            userFragment: access.userFragment
-                        )
+                var coursewareAccess: CoursewareAccess?
+                if let access = $0.coursewareAccess {
+                    var coursewareError: CourseAccessError?
+                    if let error = access.errorCode {
+                        coursewareError = CourseAccessError(rawValue: error) ?? .unknown
                     }
-                    coursewareAccessDetails = CoursewareAccessDetails(
-                        hasUNMETPrerequisites: details.hasUNMETPrerequisites,
-                        isTooEarly: details.isTooEarly,
-                        auditAccessExpires: details.auditAccessExpires,
-                        coursewareAccess: coursewareAccess
+                    
+                    coursewareAccess = CoursewareAccess(
+                        hasAccess: access.hasAccess,
+                        errorCode: coursewareError,
+                        developerMessage: access.developerMessage,
+                        userMessage: access.userMessage,
+                        additionalContextUserMessage: access.additionalContextUserMessage,
+                        userFragment: access.userFragment
                     )
                 }
                 
@@ -65,7 +56,7 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                     mode: DataLayer.Mode(rawValue: $0.mode ?? "") ?? .unknown,
                     isSelfPaced: $0.isSelfPaced,
                     courseRawImage: $0.courseRawImage,
-                    coursewareAccessDetails: coursewareAccessDetails
+                    coursewareAccess: coursewareAccess
                 )
             }
         if let result, !result.isEmpty {
@@ -95,22 +86,15 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                 newItem.mode = item.mode.rawValue
                 newItem.courseRawImage = item.courseRawImage
                 
-                if let accessDetails = item.coursewareAccessDetails {
-                    let newAccessDetails = CDDashboardCoursewareAccessDetails(context: self.context)
-                    newAccessDetails.hasUNMETPrerequisites = accessDetails.hasUNMETPrerequisites
-                    newAccessDetails.isTooEarly = accessDetails.isTooEarly
-                    newAccessDetails.auditAccessExpires = accessDetails.auditAccessExpires
-                    if let access = accessDetails.coursewareAccess {
-                        let newAccess = CDDashboardCoursewareAccess(context: self.context)
-                        newAccess.hasAccess = access.hasAccess
-                        newAccess.errorCode = access.errorCode?.rawValue
-                        newAccess.developerMessage = access.developerMessage
-                        newAccess.userMessage = access.userMessage
-                        newAccess.additionalContextUserMessage = access.additionalContextUserMessage
-                        newAccess.userFragment = access.userFragment
-                        newAccessDetails.coursewareAccess = newAccess
-                    }
-                    newItem.coursewareAccessDetails = newAccessDetails
+                if let access = item.coursewareAccess {
+                    let newAccess = CDDashboardCoursewareAccess(context: self.context)
+                    newAccess.hasAccess = access.hasAccess
+                    newAccess.errorCode = access.errorCode?.rawValue
+                    newAccess.developerMessage = access.developerMessage
+                    newAccess.userMessage = access.userMessage
+                    newAccess.additionalContextUserMessage = access.additionalContextUserMessage
+                    newAccess.userFragment = access.userFragment
+                    newItem.coursewareAccess = newAccess
                 }
                 do {
                     try context.save()

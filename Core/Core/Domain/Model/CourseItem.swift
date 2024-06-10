@@ -25,7 +25,7 @@ public struct CourseItem: Hashable {
     public let mode: DataLayer.Mode
     public let isSelfPaced: Bool?
     public let courseRawImage: String?
-    public let coursewareAccessDetails: CoursewareAccessDetails?
+    public let coursewareAccess: CoursewareAccess?
     
     public init(name: String,
                 org: String,
@@ -44,7 +44,7 @@ public struct CourseItem: Hashable {
                 mode: DataLayer.Mode = .audit,
                 isSelfPaced: Bool?,
                 courseRawImage: String?,
-                coursewareAccessDetails: CoursewareAccessDetails?
+                coursewareAccess: CoursewareAccess?
     ) {
         self.name = name
         self.org = org
@@ -63,7 +63,7 @@ public struct CourseItem: Hashable {
         self.mode = mode
         self.isSelfPaced = isSelfPaced
         self.courseRawImage = courseRawImage
-        self.coursewareAccessDetails = coursewareAccessDetails
+        self.coursewareAccess = coursewareAccess
     }
 }
 

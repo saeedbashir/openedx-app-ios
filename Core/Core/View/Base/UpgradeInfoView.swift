@@ -275,6 +275,14 @@ struct UpgradeInfoPointView: View {
     }
 }
 
+public struct UpgradeOptionsView: View {
+    public var body: some View {
+        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.first)
+        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.second)
+        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.third)
+    }
+}
+
 public struct UpgradeInfoView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var viewModel: UpgradeInfoViewModel
@@ -306,9 +314,7 @@ public struct UpgradeInfoView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         Text("\(CoreLocalization.CourseUpgrade.View.title) \(viewModel.productName)")
                             .font(Theme.Fonts.titleLarge)
-                        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.first)
-                        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.second)
-                        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.third)
+                        UpgradeOptionsView()
                             .foregroundColor(Theme.Colors.textPrimary)
                     }
                     .padding(.horizontal, 20)
