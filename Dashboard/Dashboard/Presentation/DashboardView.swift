@@ -65,6 +65,7 @@ public struct DashboardView: View {
                                                 Task {@MainActor in
                                                     await self.router.showUpgradeInfo(
                                                         productName: course.name,
+                                                        message: "",
                                                         sku: course.sku,
                                                         courseID: course.courseID,
                                                         screen: .dashboard,

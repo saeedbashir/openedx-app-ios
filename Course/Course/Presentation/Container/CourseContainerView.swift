@@ -11,17 +11,116 @@ import Discussion
 import Swinject
 import Theme
 
-struct UpgradeCourseView: View {
-    let type: CourseAccessErrorHelperType
+struct UpgradeCourseViewMessage: View {
+    let message: String
+    let icon: Image
+    @Binding var coordinate: CGFloat
+    @Binding var collapsed: Bool
+    @Binding var shouldShowUpgradeButton: Bool
+    let backAction: (() -> Void)?
     
     var body: some View {
+        ZStack {
+            DynamicOffsetView(
+                coordinate: $coordinate,
+                collapsed: $collapsed,
+                shouldShowUpgradeButton: $shouldShowUpgradeButton
+            )
+            ZStack {
+                VStack(spacing: 24) {
+                    icon
+                        .resizable()
+                        .frame(width: 96, height: 96)
+                    Text(message)
+                        .multilineTextAlignment(.center)
+                        .font(Theme.Fonts.bodyLarge)
+                        .foregroundColor(Theme.Colors.textPrimary)
+                }
+                VStack {
+                    Spacer()
+                    StyledButton("Back") {
+                        backAction?()
+                    }
+                }
+            }
+            .padding(24)
+        }
+    }
+}
+
+struct UpgradeCourseView: View {
+    let type: CourseAccessErrorHelperType
+    @Binding private var coordinate: CGFloat
+    @Binding private var collapsed: Bool
+    @Binding private var shouldShowUpgradeButton: Bool
+    private var backAction: (() -> Void)?
+
+    init(
+        type: CourseAccessErrorHelperType,
+        coordinate: Binding<CGFloat>,
+        collapsed: Binding<Bool>,
+        shouldShowUpgradeButton: Binding<Bool>,
+        backAction: (() -> Void)?
+    ) {
+        self.type = type
+        self._coordinate = coordinate
+        self._collapsed = collapsed
+        self._shouldShowUpgradeButton = shouldShowUpgradeButton
+        self.backAction = backAction
+    }
+
+    var body: some View {
         switch type {
-        case .upgradeable, .auditExpired:
-            Text("Upgrade")
-        case .startDateError:
-            Text("Start date error")
-        default:
-            Text("Unknown")
+        case let .upgradeable(date, sku, courseID, pacing, screen), let .auditExpired(date, sku, courseID, pacing, screen):
+            VStack {
+                let message = "Your free audit access to this course expired on \(date?.dateToString(style: .monthDayYear) ?? ""). Please upgrade to continue learning and receive a verified certificate."
+                UpgradeInfoView(
+                    isFindCourseButtonVisible: true,
+                    viewModel: Container.shared.resolve(
+                        UpgradeInfoViewModel.self,
+                        arguments: "", message, sku, courseID, screen, pacing
+                    )!,
+                    headerView: {
+                        VStack(spacing: 0) {
+                            DynamicOffsetView(
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                shouldShowUpgradeButton: $shouldShowUpgradeButton
+                            )
+                            
+                            VStack {
+                                CoreAssets.upgradeArrowImage.swiftUIImage
+                                    .resizable()
+                                    .frame(width: 96, height: 96)
+                                    .padding(.bottom, 4)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .background(.red)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                )
+            }
+        case .startDateError(let date):
+            let message = "This course will begin on \(date?.dateToString(style: .monthDayYear) ?? ""). Come back then to start learning!"
+            UpgradeCourseViewMessage(
+                message: message,
+                icon: CoreAssets.upgradeCalendarImage.swiftUIImage,
+                coordinate: $coordinate,
+                collapsed: $collapsed,
+                shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                backAction: backAction
+            )
+        case .isEndDateOld(let date):
+            let message = "Your free audit access to this course expired on \(date.dateToString(style: .monthDayYear))."
+            UpgradeCourseViewMessage(
+                message: message,
+                icon: CoreAssets.upgradeArrowImage.swiftUIImage,
+                coordinate: $coordinate,
+                collapsed: $collapsed,
+                shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                backAction: backAction
+            )
         }
     }
 }
@@ -80,6 +179,7 @@ public struct CourseContainerView: View {
     public var body: some View {
         ZStack(alignment: .top) {
             content
+                .environment(\.shouldHideMenuBar, viewModel.shouldHideMenuBar)
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -94,73 +194,35 @@ public struct CourseContainerView: View {
         if let courseStart = viewModel.courseStart {
             ZStack(alignment: .top) {
                 if courseStart > Date() {
-                    VStack {
-                        RefreshableScrollViewCompat(action: {
-                            await withTaskGroup(of: Void.self) { group in
-                                group.addTask {
-                                    await viewModel.getCourseBlocks(courseID: courseID, withProgress: false)
-                                }
-                                group.addTask {
-                                    await viewModel.getCourseDeadlineInfo(courseID: courseID, withProgress: false)
-                                }
-                            }
-                        }) {
-                            Spacer()
-                                .frame(height: 10)
-                            DynamicOffsetView(
-                                coordinate: $coordinate,
-                                collapsed: $collapsed,
-                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
-                            )
-                            RefreshProgressView(isShowRefresh: $viewModel.isShowRefresh)
-                            UpgradeCourseView(type: .startDateError)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .onAppear {
-                                    ignoreOffset = true
-                                }
-                            Spacer(minLength: 1000)
+                    UpgradeCourseView(
+                        type: viewModel.type(for: coursewareAccess) ?? .startDateError(date: courseStart),
+                        coordinate: $coordinate,
+                        collapsed: $collapsed,
+                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                        backAction: {
+                            viewModel.router.back()
                         }
-                    }
-//                    CourseOutlineView(
-//                        viewModel: viewModel,
-//                        title: title,
-//                        courseID: courseID,
-//                        isVideo: false,
-//                        selection: $viewModel.selection,
-//                        coordinate: $coordinate,
-//                        collapsed: $collapsed,
-//                        dateTabIndex: CourseTab.dates.rawValue
-//                    )
+                    )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .onAppear {
+                            ignoreOffset = true
+                        }
                 } else {
                     
                     if let type = viewModel.type(for: coursewareAccess) {
-                        VStack {
-                            RefreshableScrollViewCompat(action: {
-                                await withTaskGroup(of: Void.self) { group in
-                                    group.addTask {
-                                        await viewModel.getCourseBlocks(courseID: courseID, withProgress: false)
-                                    }
-                                    group.addTask {
-                                        await viewModel.getCourseDeadlineInfo(courseID: courseID, withProgress: false)
-                                    }
-                                }
-                            }) {
-                                Spacer()
-                                    .frame(height: 10)
-                                DynamicOffsetView(
-                                    coordinate: $coordinate,
-                                    collapsed: $collapsed,
-                                    shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
-                                )
-                                RefreshProgressView(isShowRefresh: $viewModel.isShowRefresh)
-                                UpgradeCourseView(type: type)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .onAppear {
-                                        ignoreOffset = true
-                                    }
-                                Spacer(minLength: 1000)
+                        UpgradeCourseView(
+                            type: type,
+                            coordinate: $coordinate,
+                            collapsed: $collapsed,
+                            shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                            backAction: {
+                                viewModel.router.back()
                             }
-                        }
+                        )
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .onAppear {
+                                ignoreOffset = true
+                            }
                     } else {
                         tabs
                     }

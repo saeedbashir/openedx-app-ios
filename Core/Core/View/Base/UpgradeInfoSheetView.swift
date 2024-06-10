@@ -92,6 +92,7 @@ private struct PaymentSnackbarModifier: ViewModifier {
 
 public class UpgradeInfoViewModel: ObservableObject {
     let productName: String
+    let message: String
     let sku: String
     let courseID: String
     let screen: CourseUpgradeScreen
@@ -111,6 +112,7 @@ public class UpgradeInfoViewModel: ObservableObject {
 
     public init(
         productName: String,
+        message: String,
         sku: String,
         courseID: String,
         screen: CourseUpgradeScreen,
@@ -127,10 +129,15 @@ public class UpgradeInfoViewModel: ObservableObject {
         self.pacing = pacing
         self.analytics = analytics
         self.router = router
+        self.message = message
     }
     
     @MainActor
     public func fetchProduct() async {
+        guard !sku.isEmpty else {
+            isLoading = false
+            return
+        }
         do {
             isLoading = true
             product = try await handler.fetchProduct(sku: sku)
@@ -260,35 +267,47 @@ struct UpgradeInfoCellView: View {
 
 struct UpgradeInfoPointView: View {
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(Theme.Colors.success)
-                .opacity(0.1)
-            Image(systemName: "checkmark")
-                .renderingMode(.template)
-                .resizable()
-                .foregroundStyle(Theme.Colors.success)
-                .font(.title.bold())
-                .padding(8)
-        }
+        CoreAssets.upgradeCheckmarkImage.swiftUIImage
+            .resizable()
+//        ZStack {
+//            Circle()
+//                .fill(Theme.Colors.success)
+//                .opacity(0.1)
+//            Image(systemName: "checkmark")
+//                .renderingMode(.template)
+//                .resizable()
+//                .foregroundStyle(Theme.Colors.success)
+//                .font(.title.bold())
+//                .padding(8)
+//        }
         .frame(width: 30, height: 30)
     }
 }
 
 public struct UpgradeOptionsView: View {
     public var body: some View {
-        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.first)
-        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.second)
-        UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.third)
+        VStack(alignment: .leading, spacing: 20) {
+            UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.first)
+            UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.second)
+            UpgradeInfoCellView(title: CoreLocalization.CourseUpgrade.View.Option.third)
+        }
     }
 }
 
-public struct UpgradeInfoView: View {
-    @Environment(\.dismiss) private var dismiss
-    @ObservedObject var viewModel: UpgradeInfoViewModel
+public struct UpgradeInfoView<Content>: View where Content: View {
+    let isFindCourseButtonVisible: Bool
+    private let headerView: () -> Content
+    @StateObject var viewModel: UpgradeInfoViewModel
     
-    public init(viewModel: UpgradeInfoViewModel) {
-        self.viewModel = viewModel
+    public init(
+        isFindCourseButtonVisible: Bool,
+        image: Image? = nil,
+        viewModel: UpgradeInfoViewModel,
+        @ViewBuilder headerView: @escaping () -> Content = {EmptyView()}
+    ) {
+        self.isFindCourseButtonVisible = isFindCourseButtonVisible
+        self._viewModel = .init(wrappedValue: viewModel)
+        self.headerView = headerView
     }
     
     private var shouldHideText: Bool {
@@ -308,49 +327,91 @@ public struct UpgradeInfoView: View {
     }
     
     public var body: some View {
-        NavigationView {
-            VStack {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    headerView()
+                    
+                    if !viewModel.productName.isEmpty {
                         Text("\(CoreLocalization.CourseUpgrade.View.title) \(viewModel.productName)")
                             .font(Theme.Fonts.titleLarge)
-                        UpgradeOptionsView()
-                            .foregroundColor(Theme.Colors.textPrimary)
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 30)
-                }
-                Spacer()
-                ZStack {
-                    if viewModel.error == nil {
-                        StyledButton(
-                            buttonText,
-                            action: {
-                                Task {
-                                    await viewModel.purchase()
-                                }
-                            },
-                            color: Theme.Colors.accentButtonColor,
-                            textColor: Theme.Colors.styledButtonText,
-                            leftImage: buttonImage,
-                            imagesStyle: .attachedToText,
-                            isTitleTracking: false,
-                            isLimitedOnPad: false)
-                        .opacity(shouldHideButton ? 0 : 1)
-                        .disabled(viewModel.isLoading)
-                        
-                        ProgressBar(size: 30, lineWidth: 8)
-                            .opacity(viewModel.isLoading ? 1 : 0)
+                    
+                    if !viewModel.message.isEmpty {
+                        Text(viewModel.message)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(Theme.Fonts.bodyLarge)
                     }
+                    
+                    UpgradeOptionsView()
+                        .foregroundColor(Theme.Colors.textPrimary)
                 }
-                .padding(20)
+                .padding(.horizontal, 20)
+                .padding(.top, 30)
             }
+            Spacer(minLength: 20)
+            if isFindCourseButtonVisible {
+                StyledButton(
+                    "Find a new course",
+                    action: {
+                        
+                    },
+                    isTransparent: true,
+                    isTitleTracking: false
+                )
+                .frame(height: 42)
+                .colorMultiply(Theme.Colors.accentColor)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+            }
+            ZStack {
+                if viewModel.error == nil && !viewModel.sku.isEmpty {
+                    StyledButton(
+                        buttonText,
+                        action: {
+                            Task {
+                                await viewModel.purchase()
+                            }
+                        },
+                        color: Theme.Colors.accentButtonColor,
+                        textColor: Theme.Colors.styledButtonText,
+                        leftImage: buttonImage,
+                        imagesStyle: .attachedToText,
+                        isTitleTracking: false,
+                        isLimitedOnPad: false)
+                    .opacity(shouldHideButton ? 0 : 1)
+                    .disabled(viewModel.isLoading)
+                    
+                    ProgressBar(size: 30, lineWidth: 8)
+                        .opacity(viewModel.isLoading ? 1 : 0)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
+        }
+        .task {
+            await viewModel.fetchProduct()
+        }
+    }
+}
+
+public struct UpgradeInfoSheetView: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var viewModel: UpgradeInfoViewModel
+    
+    public init(viewModel: UpgradeInfoViewModel) {
+        self.viewModel = viewModel
+    }
+    
+    public var body: some View {
+        NavigationView {
+            UpgradeInfoView(
+                isFindCourseButtonVisible: false,
+                viewModel: viewModel
+            )
             .background {
                 Theme.Colors.background
                     .ignoresSafeArea()
-            }
-            .task {
-                await viewModel.fetchProduct()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -373,9 +434,10 @@ public struct UpgradeInfoView: View {
 
 #if DEBUG
 #Preview {
-    UpgradeInfoView(
+    UpgradeInfoSheetView(
         viewModel: UpgradeInfoViewModel(
             productName: "Preview",
+            message: "",
             sku: "SKU",
             courseID: "",
             screen: .dashboard,

@@ -53,10 +53,10 @@ public enum CourseTab: Int, CaseIterable, Identifiable {
 }
 
 enum CourseAccessErrorHelperType {
-    case isEndDateOld
-    case startDateError
-    case auditExpired
-    case upgradeable
+    case isEndDateOld(date: Date)
+    case startDateError(date: Date?)
+    case auditExpired(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
+    case upgradeable(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
 }
 
 public class CourseContainerViewModel: BaseCourseViewModel {
@@ -74,6 +74,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     @Published var userSettings: UserSettings?
     @Published var isInternetAvaliable: Bool = true
     @Published var dueDatesShifted: Bool = false
+    @Published var shouldHideMenuBar: Bool = false
 
     var errorMessage: String? {
         didSet {
@@ -84,14 +85,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     }
     
     @Published var shouldShowUpgradeButton: Bool = false
-    
-    var hasAccess: Bool {
-        if let accessDetails = courseStructure?.coursewareAccessDetails {
-            return accessDetails.coursewareAccess?.hasAccess ?? true
-        }
-        return true
-    }
-    
+        
     var sku: String? {
         courseStructure?.sku
     }
@@ -115,7 +109,6 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     let coreAnalytics: CoreAnalytics
     private(set) var storage: CourseStorage
     private var courseID: String?
-    private var coursewareAccessDetails: CoursewareAccessDetails?
     
     public init(
         interactor: CourseInteractorProtocol,
@@ -155,6 +148,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     
     @MainActor
     func reload(courseID: String) async {
+        updateMenuBarVisibility()
         self.courseID = courseID
         await withTaskGroup(of: Void.self) {[weak self] group in
             guard let self = self else { return }
@@ -165,6 +159,13 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                 await self.getCourseDeadlineInfo(courseID: courseID, withProgress: false)
             }
         }
+    }
+    
+    @MainActor
+    func updateMenuBarVisibility() {
+        shouldHideMenuBar =
+            courseStructure == nil ||
+            courseStructure?.coursewareAccessDetails?.coursewareAccess?.hasAccess == false
     }
     
     @MainActor
@@ -180,7 +181,9 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         do {
             if isInternetAvaliable {
                 courseStructure = try await interactor.getCourseBlocks(courseID: courseID)
+                let type = type(for: courseStructure?.coursewareAccessDetails?.coursewareAccess)
                 shouldShowUpgradeButton = type == nil && courseStructure?.isUpgradeable ?? false
+                updateMenuBarVisibility()
                 NotificationCenter.default.post(name: .getCourseDates, object: courseID)
                 isShowProgress = false
                 isShowRefresh = false
@@ -273,20 +276,35 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     func type(for access: CoursewareAccess?) -> CourseAccessErrorHelperType? {
         guard let access, !access.hasAccess else { return nil }
         
-        if let courseEnd, Date().compare(courseEnd) == .orderedDescending {
+        if let courseEnd, courseEnd.isInPast() {
             if courseStructure?.isUpgradeable == true {
-                return .upgradeable
+                guard let courseStructure, let courseID else { return nil }
+                return .upgradeable(
+                    date: courseEnd,
+                    sku: courseStructure.sku ?? "",
+                    courseID: courseID,
+                    pacing: courseStructure.isSelfPaced ? Pacing.selfPace.rawValue : Pacing.instructor.rawValue,
+                    screen: .courseDashboard
+                )
             } else {
-                return .isEndDateOld
+                return .isEndDateOld(date: courseEnd)
             }
         } else {
             guard let errorCode = access.errorCode else { return nil }
             
             switch errorCode {
             case .notStarted:
-                return .startDateError
+                return .startDateError(date: courseStart)
             case .auditExpired:
-                return .auditExpired
+                guard let courseStructure, let courseID else { return nil }
+                //(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
+                return .auditExpired(
+                    date: courseEnd,
+                    sku: courseStructure.sku ?? "",
+                    courseID: courseID,
+                    pacing: courseStructure.isSelfPaced ? Pacing.selfPace.rawValue : Pacing.instructor.rawValue,
+                    screen: .courseDashboard
+                )
             
             default:
                 return nil
@@ -350,6 +368,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         Task {@MainActor in
             await router.showUpgradeInfo(
                 productName: structure.displayName,
+                message: "",
                 sku: sku,
                 courseID: structure.id,
                 screen: .courseDashboard,

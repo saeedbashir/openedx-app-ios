@@ -847,16 +847,17 @@ extension Router {
     @MainActor
     public func showUpgradeInfo(
         productName: String,
+        message: String,
         sku: String,
         courseID: String,
         screen: CourseUpgradeScreen,
         pacing: String
     ) async {
         await withCheckedContinuation { continuation in
-            let view = UpgradeInfoView(
+            let view = UpgradeInfoSheetView(
                 viewModel: Container.shared.resolve(
                     UpgradeInfoViewModel.self,
-                    arguments: productName, sku, courseID, screen, pacing
+                    arguments: productName, message, sku, courseID, screen, pacing
                 )!
             )
             let controller = UIHostingController(rootView: view)
@@ -875,7 +876,7 @@ extension Router {
     @MainActor
     public func hideUpgradeInfo(animated: Bool) async {
         await withCheckedContinuation { continuation in
-            if let controller = navigationController.presentedViewController as? UIHostingController<UpgradeInfoView> {
+            if let controller = navigationController.presentedViewController as? UIHostingController<UpgradeInfoSheetView> {
                 controller.dismiss(animated: animated) {
                     continuation.resume()
                 }

@@ -7,13 +7,24 @@
 
 import SwiftUI
 
+private struct SensitiveKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
+public extension EnvironmentValues {
+    var shouldHideMenuBar: Bool {
+        get { self[SensitiveKey.self] }
+        set { self[SensitiveKey.self] = newValue }
+    }
+}
+
 public struct DynamicOffsetView: View {
     
     private let padHeight: CGFloat = 290
     private var collapsedHorizontalHeight: CGFloat = 120
     private let collapsedVerticalHeight: CGFloat = 100
     private var expandedHeight: CGFloat {
-        240 + (shouldShowUpgradeButton ? 42+20 : 0)
+        240 + (shouldShowUpgradeButton ? 42+20 : 0) - (shouldHideMenuBar ? 28 : 0)
     }
     private let coordinateBoundaryLower: CGFloat = -115
     private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
@@ -24,6 +35,7 @@ public struct DynamicOffsetView: View {
     @State private var collapseHeight: CGFloat = .zero
     
     @Environment(\.isHorizontal) private var isHorizontal
+    @Environment(\.shouldHideMenuBar) private var shouldHideMenuBar
     
     public init(
         coordinate: Binding<CGFloat>,

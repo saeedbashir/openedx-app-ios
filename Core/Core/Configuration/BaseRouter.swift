@@ -62,6 +62,7 @@ public protocol BaseRouter {
     @MainActor
     func showUpgradeInfo(
         productName: String,
+        message: String,
         sku: String,
         courseID: String,
         screen: CourseUpgradeScreen,
@@ -147,6 +148,7 @@ open class BaseRouterMock: BaseRouter {
     @MainActor
     public func showUpgradeInfo(
         productName: String,
+        message: String,
         sku: String,
         courseID: String,
         screen: CourseUpgradeScreen,
