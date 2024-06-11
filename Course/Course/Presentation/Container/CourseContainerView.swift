@@ -17,6 +17,7 @@ struct UpgradeCourseViewMessage: View {
     @Binding var coordinate: CGFloat
     @Binding var collapsed: Bool
     @Binding var shouldShowUpgradeButton: Bool
+    @Binding var shouldHideMenuBar: Bool
     let backAction: (() -> Void)?
     
     var body: some View {
@@ -24,7 +25,8 @@ struct UpgradeCourseViewMessage: View {
             DynamicOffsetView(
                 coordinate: $coordinate,
                 collapsed: $collapsed,
-                shouldShowUpgradeButton: $shouldShowUpgradeButton
+                shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                shouldHideMenuBar: $shouldHideMenuBar
             )
             ZStack {
                 VStack(spacing: 24) {
@@ -53,6 +55,7 @@ struct UpgradeCourseView: View {
     @Binding private var coordinate: CGFloat
     @Binding private var collapsed: Bool
     @Binding private var shouldShowUpgradeButton: Bool
+    @Binding private var shouldHideMenuBar: Bool
     private var backAction: (() -> Void)?
 
     init(
@@ -60,12 +63,14 @@ struct UpgradeCourseView: View {
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
         shouldShowUpgradeButton: Binding<Bool>,
+        shouldHideMenuBar: Binding<Bool>,
         backAction: (() -> Void)?
     ) {
         self.type = type
         self._coordinate = coordinate
         self._collapsed = collapsed
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
+        self._shouldHideMenuBar = shouldHideMenuBar
         self.backAction = backAction
     }
 
@@ -85,7 +90,8 @@ struct UpgradeCourseView: View {
                             DynamicOffsetView(
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
-                                shouldShowUpgradeButton: $shouldShowUpgradeButton
+                                shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                                shouldHideMenuBar: $shouldHideMenuBar
                             )
                             
                             VStack {
@@ -108,6 +114,7 @@ struct UpgradeCourseView: View {
                 coordinate: $coordinate,
                 collapsed: $collapsed,
                 shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                shouldHideMenuBar: $shouldHideMenuBar,
                 backAction: backAction
             )
         case .isEndDateOld(let date):
@@ -118,6 +125,7 @@ struct UpgradeCourseView: View {
                 coordinate: $coordinate,
                 collapsed: $collapsed,
                 shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                shouldHideMenuBar: $shouldHideMenuBar,
                 backAction: backAction
             )
         }
@@ -178,7 +186,6 @@ public struct CourseContainerView: View {
     public var body: some View {
         ZStack(alignment: .top) {
             content
-                .environment(\.shouldHideMenuBar, viewModel.shouldHideMenuBar)
         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -190,42 +197,9 @@ public struct CourseContainerView: View {
     
     @ViewBuilder
     private var content: some View {
-        if let courseStart = viewModel.courseStart {
+        if viewModel.courseStart != nil {
             ZStack(alignment: .top) {
-                if courseStart > Date() {
-                    UpgradeCourseView(
-                        type: viewModel.type(for: coursewareAccess) ?? .startDateError(date: courseStart),
-                        coordinate: $coordinate,
-                        collapsed: $collapsed,
-                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
-                        backAction: {
-                            viewModel.router.back()
-                        }
-                    )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .onAppear {
-                            ignoreOffset = true
-                        }
-                } else {
-                    
-                    if let type = viewModel.type(for: coursewareAccess) {
-                        UpgradeCourseView(
-                            type: type,
-                            coordinate: $coordinate,
-                            collapsed: $collapsed,
-                            shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
-                            backAction: {
-                                viewModel.router.back()
-                            }
-                        )
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
-                            .onAppear {
-                                ignoreOffset = true
-                            }
-                    } else {
-                        tabs
-                    }
-                }
+                tabs
                 GeometryReader { proxy in
                     VStack(spacing: 0) {
                         CourseHeaderView(
@@ -240,7 +214,7 @@ public struct CourseContainerView: View {
                             upgradeAction: {
                                 viewModel.showPaymentsInfo()
                             }
-                        ).opacity(0)
+                        )
                     }
                     .offset(
                         y: ignoreOffset
@@ -312,86 +286,123 @@ public struct CourseContainerView: View {
     
     private var tabs: some View {
         TabView(selection: $viewModel.selection) {
-            ForEach(CourseTab.allCases) { tab in
-                switch tab {
-                case .course:
-                    CourseOutlineView(
-                        viewModel: viewModel,
-                        title: title,
-                        courseID: courseID,
-                        isVideo: false,
-                        selection: $viewModel.selection,
+            if let courseStart = viewModel.courseStart, courseStart > Date() {
+                UpgradeCourseView(
+                    type: viewModel.type(for: coursewareAccess) ?? .startDateError(date: courseStart),
+                    coordinate: $coordinate,
+                    collapsed: $collapsed,
+                    shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                    shouldHideMenuBar: $viewModel.shouldHideMenuBar,
+                    backAction: {
+                        viewModel.router.back()
+                    }
+                )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onAppear {
+                        ignoreOffset = true
+                    }
+            } else {
+                if let type = viewModel.type(for: coursewareAccess) {
+                    UpgradeCourseView(
+                        type: type,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
-                        dateTabIndex: CourseTab.dates.rawValue
+                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                        shouldHideMenuBar: $viewModel.shouldHideMenuBar,
+                        backAction: {
+                            viewModel.router.back()
+                        }
                     )
-                    .tabItem {
-                        tab.image
-                        Text(tab.title)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .onAppear {
+                            ignoreOffset = true
+                        }
+                } else {
+                    ForEach(CourseTab.allCases) { tab in
+                        switch tab {
+                        case .course:
+                            CourseOutlineView(
+                                viewModel: viewModel,
+                                title: title,
+                                courseID: courseID,
+                                isVideo: false,
+                                selection: $viewModel.selection,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                dateTabIndex: CourseTab.dates.rawValue
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .videos:
+                            CourseOutlineView(
+                                viewModel: viewModel,
+                                title: title,
+                                courseID: courseID,
+                                isVideo: true,
+                                selection: $viewModel.selection,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                dateTabIndex: CourseTab.dates.rawValue
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .dates:
+                            CourseDatesView(
+                                courseID: courseID,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                viewModel: courseDatesViewModel,
+                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                                shouldHideMenuBar: $viewModel.shouldHideMenuBar
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .discussion:
+                            DiscussionTopicsView(
+                                courseID: courseID,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                viewModel: Container.shared.resolve(DiscussionTopicsViewModel.self,
+                                                                    argument: title)!,
+                                router: Container.shared.resolve(DiscussionRouter.self)!,
+                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                                shouldHideMenuBar: $viewModel.shouldHideMenuBar
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .handounds:
+                            HandoutsView(
+                                courseID: courseID,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                viewModel: Container.shared.resolve(HandoutsViewModel.self, argument: courseID)!,
+                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                                shouldHideMenuBar: $viewModel.shouldHideMenuBar
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        }
                     }
-                    .tag(tab)
-                    .accentColor(Theme.Colors.accentColor)
-                case .videos:
-                    CourseOutlineView(
-                        viewModel: viewModel,
-                        title: title,
-                        courseID: courseID,
-                        isVideo: true,
-                        selection: $viewModel.selection,
-                        coordinate: $coordinate,
-                        collapsed: $collapsed,
-                        dateTabIndex: CourseTab.dates.rawValue
-                    )
-                    .tabItem {
-                        tab.image
-                        Text(tab.title)
-                    }
-                    .tag(tab)
-                    .accentColor(Theme.Colors.accentColor)
-                case .dates:
-                    CourseDatesView(
-                        courseID: courseID,
-                        coordinate: $coordinate,
-                        collapsed: $collapsed,
-                        viewModel: courseDatesViewModel,
-                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
-                    )
-                    .tabItem {
-                        tab.image
-                        Text(tab.title)
-                    }
-                    .tag(tab)
-                    .accentColor(Theme.Colors.accentColor)
-                case .discussion:
-                    DiscussionTopicsView(
-                        courseID: courseID,
-                        coordinate: $coordinate,
-                        collapsed: $collapsed,
-                        viewModel: Container.shared.resolve(DiscussionTopicsViewModel.self,
-                                                            argument: title)!,
-                        router: Container.shared.resolve(DiscussionRouter.self)!,
-                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
-                    )
-                    .tabItem {
-                        tab.image
-                        Text(tab.title)
-                    }
-                    .tag(tab)
-                    .accentColor(Theme.Colors.accentColor)
-                case .handounds:
-                    HandoutsView(
-                        courseID: courseID,
-                        coordinate: $coordinate,
-                        collapsed: $collapsed,
-                        viewModel: Container.shared.resolve(HandoutsViewModel.self, argument: courseID)!,
-                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton
-                    )
-                    .tabItem {
-                        tab.image
-                        Text(tab.title)
-                    }
-                    .tag(tab)
-                    .accentColor(Theme.Colors.accentColor)
                 }
             }
         }

@@ -7,17 +7,6 @@
 
 import SwiftUI
 
-private struct SensitiveKey: EnvironmentKey {
-    static let defaultValue: Bool = false
-}
-
-public extension EnvironmentValues {
-    var shouldHideMenuBar: Bool {
-        get { self[SensitiveKey.self] }
-        set { self[SensitiveKey.self] = newValue }
-    }
-}
-
 public struct DynamicOffsetView: View {
     
     private let padHeight: CGFloat = 290
@@ -31,21 +20,22 @@ public struct DynamicOffsetView: View {
     @State private var collapseHeight: CGFloat = .zero
     
     @Environment(\.isHorizontal) private var isHorizontal
-    @Environment(\.shouldHideMenuBar) private var shouldHideMenuBar
+    @Binding private var shouldHideMenuBar: Bool
     
     public init(
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
-        shouldShowUpgradeButton: Binding<Bool>
+        shouldShowUpgradeButton: Binding<Bool>,
+        shouldHideMenuBar: Binding<Bool>
     ) {
         self._coordinate = coordinate
         self._collapsed = collapsed
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
+        self._shouldHideMenuBar = shouldHideMenuBar
     }
     
     public var body: some View {
         VStack {
-            Color.blue
         }
         .frame(height: collapseHeight)
         .overlay(
@@ -117,7 +107,7 @@ public struct DynamicOffsetView: View {
     }
     
     private func expandedHeight(shouldShowUpgradeButton: Bool, shouldHideMenuBar: Bool) -> CGFloat {
-        240 + (shouldShowUpgradeButton ? 83 : 0) - (shouldHideMenuBar ? 20 : 0)
+        240 + (shouldShowUpgradeButton ? 63 : 0) - (shouldHideMenuBar ? 80 : 0)
     }
 
     private func changeCollapsedHeight(

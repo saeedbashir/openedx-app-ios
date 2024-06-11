@@ -19,6 +19,7 @@ public struct DiscussionTopicsView: View {
     @Binding private var collapsed: Bool
     @State private var runOnce: Bool = false
     @Binding private var shouldShowUpgradeButton: Bool
+    @Binding private var shouldHideMenuBar: Bool
     
     public init(
         courseID: String,
@@ -26,7 +27,8 @@ public struct DiscussionTopicsView: View {
         collapsed: Binding<Bool>,
         viewModel: DiscussionTopicsViewModel,
         router: DiscussionRouter,
-        shouldShowUpgradeButton: Binding<Bool>
+        shouldShowUpgradeButton: Binding<Bool>,
+        shouldHideMenuBar: Binding<Bool>
     ) {
         self._viewModel = StateObject(wrappedValue: { viewModel }())
         self.courseID = courseID
@@ -34,6 +36,7 @@ public struct DiscussionTopicsView: View {
         self._collapsed = collapsed
         self.router = router
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
+        self._shouldHideMenuBar = shouldHideMenuBar
     }
     
     public var body: some View {
@@ -46,7 +49,8 @@ public struct DiscussionTopicsView: View {
                         DynamicOffsetView(
                             coordinate: $coordinate,
                             collapsed: $collapsed,
-                            shouldShowUpgradeButton: $shouldShowUpgradeButton
+                            shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                            shouldHideMenuBar: $shouldHideMenuBar
                         )
                         RefreshProgressView(isShowRefresh: $viewModel.isShowRefresh)
                         // MARK: - Search fake field
@@ -228,7 +232,8 @@ struct DiscussionView_Previews: PreviewProvider {
             collapsed: .constant(false),
             viewModel: vm,
             router: router,
-            shouldShowUpgradeButton: .constant(false)
+            shouldShowUpgradeButton: .constant(false),
+            shouldHideMenuBar: .constant(false)
         )
         .preferredColorScheme(.light)
         .previewDisplayName("DiscussionTopicsView Light")
@@ -240,7 +245,8 @@ struct DiscussionView_Previews: PreviewProvider {
             collapsed: .constant(false),
             viewModel: vm,
             router: router,
-            shouldShowUpgradeButton: .constant(false)
+            shouldShowUpgradeButton: .constant(false),
+            shouldHideMenuBar: .constant(false)
         )
         .preferredColorScheme(.dark)
         .previewDisplayName("DiscussionTopicsView Dark")

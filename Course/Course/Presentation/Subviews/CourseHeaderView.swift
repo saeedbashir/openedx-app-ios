@@ -19,17 +19,16 @@ struct CourseHeaderView: View {
     @Binding private var collapsed: Bool
     @Binding private var isAnimatingForTap: Bool
     @Environment(\.isHorizontal) private var isHorizontal
-    @Environment(\.shouldHideMenuBar) private var shouldHideMenuBar
     
     private var collapsedHorizontalHeight: CGFloat {
-        186 + (!shouldHideMenuBar ? 44 : 0)
+        186 + (!viewModel.shouldHideMenuBar ? 44 : 0)
     }
     private var collapsedVerticalHeight: CGFloat {
-        216 + (!shouldHideMenuBar ? 44 : 0)
+        216 + (!viewModel.shouldHideMenuBar ? 44 : 0)
     }
 
     private var expandedHeight: CGFloat {
-        220 + (!shouldHideMenuBar ? 80 : 0) + (viewModel.shouldShowUpgradeButton ? 42+20 : 0)
+        220 + (!viewModel.shouldHideMenuBar ? 80 : 0) + (viewModel.shouldShowUpgradeButton ? 42+20 : 0)
     }
     
     private var upgradeAction: (() -> Void)?
@@ -105,7 +104,7 @@ struct CourseHeaderView: View {
                         }
                         .padding(.top, 46)
                         .padding(.leading, 12)
-                        if !shouldHideMenuBar {
+                        if !viewModel.shouldHideMenuBar {
                             courseMenuBar(containerWidth: containerWidth)
                                 .matchedGeometryEffect(id: GeometryName.topTabBar, in: animationNamespace)
                                 .padding(.bottom, 12)
@@ -156,7 +155,7 @@ struct CourseHeaderView: View {
                                     .padding(.horizontal, 24)
                                     .frameLimit(width: containerWidth)
                             }
-                            if !shouldHideMenuBar {
+                            if !viewModel.shouldHideMenuBar {
                                 courseMenuBar(containerWidth: containerWidth)
                                     .matchedGeometryEffect(id: GeometryName.topTabBar, in: animationNamespace)
                                     .padding(.bottom, 12)

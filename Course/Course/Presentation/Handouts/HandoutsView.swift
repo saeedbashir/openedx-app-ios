@@ -18,19 +18,21 @@ struct HandoutsView: View {
     @StateObject
     private var viewModel: HandoutsViewModel
     @Binding private var shouldShowUpgradeButton: Bool
-    
+    @Binding private var shouldHideMenuBar: Bool
     public init(
         courseID: String,
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
         viewModel: HandoutsViewModel,
-        shouldShowUpgradeButton: Binding<Bool>
+        shouldShowUpgradeButton: Binding<Bool>,
+        shouldHideMenuBar: Binding<Bool>
     ) {
         self.courseID = courseID
         self._coordinate = coordinate
         self._collapsed = collapsed
         self._viewModel = StateObject(wrappedValue: { viewModel }())
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
+        self._shouldHideMenuBar = shouldHideMenuBar
     }
     
     public var body: some View {
@@ -42,7 +44,8 @@ struct HandoutsView: View {
                         DynamicOffsetView(
                             coordinate: $coordinate,
                             collapsed: $collapsed,
-                            shouldShowUpgradeButton: $shouldShowUpgradeButton
+                            shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                            shouldHideMenuBar: $shouldHideMenuBar
                         )
                         if viewModel.isShowProgress {
                             HStack(alignment: .center) {
@@ -142,7 +145,8 @@ struct HandoutsView_Previews: PreviewProvider {
             coordinate: .constant(0),
             collapsed: .constant(false),
             viewModel: viewModel,
-            shouldShowUpgradeButton: .constant(false)
+            shouldShowUpgradeButton: .constant(false),
+            shouldHideMenuBar: .constant(false)
         )
     }
 }
