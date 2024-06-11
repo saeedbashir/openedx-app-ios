@@ -52,13 +52,6 @@ public enum CourseTab: Int, CaseIterable, Identifiable {
     }
 }
 
-enum CourseAccessErrorHelperType {
-    case isEndDateOld(date: Date)
-    case startDateError(date: Date?)
-    case auditExpired(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
-    case upgradeable(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
-}
-
 public class CourseContainerViewModel: BaseCourseViewModel {
 
     @Published public var selection: Int = CourseTab.course.rawValue
