@@ -329,9 +329,8 @@ public struct UpgradeInfoView<Content>: View where Content: View {
     public var body: some View {
         VStack(spacing: 0) {
             ScrollView {
+                headerView()
                 VStack(alignment: .leading, spacing: 20) {
-                    headerView()
-                    
                     if !viewModel.productName.isEmpty {
                         Text("\(CoreLocalization.CourseUpgrade.View.title) \(viewModel.productName)")
                             .font(Theme.Fonts.titleLarge)

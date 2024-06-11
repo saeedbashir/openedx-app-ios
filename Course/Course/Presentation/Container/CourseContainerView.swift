@@ -20,7 +20,7 @@ struct UpgradeCourseViewMessage: View {
     let backAction: (() -> Void)?
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
             DynamicOffsetView(
                 coordinate: $coordinate,
                 collapsed: $collapsed,
@@ -81,7 +81,7 @@ struct UpgradeCourseView: View {
                         arguments: "", message, sku, courseID, screen, pacing
                     )!,
                     headerView: {
-                        VStack(spacing: 0) {
+                        VStack(spacing: 20) {
                             DynamicOffsetView(
                                 coordinate: $coordinate,
                                 collapsed: $collapsed,
@@ -95,7 +95,6 @@ struct UpgradeCourseView: View {
                                     .padding(.bottom, 4)
                             }
                             .frame(maxWidth: .infinity)
-                            .background(.red)
                         }
                         .frame(maxWidth: .infinity)
                     }
@@ -241,7 +240,7 @@ public struct CourseContainerView: View {
                             upgradeAction: {
                                 viewModel.showPaymentsInfo()
                             }
-                        )
+                        ).opacity(0)
                     }
                     .offset(
                         y: ignoreOffset
