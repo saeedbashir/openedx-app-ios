@@ -23,7 +23,7 @@ public struct UpgradeCourseView: View {
     @Binding private var shouldHideMenuBar: Bool
     private var backAction: (() -> Void)?
     @Environment(\.isHorizontal) private var isHorizontal
-    private let findAction:(() -> Void)?
+    private let findAction: (() -> Void)?
     
     public init(
         type: CourseAccessErrorHelperType,
@@ -32,7 +32,7 @@ public struct UpgradeCourseView: View {
         shouldShowUpgradeButton: Binding<Bool>,
         shouldHideMenuBar: Binding<Bool>,
         backAction: (() -> Void)?,
-        findAction:(() -> Void)?
+        findAction: (() -> Void)?
     ) {
         self.type = type
         self._coordinate = coordinate
@@ -99,7 +99,7 @@ public struct UpgradeCourseView: View {
                 backAction: backAction
             )
         case .isEndDateOld(let date):
-            let message = CoreLocalization.CourseUpgrade.View.startDateMessage
+            let message = CoreLocalization.CourseUpgrade.View.endDateMessage
                 .replacingOccurrences(
                     of: CoreLocalization.CourseUpgrade.View.datePlaceholder,
                     with: date.dateToString(style: .monthDayYear)
