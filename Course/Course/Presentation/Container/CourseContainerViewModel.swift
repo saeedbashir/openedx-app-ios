@@ -308,6 +308,15 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         }
     }
     
+    private func date(from stringDate: String?) -> Date? {
+        guard let stringDate else { return nil }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        return dateFormatter.date(from: stringDate)
+    }
+    
     func type(for access: CoursewareAccess?) -> CourseAccessErrorHelperType? {
         guard let access, !access.hasAccess else { return nil }
         
@@ -331,9 +340,14 @@ public class CourseContainerViewModel: BaseCourseViewModel {
             case .notStarted:
                 return .startDateError(date: courseStart)
             case .auditExpired:
-                guard let courseStructure, let courseID else { return nil }
+                guard
+                    let courseStructure,
+                    let courseID,
+                    let dateString = courseStructure.coursewareAccessDetails?.auditAccessExpires,
+                    let date = date(from: dateString)
+                else { return nil }
                 return .auditExpired(
-                    date: courseEnd,
+                    date: date,
                     sku: courseStructure.sku ?? "",
                     courseID: courseID,
                     pacing: courseStructure.isSelfPaced ? Pacing.selfPace.rawValue : Pacing.instructor.rawValue,
