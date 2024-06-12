@@ -85,7 +85,7 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 newItem.courseRawImage = item.courseRawImage
                 
                 if let access = item.coursewareAccess {
-                    let newAccess = CDDashboardCoursewareAccess(context: self.context)
+                    let newAccess = CDCoursewareAccess(context: self.context)
                     newAccess.hasAccess = access.hasAccess
                     newAccess.errorCode = access.errorCode?.rawValue
                     newAccess.developerMessage = access.developerMessage
@@ -169,6 +169,13 @@ public class CoursePersistence: CoursePersistenceProtocol {
             result[block.id] = block
         } ?? [:]
         
+        return courseStructure(from: structure, blocks: dictionary)
+    }
+    
+    private func courseStructure(
+        from structure: CDCourseStructure,
+        blocks dictionary: [String : DataLayer.CourseBlock]
+    ) -> DataLayer.CourseStructure {
         var coursewareAccessDetails: DataLayer.CoursewareAccessDetails?
         if let accessDetails = structure.coursewareAccessDetails {
             var coursewareAccess: DataLayer.CoursewareAccess?
@@ -219,6 +226,27 @@ public class CoursePersistence: CoursePersistenceProtocol {
         )
     }
     
+    private func accessDetails(from structure: DataLayer.CourseStructure) -> CDCoursewareAccessDetails? {
+        if let accessDetails = structure.coursewareAccessDetails {
+            let newAccessDetails = CDCoursewareAccessDetails(context: self.context)
+            newAccessDetails.hasUNMETPrerequisites = accessDetails.hasUNMETPrerequisites
+            newAccessDetails.isTooEarly = accessDetails.isTooEarly
+            newAccessDetails.auditAccessExpires = accessDetails.auditAccessExpires
+            if let access = accessDetails.coursewareAccess {
+                let newAccess = CDCoursewareAccess(context: self.context)
+                newAccess.hasAccess = access.hasAccess
+                newAccess.errorCode = access.errorCode?.rawValue
+                newAccess.developerMessage = access.developerMessage
+                newAccess.userMessage = access.userMessage
+                newAccess.additionalContextUserMessage = access.additionalContextUserMessage
+                newAccess.userFragment = access.userFragment
+                newAccessDetails.coursewareAccess = newAccess
+            }
+            return newAccessDetails
+        }
+        return nil
+    }
+    
     public func saveCourseStructure(structure: DataLayer.CourseStructure) {
         context.performAndWait {
             context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
@@ -236,22 +264,8 @@ public class CoursePersistence: CoursePersistenceProtocol {
             newStructure.totalAssignmentsCount = Int32(structure.courseProgress?.totalAssignmentsCount ?? 0)
             newStructure.assignmentsCompleted = Int32(structure.courseProgress?.assignmentsCompleted ?? 0)
             
-            if let accessDetails = structure.coursewareAccessDetails {
-                let newAccessDetails = CDCoursewareAccessDetails(context: self.context)
-                newAccessDetails.hasUNMETPrerequisites = accessDetails.hasUNMETPrerequisites
-                newAccessDetails.isTooEarly = accessDetails.isTooEarly
-                newAccessDetails.auditAccessExpires = accessDetails.auditAccessExpires
-                if let access = accessDetails.coursewareAccess {
-                    let newAccess = CDCoursewareAccess(context: self.context)
-                    newAccess.hasAccess = access.hasAccess
-                    newAccess.errorCode = access.errorCode?.rawValue
-                    newAccess.developerMessage = access.developerMessage
-                    newAccess.userMessage = access.userMessage
-                    newAccess.additionalContextUserMessage = access.additionalContextUserMessage
-                    newAccess.userFragment = access.userFragment
-                    newAccessDetails.coursewareAccess = newAccess
-                }
-                newStructure.coursewareAccessDetails = newAccessDetails
+            if let details = accessDetails(from: structure) {
+                newStructure.coursewareAccessDetails = details
             }
             
             for block in Array(structure.dict.values) {

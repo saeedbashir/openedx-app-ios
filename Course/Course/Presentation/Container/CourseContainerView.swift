@@ -389,7 +389,7 @@ struct CourseScreensView_Previews: PreviewProvider {
             title: "Title of Course",
             org: "Org",
             courseRawImage: nil,
-            coursewareAccess: nil,
+            coursewareAccess: nil
         )
     }
 }

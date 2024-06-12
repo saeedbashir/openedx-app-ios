@@ -113,7 +113,7 @@ public extension DataLayer.DiscoveryResponce {
                        coursesCount: pagination.count,
                        isSelfPaced: $0.isSelfPaced,
                        courseRawImage: $0.media.image?.raw,
-                       coursewareAccess: nil
+                       coursewareAccess: nil,
                        progressEarned: 0,
                        progressPossible: 0
             )

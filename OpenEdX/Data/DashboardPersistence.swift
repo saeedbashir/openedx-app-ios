@@ -154,6 +154,23 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
             
             let courses = (result.courses as? Set<CDDashboardCourse> ?? [])
                 .map { cdCourse in
+                    var coursewareAccess: CoursewareAccess?
+                    if let access = cdCourse.coursewareAccess {
+                        var coursewareError: CourseAccessError?
+                        if let error = access.errorCode {
+                            coursewareError = CourseAccessError(rawValue: error) ?? .unknown
+                        }
+                        
+                        coursewareAccess = CoursewareAccess(
+                            hasAccess: access.hasAccess,
+                            errorCode: coursewareError,
+                            developerMessage: access.developerMessage,
+                            userMessage: access.userMessage,
+                            additionalContextUserMessage: access.additionalContextUserMessage,
+                            userFragment: access.userFragment
+                        )
+                    }
+                    
                     return CourseItem(
                         name: cdCourse.name ?? "",
                         org: cdCourse.org ?? "",
@@ -171,6 +188,8 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
                         dynamicUpgradeDeadline: cdCourse.dynamicUpgradeDeadline,
                         mode: DataLayer.Mode(rawValue: cdCourse.mode ?? "") ?? .unknown,
                         isSelfPaced: cdCourse.isSelfPaced,
+                        courseRawImage: cdCourse.courseRawImage,
+                        coursewareAccess: coursewareAccess,
                         progressEarned: Int(cdCourse.progressEarned),
                         progressPossible: Int(cdCourse.progressPossible)
                     )
