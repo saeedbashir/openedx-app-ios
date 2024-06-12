@@ -526,6 +526,7 @@ struct CourseDatesView_Previews: PreviewProvider {
             shouldShowUpgradeButton: .constant(false),
             shouldHideMenuBar: .constant(false)
         )
+
     }
 }
 #endif

@@ -162,7 +162,7 @@ struct CourseCellView_Previews: PreviewProvider {
         org: "Edx",
         shortDescription: "",
         imageURL: "https://thumbs.dreamstime.com/b/logo-edx-samsung-tablet-edx-massive-open-online-course-mooc-provider-hosts-online-university-level-courses-wide-117763805.jpg",
-        isActive: true,
+        hasAccess: true,
         courseStart: Date(iso8601: "2032-05-26T12:13:14Z"),
         courseEnd: Date(iso8601: "2033-05-26T12:13:14Z"),
         enrollmentStart: nil,
@@ -172,7 +172,9 @@ struct CourseCellView_Previews: PreviewProvider {
         coursesCount: 10,
         isSelfPaced: false,
         courseRawImage: nil,
-        coursewareAccess: nil
+        coursewareAccess: nil,
+        progressEarned: 4,
+        progressPossible: 10
     )
     
     static var previews: some View {

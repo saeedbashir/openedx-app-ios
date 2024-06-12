@@ -130,7 +130,7 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     org: "Organization",
                     shortDescription: "shortDescription",
                     imageURL: "",
-                    isActive: true,
+                    hasAccess: true,
                     courseStart: nil,
                     courseEnd: nil,
                     enrollmentStart: nil,
@@ -140,7 +140,9 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     coursesCount: 10,
                     isSelfPaced: false,
                     courseRawImage: nil,
-                    coursewareAccess: nil
+                    coursewareAccess: nil,
+                    progressEarned: 0,
+                    progressPossible: 0
                 )
             )
         }
@@ -156,17 +158,19 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     org: "Organization",
                     shortDescription: "shortDescription",
                     imageURL: "",
-                    isActive: nil,
+                    hasAccess: true,
                     courseStart: nil,
                     courseEnd: nil,
                     enrollmentStart: nil,
                     enrollmentEnd: nil,
                     courseID: "course_id_\(i)",
-                    numPages: 1, 
+                    numPages: 1,
                     coursesCount: 10,
                     isSelfPaced: false,
                     courseRawImage: nil,
-                    coursewareAccess: nil
+                    coursewareAccess: nil,
+                    progressEarned: 0,
+                    progressPossible: 0
                 )
             )
         }
@@ -182,7 +186,7 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     org: "Organization",
                     shortDescription: "shortDescription",
                     imageURL: "",
-                    isActive: true,
+                    hasAccess: true,
                     courseStart: nil,
                     courseEnd: nil,
                     enrollmentStart: nil,
@@ -192,7 +196,9 @@ class DiscoveryRepositoryMock: DiscoveryRepositoryProtocol {
                     coursesCount: 10,
                     isSelfPaced: false,
                     courseRawImage: nil,
-                    coursewareAccess: nil
+                    coursewareAccess: nil,
+                    progressEarned: 0,
+                    progressPossible: 0
                 )
             )
         }

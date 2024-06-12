@@ -18,6 +18,92 @@ public class CoursePersistence: CoursePersistenceProtocol {
         self.context = context
     }
     
+    public func loadEnrollments() throws -> [CourseItem] {
+        let result = try? context.fetch(CDCourseItem.fetchRequest())
+            .map {
+                var coursewareAccess: CoursewareAccess?
+                if let access = $0.coursewareAccess {
+                    var coursewareError: CourseAccessError?
+                    if let error = access.errorCode {
+                        coursewareError = CourseAccessError(rawValue: error) ?? .unknown
+                    }
+                    
+                    coursewareAccess = CoursewareAccess(
+                        hasAccess: access.hasAccess,
+                        errorCode: coursewareError,
+                        developerMessage: access.developerMessage,
+                        userMessage: access.userMessage,
+                        additionalContextUserMessage: access.additionalContextUserMessage,
+                        userFragment: access.userFragment
+                    )
+                }
+                return CourseItem(
+                    name: $0.name ?? "",
+                    org: $0.org ?? "",
+                    shortDescription: $0.desc ?? "",
+                    imageURL: $0.imageURL ?? "",
+                    hasAccess: $0.hasAccess,
+                    courseStart: $0.courseStart,
+                    courseEnd: $0.courseEnd,
+                    enrollmentStart: $0.enrollmentStart,
+                    enrollmentEnd: $0.enrollmentEnd,
+                    courseID: $0.courseID ?? "",
+                    numPages: Int($0.numPages),
+                    coursesCount: Int($0.courseCount),
+                    isSelfPaced: $0.isSelfPaced,
+                    courseRawImage: $0.courseRawImage,
+                    coursewareAccess: coursewareAccess,
+                    progressEarned: 0,
+                    progressPossible: 0
+                )
+            }
+
+        if let result, !result.isEmpty {
+            return result
+        } else {
+            throw NoCachedDataError()
+        }
+    }
+    
+    public func saveEnrollments(items: [CourseItem]) {
+        context.performAndWait {
+            for item in items {
+                let newItem = CDCourseItem(context: context)
+                newItem.name = item.name
+                newItem.org = item.org
+                newItem.desc = item.shortDescription
+                newItem.imageURL = item.imageURL
+                newItem.hasAccess = item.hasAccess
+                newItem.courseStart = item.courseStart
+                newItem.courseEnd = item.courseEnd
+                newItem.enrollmentStart = item.enrollmentStart
+                newItem.enrollmentEnd = item.enrollmentEnd
+                newItem.numPages = Int32(item.numPages)
+                newItem.courseID = item.courseID
+                newItem.courseCount = Int32(item.coursesCount)
+                
+                newItem.courseRawImage = item.courseRawImage
+                
+                if let access = item.coursewareAccess {
+                    let newAccess = CDDashboardCoursewareAccess(context: self.context)
+                    newAccess.hasAccess = access.hasAccess
+                    newAccess.errorCode = access.errorCode?.rawValue
+                    newAccess.developerMessage = access.developerMessage
+                    newAccess.userMessage = access.userMessage
+                    newAccess.additionalContextUserMessage = access.additionalContextUserMessage
+                    newAccess.userFragment = access.userFragment
+                    newItem.coursewareAccess = newAccess
+                }
+                
+                do {
+                    try context.save()
+                } catch {
+                    print("⛔️⛔️⛔️⛔️⛔️", error)
+                }
+            }
+        }
+    }
+    
     public func loadCourseStructure(courseID: String) throws -> DataLayer.CourseStructure {
         let request = CDCourseStructure.fetchRequest()
         request.predicate = NSPredicate(format: "id = %@", courseID)
@@ -25,7 +111,7 @@ public class CoursePersistence: CoursePersistenceProtocol {
         
         let requestBlocks = CDCourseBlock.fetchRequest()
         requestBlocks.predicate = NSPredicate(format: "courseID = %@", courseID)
-
+        
         let blocks = try? context.fetch(requestBlocks).map {
             let userViewData = DataLayer.CourseDetailUserViewData(
                 transcripts: $0.transcripts?.jsonStringToDictionary() as? [String: String],
@@ -61,6 +147,7 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 blockId: $0.blockId ?? "",
                 id: $0.id ?? "",
                 graded: $0.graded,
+                due: $0.due,
                 completion: $0.completion,
                 studentUrl: $0.studentUrl ?? "",
                 webUrl: $0.webUrl ?? "",
@@ -69,7 +156,12 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 descendants: $0.descendants,
                 allSources: $0.allSources,
                 userViewData: userViewData,
-                multiDevice: $0.multiDevice
+                multiDevice: $0.multiDevice,
+                assignmentProgress: DataLayer.AssignmentProgress(
+                    assignmentType: $0.assignmentType,
+                    numPointsEarned: $0.numPointsEarned,
+                    numPointsPossible: $0.numPointsPossible
+                )
             )
         }
         
@@ -119,12 +211,17 @@ public class CoursePersistence: CoursePersistenceProtocol {
             courseStart: structure.courseStart,
             courseSKU: structure.courseSKU,
             courseMode: DataLayer.Mode(rawValue: structure.mode ?? ""),
-            coursewareAccessDetails: coursewareAccessDetails
+            coursewareAccessDetails: coursewareAccessDetails,
+            courseProgress: DataLayer.CourseProgress(
+                assignmentsCompleted: Int(structure.assignmentsCompleted),
+                totalAssignmentsCount: Int(structure.totalAssignmentsCount)
+            )
         )
     }
     
     public func saveCourseStructure(structure: DataLayer.CourseStructure) {
         context.performAndWait {
+            context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
             let newStructure = CDCourseStructure(context: self.context)
             newStructure.certificate = structure.certificate?.url
             newStructure.mediaSmall = structure.media.image.small
@@ -136,6 +233,8 @@ public class CoursePersistence: CoursePersistenceProtocol {
             newStructure.courseStart = structure.courseStart
             newStructure.courseSKU = structure.courseSKU
             newStructure.mode = structure.courseMode?.rawValue
+            newStructure.totalAssignmentsCount = Int32(structure.courseProgress?.totalAssignmentsCount ?? 0)
+            newStructure.assignmentsCompleted = Int32(structure.courseProgress?.assignmentsCompleted ?? 0)
             
             if let accessDetails = structure.coursewareAccessDetails {
                 let newAccessDetails = CDCoursewareAccessDetails(context: self.context)
@@ -168,6 +267,18 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 courseDetail.type = block.type
                 courseDetail.completion = block.completion ?? 0
                 courseDetail.multiDevice = block.multiDevice ?? false
+                if let numPointsEarned = block.assignmentProgress?.numPointsEarned {
+                    courseDetail.numPointsEarned = numPointsEarned
+                }
+                if let numPointsPossible = block.assignmentProgress?.numPointsPossible {
+                    courseDetail.numPointsPossible = numPointsPossible
+                }
+                if let assignmentType = block.assignmentProgress?.assignmentType {
+                    courseDetail.assignmentType = assignmentType
+                }
+                if let due = block.due {
+                    courseDetail.due = due
+                }
 
                 if block.userViewData?.encodedVideo?.youTube != nil {
                     let youTube = CDCourseBlockVideo(context: self.context)

@@ -135,7 +135,7 @@ public struct CourseContainerView: View {
             courseDatesViewModel.resetEventState()
         }
     }
-
+    
     private func backButton(containerWidth: CGFloat) -> some View {
         ZStack(alignment: .topLeading) {
             if !collapsed {
@@ -372,6 +372,7 @@ struct CourseScreensView_Previews: PreviewProvider {
                 courseEnd: nil,
                 enrollmentStart: nil,
                 enrollmentEnd: nil,
+                lastVisitedBlockID: nil,
                 coreAnalytics: CoreAnalyticsMock()
             ),
             courseDatesViewModel: CourseDatesViewModel(
@@ -388,7 +389,7 @@ struct CourseScreensView_Previews: PreviewProvider {
             title: "Title of Course",
             org: "Org",
             courseRawImage: nil,
-            coursewareAccess: nil
+            coursewareAccess: nil,
         )
     }
 }

@@ -275,7 +275,7 @@ private struct CourseStateView: View {
                     )
                     viewModel.router.showCourseScreens(
                         courseID: courseDetails.courseID,
-                        isActive: nil,
+                        hasAccess: nil,
                         courseStart: courseDetails.courseStart,
                         courseEnd: courseDetails.courseEnd,
                         enrollmentStart: courseDetails.enrollmentStart,
@@ -283,7 +283,9 @@ private struct CourseStateView: View {
                         title: title,
                         org: courseDetails.org,
                         courseRawImage: courseDetails.courseRawImage,
-                        coursewareAccess: nil
+                        coursewareAccess: nil,
+                        showDates: false,
+                        lastVisitedBlockID: nil
                     )
                 }
             })

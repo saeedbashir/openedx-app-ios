@@ -231,7 +231,7 @@ extension DiscoveryWebviewViewModel: WebViewNavigationDelegate {
         
         router.showCourseScreens(
             courseID: courseDetails.courseID,
-            isActive: nil,
+            hasAccess: nil,
             courseStart: courseDetails.courseStart,
             courseEnd: courseDetails.courseEnd,
             enrollmentStart: courseDetails.enrollmentStart,
@@ -239,7 +239,9 @@ extension DiscoveryWebviewViewModel: WebViewNavigationDelegate {
             title: courseDetails.courseTitle,
             org: courseDetails.org,
             courseRawImage: courseDetails.courseRawImage,
-            coursewareAccess: nil
+            coursewareAccess: nil,
+            showDates: false,
+            lastVisitedBlockID: nil
         )
         
         return true

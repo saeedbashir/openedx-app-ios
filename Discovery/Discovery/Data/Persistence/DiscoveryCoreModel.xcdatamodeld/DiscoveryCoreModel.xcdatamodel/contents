@@ -30,6 +30,7 @@
         <attribute name="desc" optional="YES" attributeType="String"/>
         <attribute name="enrollmentEnd" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="enrollmentStart" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="hasAccess" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="imageURL" optional="YES" attributeType="String"/>
         <attribute name="isActive" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isSelfPaced" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
