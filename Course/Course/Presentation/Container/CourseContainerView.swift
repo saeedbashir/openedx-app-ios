@@ -178,6 +178,10 @@ public struct CourseContainerView: View {
                     shouldHideMenuBar: $viewModel.shouldHideMenuBar,
                     backAction: {
                         viewModel.router.back()
+                    },
+                    findAction: {
+                        viewModel.router.backToRoot(animated: true)
+                        viewModel.router.showTabScreen(tab: .discovery)
                     }
                 )
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -194,6 +198,10 @@ public struct CourseContainerView: View {
                         shouldHideMenuBar: $viewModel.shouldHideMenuBar,
                         backAction: {
                             viewModel.router.back()
+                        },
+                        findAction: {
+                            viewModel.router.backToRoot(animated: true)
+                            viewModel.router.showTabScreen(tab: .discovery)
                         }
                     )
                         .frame(maxWidth: .infinity, maxHeight: .infinity)

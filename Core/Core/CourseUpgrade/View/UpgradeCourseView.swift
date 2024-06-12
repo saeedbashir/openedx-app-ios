@@ -23,6 +23,7 @@ public struct UpgradeCourseView: View {
     @Binding private var shouldHideMenuBar: Bool
     private var backAction: (() -> Void)?
     @Environment(\.isHorizontal) private var isHorizontal
+    private let findAction:(() -> Void)?
     
     public init(
         type: CourseAccessErrorHelperType,
@@ -30,7 +31,8 @@ public struct UpgradeCourseView: View {
         collapsed: Binding<Bool>,
         shouldShowUpgradeButton: Binding<Bool>,
         shouldHideMenuBar: Binding<Bool>,
-        backAction: (() -> Void)?
+        backAction: (() -> Void)?,
+        findAction:(() -> Void)?
     ) {
         self.type = type
         self._coordinate = coordinate
@@ -38,6 +40,7 @@ public struct UpgradeCourseView: View {
         self._shouldShowUpgradeButton = shouldShowUpgradeButton
         self._shouldHideMenuBar = shouldHideMenuBar
         self.backAction = backAction
+        self.findAction = findAction
     }
 
     public var body: some View {
@@ -56,6 +59,9 @@ public struct UpgradeCourseView: View {
                         UpgradeInfoViewModel.self,
                         arguments: "", message, sku, courseID, screen, pacing
                     )!,
+                    findAction: {
+                        findAction?()
+                    },
                     headerView: {
                         VStack(spacing: 40) {
                             DynamicOffsetView(
@@ -126,7 +132,8 @@ public struct UpgradeCourseView: View {
             collapsed: .constant(false),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
-            backAction: nil
+            backAction: nil,
+            findAction: nil
         )
         UpgradeCourseView(
             type: .upgradeable(
@@ -140,7 +147,8 @@ public struct UpgradeCourseView: View {
             collapsed: .constant(false),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
-            backAction: nil
+            backAction: nil,
+            findAction: nil
         )
         UpgradeCourseView(
             type: .startDateError(date: .now),
@@ -148,7 +156,8 @@ public struct UpgradeCourseView: View {
             collapsed: .constant(false),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
-            backAction: nil
+            backAction: nil,
+            findAction: nil
         )
         UpgradeCourseView(
             type: .isEndDateOld(date: .now),
@@ -156,7 +165,8 @@ public struct UpgradeCourseView: View {
             collapsed: .constant(false),
             shouldShowUpgradeButton: .constant(true),
             shouldHideMenuBar: .constant(false),
-            backAction: nil
+            backAction: nil,
+            findAction: nil
         )
     }
 }

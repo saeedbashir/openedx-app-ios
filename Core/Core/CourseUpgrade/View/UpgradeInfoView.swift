@@ -11,17 +11,20 @@ import Theme
 public struct UpgradeInfoView<Content>: View where Content: View {
     let isFindCourseButtonVisible: Bool
     private let headerView: () -> Content
+    private let findAction: (() -> Void)?
     @StateObject var viewModel: UpgradeInfoViewModel
     
     public init(
         isFindCourseButtonVisible: Bool,
         image: Image? = nil,
         viewModel: UpgradeInfoViewModel,
+        findAction: (() -> Void)? = nil,
         @ViewBuilder headerView: @escaping () -> Content = {EmptyView()}
     ) {
         self.isFindCourseButtonVisible = isFindCourseButtonVisible
         self._viewModel = .init(wrappedValue: viewModel)
         self.headerView = headerView
+        self.findAction = findAction
     }
     
     private var shouldHideText: Bool {
@@ -67,7 +70,7 @@ public struct UpgradeInfoView<Content>: View where Content: View {
                 StyledButton(
                     CoreLocalization.CourseUpgrade.Button.findCourse,
                     action: {
-                        
+                        findAction?()
                     },
                     isTransparent: true,
                     isTitleTracking: false
@@ -122,7 +125,8 @@ public struct UpgradeInfoView<Content>: View where Content: View {
             pacing: "self",
             analytics: CoreAnalyticsMock(),
             router: BaseRouterMock()
-        )
+        ),
+        findAction: nil
     )
 }
 #endif
