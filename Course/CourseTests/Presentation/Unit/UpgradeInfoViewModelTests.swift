@@ -75,7 +75,8 @@ final class UpgradeInfoViewModelTests: XCTestCase {
     
     private func viewModel(with handler: CourseUpgradeHandlerProtocol) throws -> UpgradeInfoViewModel {
         return UpgradeInfoViewModel(
-            productName: "TestProduct",
+            productName: "TestProduct", 
+            message: "Message",
             sku: "sku1",
             courseID: "course1",
             screen: .dashboard,

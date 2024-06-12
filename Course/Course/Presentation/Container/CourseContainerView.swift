@@ -163,11 +163,15 @@ public struct CourseContainerView: View {
         }
     }
     
+    private var actualAccess: CoursewareAccess? {
+        viewModel.courseStructure?.coursewareAccessDetails?.coursewareAccess ?? coursewareAccess
+    }
+    
     private var tabs: some View {
         TabView(selection: $viewModel.selection) {
             if let courseStart = viewModel.courseStart, courseStart > Date() {
                 UpgradeCourseView(
-                    type: viewModel.type(for: coursewareAccess) ?? .startDateError(date: courseStart),
+                    type: viewModel.type(for: actualAccess) ?? .startDateError(date: courseStart),
                     coordinate: $coordinate,
                     collapsed: $collapsed,
                     shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
@@ -181,7 +185,7 @@ public struct CourseContainerView: View {
                         ignoreOffset = true
                     }
             } else {
-                if let type = viewModel.type(for: coursewareAccess) {
+                if let type = viewModel.type(for: actualAccess) {
                     UpgradeCourseView(
                         type: type,
                         coordinate: $coordinate,

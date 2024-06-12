@@ -612,10 +612,10 @@ open class BaseRouterMock: BaseRouter, Mock {
     }
 
     @MainActor
-	open func showUpgradeInfo(productName: String, sku: String, courseID: String, screen: CourseUpgradeScreen, pacing: String) {
-        addInvocation(.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`)))
-		let perform = methodPerformValue(.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`))) as? (String, String, String, CourseUpgradeScreen, String) -> Void
-		perform?(`productName`, `sku`, `courseID`, `screen`, `pacing`)
+	open func showUpgradeInfo(productName: String, message: String, sku: String, courseID: String, screen: CourseUpgradeScreen, pacing: String) {
+        addInvocation(.m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`message`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`)))
+		let perform = methodPerformValue(.m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`message`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`))) as? (String, String, String, String, CourseUpgradeScreen, String) -> Void
+		perform?(`productName`, `message`, `sku`, `courseID`, `screen`, `pacing`)
     }
 
     @MainActor
@@ -639,6 +639,20 @@ open class BaseRouterMock: BaseRouter, Mock {
 		perform?(`animated`)
     }
 
+    @MainActor
+	open func showRestoreProgressView() {
+        addInvocation(.m_showRestoreProgressView)
+		let perform = methodPerformValue(.m_showRestoreProgressView) as? () -> Void
+		perform?()
+    }
+
+    @MainActor
+	open func hideRestoreProgressView() {
+        addInvocation(.m_hideRestoreProgressView)
+		let perform = methodPerformValue(.m_hideRestoreProgressView) as? () -> Void
+		perform?()
+    }
+
 
     fileprivate enum MethodType {
         case m_backToRoot__animated_animated(Parameter<Bool>)
@@ -658,10 +672,12 @@ open class BaseRouterMock: BaseRouter, Mock {
         case m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(Parameter<UIModalTransitionStyle>, Parameter<any View>, Parameter<(() -> Void)?>)
         case m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(Parameter<UIModalTransitionStyle>, Parameter<Bool>, Parameter<() -> any View>)
         case m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>, Parameter<String?>, Parameter<[UIAlertAction]>)
-        case m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>, Parameter<String>, Parameter<String>, Parameter<CourseUpgradeScreen>, Parameter<String>)
+        case m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>, Parameter<String>, Parameter<String>, Parameter<String>, Parameter<CourseUpgradeScreen>, Parameter<String>)
         case m_hideUpgradeInfo__animated_animated(Parameter<Bool>)
         case m_showUpgradeLoaderView__animated_animated(Parameter<Bool>)
         case m_hideUpgradeLoaderView__animated_animated(Parameter<Bool>)
+        case m_showRestoreProgressView
+        case m_hideRestoreProgressView
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -761,9 +777,10 @@ open class BaseRouterMock: BaseRouter, Mock {
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsActions, rhs: rhsActions, with: matcher), lhsActions, rhsActions, "actions"))
 				return Matcher.ComparisonResult(results)
 
-            case (.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let lhsProductname, let lhsSku, let lhsCourseid, let lhsScreen, let lhsPacing), .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let rhsProductname, let rhsSku, let rhsCourseid, let rhsScreen, let rhsPacing)):
+            case (.m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(let lhsProductname, let lhsMessage, let lhsSku, let lhsCourseid, let lhsScreen, let lhsPacing), .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(let rhsProductname, let rhsMessage, let rhsSku, let rhsCourseid, let rhsScreen, let rhsPacing)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsProductname, rhs: rhsProductname, with: matcher), lhsProductname, rhsProductname, "productName"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsMessage, rhs: rhsMessage, with: matcher), lhsMessage, rhsMessage, "message"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsSku, rhs: rhsSku, with: matcher), lhsSku, rhsSku, "sku"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsCourseid, rhs: rhsCourseid, with: matcher), lhsCourseid, rhsCourseid, "courseID"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsScreen, rhs: rhsScreen, with: matcher), lhsScreen, rhsScreen, "screen"))
@@ -784,6 +801,10 @@ open class BaseRouterMock: BaseRouter, Mock {
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsAnimated, rhs: rhsAnimated, with: matcher), lhsAnimated, rhsAnimated, "animated"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_showRestoreProgressView, .m_showRestoreProgressView): return .match
+
+            case (.m_hideRestoreProgressView, .m_hideRestoreProgressView): return .match
             default: return .none
             }
         }
@@ -807,10 +828,12 @@ open class BaseRouterMock: BaseRouter, Mock {
             case let .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_presentNativeAlert__title_titlemessage_messageactions_actions(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
-            case let .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(p0, p1, p2, p3, p4): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue
+            case let .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(p0, p1, p2, p3, p4, p5): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue + p5.intValue
             case let .m_hideUpgradeInfo__animated_animated(p0): return p0.intValue
             case let .m_showUpgradeLoaderView__animated_animated(p0): return p0.intValue
             case let .m_hideUpgradeLoaderView__animated_animated(p0): return p0.intValue
+            case .m_showRestoreProgressView: return 0
+            case .m_hideRestoreProgressView: return 0
             }
         }
         func assertionName() -> String {
@@ -832,10 +855,12 @@ open class BaseRouterMock: BaseRouter, Mock {
             case .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion: return ".presentView(transitionStyle:view:completion:)"
             case .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content: return ".presentView(transitionStyle:animated:content:)"
             case .m_presentNativeAlert__title_titlemessage_messageactions_actions: return ".presentNativeAlert(title:message:actions:)"
-            case .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing: return ".showUpgradeInfo(productName:sku:courseID:screen:pacing:)"
+            case .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing: return ".showUpgradeInfo(productName:message:sku:courseID:screen:pacing:)"
             case .m_hideUpgradeInfo__animated_animated: return ".hideUpgradeInfo(animated:)"
             case .m_showUpgradeLoaderView__animated_animated: return ".showUpgradeLoaderView(animated:)"
             case .m_hideUpgradeLoaderView__animated_animated: return ".hideUpgradeLoaderView(animated:)"
+            case .m_showRestoreProgressView: return ".showRestoreProgressView()"
+            case .m_hideRestoreProgressView: return ".hideRestoreProgressView()"
             }
         }
     }
@@ -872,13 +897,17 @@ open class BaseRouterMock: BaseRouter, Mock {
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, animated: Parameter<Bool>, content: Parameter<() -> any View>) -> Verify { return Verify(method: .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(`transitionStyle`, `animated`, `content`))}
         public static func presentNativeAlert(title: Parameter<String?>, message: Parameter<String?>, actions: Parameter<[UIAlertAction]>) -> Verify { return Verify(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`))}
         @MainActor
-		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>) -> Verify { return Verify(method: .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `sku`, `courseID`, `screen`, `pacing`))}
+		public static func showUpgradeInfo(productName: Parameter<String>, message: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>) -> Verify { return Verify(method: .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `message`, `sku`, `courseID`, `screen`, `pacing`))}
         @MainActor
 		public static func hideUpgradeInfo(animated: Parameter<Bool>) -> Verify { return Verify(method: .m_hideUpgradeInfo__animated_animated(`animated`))}
         @MainActor
 		public static func showUpgradeLoaderView(animated: Parameter<Bool>) -> Verify { return Verify(method: .m_showUpgradeLoaderView__animated_animated(`animated`))}
         @MainActor
 		public static func hideUpgradeLoaderView(animated: Parameter<Bool>) -> Verify { return Verify(method: .m_hideUpgradeLoaderView__animated_animated(`animated`))}
+        @MainActor
+		public static func showRestoreProgressView() -> Verify { return Verify(method: .m_showRestoreProgressView)}
+        @MainActor
+		public static func hideRestoreProgressView() -> Verify { return Verify(method: .m_hideRestoreProgressView)}
     }
 
     public struct Perform {
@@ -937,8 +966,8 @@ open class BaseRouterMock: BaseRouter, Mock {
             return Perform(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`), performs: perform)
         }
         @MainActor
-		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>, perform: @escaping (String, String, String, CourseUpgradeScreen, String) -> Void) -> Perform {
-            return Perform(method: .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `sku`, `courseID`, `screen`, `pacing`), performs: perform)
+		public static func showUpgradeInfo(productName: Parameter<String>, message: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>, perform: @escaping (String, String, String, String, CourseUpgradeScreen, String) -> Void) -> Perform {
+            return Perform(method: .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `message`, `sku`, `courseID`, `screen`, `pacing`), performs: perform)
         }
         @MainActor
 		public static func hideUpgradeInfo(animated: Parameter<Bool>, perform: @escaping (Bool) -> Void) -> Perform {
@@ -951,6 +980,14 @@ open class BaseRouterMock: BaseRouter, Mock {
         @MainActor
 		public static func hideUpgradeLoaderView(animated: Parameter<Bool>, perform: @escaping (Bool) -> Void) -> Perform {
             return Perform(method: .m_hideUpgradeLoaderView__animated_animated(`animated`), performs: perform)
+        }
+        @MainActor
+		public static func showRestoreProgressView(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_showRestoreProgressView, performs: perform)
+        }
+        @MainActor
+		public static func hideRestoreProgressView(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_hideRestoreProgressView, performs: perform)
         }
     }
 
@@ -1953,10 +1990,17 @@ open class CourseUpgradeHelperProtocolMock: CourseUpgradeHelperProtocol, Mock {
 		perform?(`upgradeHadler`, `state`, `delegate`)
     }
 
+    open func showRestorePurchasesAlert() {
+        addInvocation(.m_showRestorePurchasesAlert)
+		let perform = methodPerformValue(.m_showRestorePurchasesAlert) as? () -> Void
+		perform?()
+    }
+
 
     fileprivate enum MethodType {
         case m_setData__courseID_courseIDpacing_pacingblockID_blockIDlocalizedCoursePrice_localizedCoursePricescreen_screen(Parameter<String>, Parameter<String>, Parameter<String?>, Parameter<String>, Parameter<CourseUpgradeScreen>)
         case m_handleCourseUpgrade__upgradeHadler_upgradeHadlerstate_statedelegate_delegate(Parameter<CourseUpgradeHandler>, Parameter<UpgradeCompletionState>, Parameter<CourseUpgradeHelperDelegate?>)
+        case m_showRestorePurchasesAlert
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -1975,6 +2019,8 @@ open class CourseUpgradeHelperProtocolMock: CourseUpgradeHelperProtocol, Mock {
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsState, rhs: rhsState, with: matcher), lhsState, rhsState, "state"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsDelegate, rhs: rhsDelegate, with: matcher), lhsDelegate, rhsDelegate, "delegate"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_showRestorePurchasesAlert, .m_showRestorePurchasesAlert): return .match
             default: return .none
             }
         }
@@ -1983,12 +2029,14 @@ open class CourseUpgradeHelperProtocolMock: CourseUpgradeHelperProtocol, Mock {
             switch self {
             case let .m_setData__courseID_courseIDpacing_pacingblockID_blockIDlocalizedCoursePrice_localizedCoursePricescreen_screen(p0, p1, p2, p3, p4): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue
             case let .m_handleCourseUpgrade__upgradeHadler_upgradeHadlerstate_statedelegate_delegate(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
+            case .m_showRestorePurchasesAlert: return 0
             }
         }
         func assertionName() -> String {
             switch self {
             case .m_setData__courseID_courseIDpacing_pacingblockID_blockIDlocalizedCoursePrice_localizedCoursePricescreen_screen: return ".setData(courseID:pacing:blockID:localizedCoursePrice:screen:)"
             case .m_handleCourseUpgrade__upgradeHadler_upgradeHadlerstate_statedelegate_delegate: return ".handleCourseUpgrade(upgradeHadler:state:delegate:)"
+            case .m_showRestorePurchasesAlert: return ".showRestorePurchasesAlert()"
             }
         }
     }
@@ -2009,6 +2057,7 @@ open class CourseUpgradeHelperProtocolMock: CourseUpgradeHelperProtocol, Mock {
 
         public static func setData(courseID: Parameter<String>, pacing: Parameter<String>, blockID: Parameter<String?>, localizedCoursePrice: Parameter<String>, screen: Parameter<CourseUpgradeScreen>) -> Verify { return Verify(method: .m_setData__courseID_courseIDpacing_pacingblockID_blockIDlocalizedCoursePrice_localizedCoursePricescreen_screen(`courseID`, `pacing`, `blockID`, `localizedCoursePrice`, `screen`))}
         public static func handleCourseUpgrade(upgradeHadler: Parameter<CourseUpgradeHandler>, state: Parameter<UpgradeCompletionState>, delegate: Parameter<CourseUpgradeHelperDelegate?>) -> Verify { return Verify(method: .m_handleCourseUpgrade__upgradeHadler_upgradeHadlerstate_statedelegate_delegate(`upgradeHadler`, `state`, `delegate`))}
+        public static func showRestorePurchasesAlert() -> Verify { return Verify(method: .m_showRestorePurchasesAlert)}
     }
 
     public struct Perform {
@@ -2020,6 +2069,9 @@ open class CourseUpgradeHelperProtocolMock: CourseUpgradeHelperProtocol, Mock {
         }
         public static func handleCourseUpgrade(upgradeHadler: Parameter<CourseUpgradeHandler>, state: Parameter<UpgradeCompletionState>, delegate: Parameter<CourseUpgradeHelperDelegate?>, perform: @escaping (CourseUpgradeHandler, UpgradeCompletionState, CourseUpgradeHelperDelegate?) -> Void) -> Perform {
             return Perform(method: .m_handleCourseUpgrade__upgradeHadler_upgradeHadlerstate_statedelegate_delegate(`upgradeHadler`, `state`, `delegate`), performs: perform)
+        }
+        public static func showRestorePurchasesAlert(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_showRestorePurchasesAlert, performs: perform)
         }
     }
 
@@ -3654,10 +3706,10 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
     }
 
     @MainActor
-	open func showUpgradeInfo(productName: String, sku: String, courseID: String, screen: CourseUpgradeScreen, pacing: String) {
-        addInvocation(.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`)))
-		let perform = methodPerformValue(.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`))) as? (String, String, String, CourseUpgradeScreen, String) -> Void
-		perform?(`productName`, `sku`, `courseID`, `screen`, `pacing`)
+	open func showUpgradeInfo(productName: String, message: String, sku: String, courseID: String, screen: CourseUpgradeScreen, pacing: String) {
+        addInvocation(.m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`message`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`)))
+		let perform = methodPerformValue(.m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>.value(`productName`), Parameter<String>.value(`message`), Parameter<String>.value(`sku`), Parameter<String>.value(`courseID`), Parameter<CourseUpgradeScreen>.value(`screen`), Parameter<String>.value(`pacing`))) as? (String, String, String, String, CourseUpgradeScreen, String) -> Void
+		perform?(`productName`, `message`, `sku`, `courseID`, `screen`, `pacing`)
     }
 
     @MainActor
@@ -3679,6 +3731,20 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
         addInvocation(.m_hideUpgradeLoaderView__animated_animated(Parameter<Bool>.value(`animated`)))
 		let perform = methodPerformValue(.m_hideUpgradeLoaderView__animated_animated(Parameter<Bool>.value(`animated`))) as? (Bool) -> Void
 		perform?(`animated`)
+    }
+
+    @MainActor
+	open func showRestoreProgressView() {
+        addInvocation(.m_showRestoreProgressView)
+		let perform = methodPerformValue(.m_showRestoreProgressView) as? () -> Void
+		perform?()
+    }
+
+    @MainActor
+	open func hideRestoreProgressView() {
+        addInvocation(.m_hideRestoreProgressView)
+		let perform = methodPerformValue(.m_hideRestoreProgressView) as? () -> Void
+		perform?()
     }
 
 
@@ -3706,10 +3772,12 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
         case m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(Parameter<UIModalTransitionStyle>, Parameter<any View>, Parameter<(() -> Void)?>)
         case m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(Parameter<UIModalTransitionStyle>, Parameter<Bool>, Parameter<() -> any View>)
         case m_presentNativeAlert__title_titlemessage_messageactions_actions(Parameter<String?>, Parameter<String?>, Parameter<[UIAlertAction]>)
-        case m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>, Parameter<String>, Parameter<String>, Parameter<CourseUpgradeScreen>, Parameter<String>)
+        case m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(Parameter<String>, Parameter<String>, Parameter<String>, Parameter<String>, Parameter<CourseUpgradeScreen>, Parameter<String>)
         case m_hideUpgradeInfo__animated_animated(Parameter<Bool>)
         case m_showUpgradeLoaderView__animated_animated(Parameter<Bool>)
         case m_hideUpgradeLoaderView__animated_animated(Parameter<Bool>)
+        case m_showRestoreProgressView
+        case m_hideRestoreProgressView
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -3854,9 +3922,10 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsActions, rhs: rhsActions, with: matcher), lhsActions, rhsActions, "actions"))
 				return Matcher.ComparisonResult(results)
 
-            case (.m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let lhsProductname, let lhsSku, let lhsCourseid, let lhsScreen, let lhsPacing), .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(let rhsProductname, let rhsSku, let rhsCourseid, let rhsScreen, let rhsPacing)):
+            case (.m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(let lhsProductname, let lhsMessage, let lhsSku, let lhsCourseid, let lhsScreen, let lhsPacing), .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(let rhsProductname, let rhsMessage, let rhsSku, let rhsCourseid, let rhsScreen, let rhsPacing)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsProductname, rhs: rhsProductname, with: matcher), lhsProductname, rhsProductname, "productName"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsMessage, rhs: rhsMessage, with: matcher), lhsMessage, rhsMessage, "message"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsSku, rhs: rhsSku, with: matcher), lhsSku, rhsSku, "sku"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsCourseid, rhs: rhsCourseid, with: matcher), lhsCourseid, rhsCourseid, "courseID"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsScreen, rhs: rhsScreen, with: matcher), lhsScreen, rhsScreen, "screen"))
@@ -3877,6 +3946,10 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsAnimated, rhs: rhsAnimated, with: matcher), lhsAnimated, rhsAnimated, "animated"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_showRestoreProgressView, .m_showRestoreProgressView): return .match
+
+            case (.m_hideRestoreProgressView, .m_hideRestoreProgressView): return .match
             default: return .none
             }
         }
@@ -3906,10 +3979,12 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
             case let .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_presentNativeAlert__title_titlemessage_messageactions_actions(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
-            case let .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(p0, p1, p2, p3, p4): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue
+            case let .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(p0, p1, p2, p3, p4, p5): return p0.intValue + p1.intValue + p2.intValue + p3.intValue + p4.intValue + p5.intValue
             case let .m_hideUpgradeInfo__animated_animated(p0): return p0.intValue
             case let .m_showUpgradeLoaderView__animated_animated(p0): return p0.intValue
             case let .m_hideUpgradeLoaderView__animated_animated(p0): return p0.intValue
+            case .m_showRestoreProgressView: return 0
+            case .m_hideRestoreProgressView: return 0
             }
         }
         func assertionName() -> String {
@@ -3937,10 +4012,12 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
             case .m_presentView__transitionStyle_transitionStyleview_viewcompletion_completion: return ".presentView(transitionStyle:view:completion:)"
             case .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content: return ".presentView(transitionStyle:animated:content:)"
             case .m_presentNativeAlert__title_titlemessage_messageactions_actions: return ".presentNativeAlert(title:message:actions:)"
-            case .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing: return ".showUpgradeInfo(productName:sku:courseID:screen:pacing:)"
+            case .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing: return ".showUpgradeInfo(productName:message:sku:courseID:screen:pacing:)"
             case .m_hideUpgradeInfo__animated_animated: return ".hideUpgradeInfo(animated:)"
             case .m_showUpgradeLoaderView__animated_animated: return ".showUpgradeLoaderView(animated:)"
             case .m_hideUpgradeLoaderView__animated_animated: return ".hideUpgradeLoaderView(animated:)"
+            case .m_showRestoreProgressView: return ".showRestoreProgressView()"
+            case .m_hideRestoreProgressView: return ".hideRestoreProgressView()"
             }
         }
     }
@@ -3983,13 +4060,17 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
         public static func presentView(transitionStyle: Parameter<UIModalTransitionStyle>, animated: Parameter<Bool>, content: Parameter<() -> any View>) -> Verify { return Verify(method: .m_presentView__transitionStyle_transitionStyleanimated_animatedcontent_content(`transitionStyle`, `animated`, `content`))}
         public static func presentNativeAlert(title: Parameter<String?>, message: Parameter<String?>, actions: Parameter<[UIAlertAction]>) -> Verify { return Verify(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`))}
         @MainActor
-		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>) -> Verify { return Verify(method: .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `sku`, `courseID`, `screen`, `pacing`))}
+		public static func showUpgradeInfo(productName: Parameter<String>, message: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>) -> Verify { return Verify(method: .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `message`, `sku`, `courseID`, `screen`, `pacing`))}
         @MainActor
 		public static func hideUpgradeInfo(animated: Parameter<Bool>) -> Verify { return Verify(method: .m_hideUpgradeInfo__animated_animated(`animated`))}
         @MainActor
 		public static func showUpgradeLoaderView(animated: Parameter<Bool>) -> Verify { return Verify(method: .m_showUpgradeLoaderView__animated_animated(`animated`))}
         @MainActor
 		public static func hideUpgradeLoaderView(animated: Parameter<Bool>) -> Verify { return Verify(method: .m_hideUpgradeLoaderView__animated_animated(`animated`))}
+        @MainActor
+		public static func showRestoreProgressView() -> Verify { return Verify(method: .m_showRestoreProgressView)}
+        @MainActor
+		public static func hideRestoreProgressView() -> Verify { return Verify(method: .m_hideRestoreProgressView)}
     }
 
     public struct Perform {
@@ -4066,8 +4147,8 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
             return Perform(method: .m_presentNativeAlert__title_titlemessage_messageactions_actions(`title`, `message`, `actions`), performs: perform)
         }
         @MainActor
-		public static func showUpgradeInfo(productName: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>, perform: @escaping (String, String, String, CourseUpgradeScreen, String) -> Void) -> Perform {
-            return Perform(method: .m_showUpgradeInfo__productName_productNamesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `sku`, `courseID`, `screen`, `pacing`), performs: perform)
+		public static func showUpgradeInfo(productName: Parameter<String>, message: Parameter<String>, sku: Parameter<String>, courseID: Parameter<String>, screen: Parameter<CourseUpgradeScreen>, pacing: Parameter<String>, perform: @escaping (String, String, String, String, CourseUpgradeScreen, String) -> Void) -> Perform {
+            return Perform(method: .m_showUpgradeInfo__productName_productNamemessage_messagesku_skucourseID_courseIDscreen_screenpacing_pacing(`productName`, `message`, `sku`, `courseID`, `screen`, `pacing`), performs: perform)
         }
         @MainActor
 		public static func hideUpgradeInfo(animated: Parameter<Bool>, perform: @escaping (Bool) -> Void) -> Perform {
@@ -4080,6 +4161,14 @@ open class DiscussionRouterMock: DiscussionRouter, Mock {
         @MainActor
 		public static func hideUpgradeLoaderView(animated: Parameter<Bool>, perform: @escaping (Bool) -> Void) -> Perform {
             return Perform(method: .m_hideUpgradeLoaderView__animated_animated(`animated`), performs: perform)
+        }
+        @MainActor
+		public static func showRestoreProgressView(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_showRestoreProgressView, performs: perform)
+        }
+        @MainActor
+		public static func hideRestoreProgressView(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_hideRestoreProgressView, performs: perform)
         }
     }
 

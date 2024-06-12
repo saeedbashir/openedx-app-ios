@@ -332,7 +332,6 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                 return .startDateError(date: courseStart)
             case .auditExpired:
                 guard let courseStructure, let courseID else { return nil }
-                //(date: Date?, sku: String, courseID: String, pacing: String, screen: CourseUpgradeScreen)
                 return .auditExpired(
                     date: courseEnd,
                     sku: courseStructure.sku ?? "",
