@@ -25,11 +25,13 @@ public protocol ConfigProtocol {
     var theme: ThemeConfig { get }
     var uiComponents: UIComponentsConfig { get }
     var discovery: DiscoveryConfig { get }
+    var dashboard: DashboardConfig { get }
     var braze: BrazeConfig { get }
     var branch: BranchConfig { get }
     var segment: SegmentConfig { get }
     var program: DiscoveryConfig { get }
     var URIScheme: String { get }
+    var fullStory: FullStoryConfig { get }
 }
 
 public enum TokenType: String {

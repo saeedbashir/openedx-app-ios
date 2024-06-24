@@ -25,14 +25,16 @@ public class CoursePersistence: CoursePersistenceProtocol {
                            org: $0.org ?? "",
                            shortDescription: $0.desc ?? "",
                            imageURL: $0.imageURL ?? "",
-                           isActive: $0.isActive,
+                           hasAccess: $0.hasAccess,
                            courseStart: $0.courseStart,
                            courseEnd: $0.courseEnd,
                            enrollmentStart: $0.enrollmentStart,
                            enrollmentEnd: $0.enrollmentEnd,
                            courseID: $0.courseID ?? "",
                            numPages: Int($0.numPages),
-                           coursesCount: Int($0.courseCount))}
+                           coursesCount: Int($0.courseCount),
+                           progressEarned: 0,
+                           progressPossible: 0)}
         if let result, !result.isEmpty {
             return result
         } else {
@@ -48,9 +50,7 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 newItem.org = item.org
                 newItem.desc = item.shortDescription
                 newItem.imageURL = item.imageURL
-                if let isActive = item.isActive {
-                    newItem.isActive = isActive
-                }
+                newItem.hasAccess = item.hasAccess
                 newItem.courseStart = item.courseStart
                 newItem.courseEnd = item.courseEnd
                 newItem.enrollmentStart = item.enrollmentStart
@@ -75,7 +75,7 @@ public class CoursePersistence: CoursePersistenceProtocol {
         
         let requestBlocks = CDCourseBlock.fetchRequest()
         requestBlocks.predicate = NSPredicate(format: "courseID = %@", courseID)
-
+        
         let blocks = try? context.fetch(requestBlocks).map {
             let userViewData = DataLayer.CourseDetailUserViewData(
                 transcripts: $0.transcripts?.jsonStringToDictionary() as? [String: String],
@@ -111,6 +111,7 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 blockId: $0.blockId ?? "",
                 id: $0.id ?? "",
                 graded: $0.graded,
+                due: $0.due,
                 completion: $0.completion,
                 studentUrl: $0.studentUrl ?? "",
                 webUrl: $0.webUrl ?? "",
@@ -119,7 +120,12 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 descendants: $0.descendants,
                 allSources: $0.allSources,
                 userViewData: userViewData,
-                multiDevice: $0.multiDevice
+                multiDevice: $0.multiDevice,
+                assignmentProgress: DataLayer.AssignmentProgress(
+                    assignmentType: $0.assignmentType,
+                    numPointsEarned: $0.numPointsEarned,
+                    numPointsPossible: $0.numPointsPossible
+                )
             )
         }
         
@@ -140,12 +146,17 @@ public class CoursePersistence: CoursePersistenceProtocol {
             ),
             certificate: DataLayer.Certificate(url: structure.certificate),
             org: structure.org ?? "",
-            isSelfPaced: structure.isSelfPaced
+            isSelfPaced: structure.isSelfPaced,
+            courseProgress: DataLayer.CourseProgress(
+                assignmentsCompleted: Int(structure.assignmentsCompleted),
+                totalAssignmentsCount: Int(structure.totalAssignmentsCount)
+            )
         )
     }
     
     public func saveCourseStructure(structure: DataLayer.CourseStructure) {
         context.performAndWait {
+            context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
             let newStructure = CDCourseStructure(context: self.context)
             newStructure.certificate = structure.certificate?.url
             newStructure.mediaSmall = structure.media.image.small
@@ -154,6 +165,8 @@ public class CoursePersistence: CoursePersistenceProtocol {
             newStructure.id = structure.id
             newStructure.rootItem = structure.rootItem
             newStructure.isSelfPaced = structure.isSelfPaced
+            newStructure.totalAssignmentsCount = Int32(structure.courseProgress?.totalAssignmentsCount ?? 0)
+            newStructure.assignmentsCompleted = Int32(structure.courseProgress?.assignmentsCompleted ?? 0)
             
             for block in Array(structure.dict.values) {
                 let courseDetail = CDCourseBlock(context: self.context)
@@ -168,6 +181,18 @@ public class CoursePersistence: CoursePersistenceProtocol {
                 courseDetail.type = block.type
                 courseDetail.completion = block.completion ?? 0
                 courseDetail.multiDevice = block.multiDevice ?? false
+                if let numPointsEarned = block.assignmentProgress?.numPointsEarned {
+                    courseDetail.numPointsEarned = numPointsEarned
+                }
+                if let numPointsPossible = block.assignmentProgress?.numPointsPossible {
+                    courseDetail.numPointsPossible = numPointsPossible
+                }
+                if let assignmentType = block.assignmentProgress?.assignmentType {
+                    courseDetail.assignmentType = assignmentType
+                }
+                if let due = block.due {
+                    courseDetail.due = due
+                }
 
                 if block.userViewData?.encodedVideo?.youTube != nil {
                     let youTube = CDCourseBlockVideo(context: self.context)

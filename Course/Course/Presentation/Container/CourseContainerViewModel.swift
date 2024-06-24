@@ -14,13 +14,14 @@ public enum CourseTab: Int, CaseIterable, Identifiable {
     public var id: Int {
         rawValue
     }
-
     case course
     case videos
-    case discussion
     case dates
+    case discussion
     case handounds
+}
 
+extension CourseTab {
     public var title: String {
         switch self {
         case .course:
@@ -54,7 +55,7 @@ public enum CourseTab: Int, CaseIterable, Identifiable {
 
 public class CourseContainerViewModel: BaseCourseViewModel {
 
-    @Published public var selection: Int = CourseTab.course.rawValue
+    @Published public var selection: Int
     @Published var isShowProgress = true
     @Published var isShowRefresh = false
     @Published var courseStructure: CourseStructure?
@@ -67,6 +68,9 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     @Published var userSettings: UserSettings?
     @Published var isInternetAvaliable: Bool = true
     @Published var dueDatesShifted: Bool = false
+    @Published var updateCourseProgress: Bool = false
+    
+    let completionPublisher = NotificationCenter.default.publisher(for: .onblockCompletionRequested)
 
     var errorMessage: String? {
         didSet {
@@ -85,6 +89,7 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     let courseEnd: Date?
     let enrollmentStart: Date?
     let enrollmentEnd: Date?
+    let lastVisitedBlockID: String?
 
     var courseDownloadTasks: [DownloadDataTask] = []
     private(set) var waitingDownloads: [CourseBlock]?
@@ -109,7 +114,9 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         courseEnd: Date?,
         enrollmentStart: Date?,
         enrollmentEnd: Date?,
-        coreAnalytics: CoreAnalytics
+        lastVisitedBlockID: String?,
+        coreAnalytics: CoreAnalytics,
+        selection: CourseTab = CourseTab.course
     ) {
         self.interactor = interactor
         self.authInteractor = authInteractor
@@ -125,10 +132,48 @@ public class CourseContainerViewModel: BaseCourseViewModel {
         self.storage = storage
         self.userSettings = storage.userSettings
         self.isInternetAvaliable = connectivity.isInternetAvaliable
+        self.lastVisitedBlockID = lastVisitedBlockID
         self.coreAnalytics = coreAnalytics
+        self.selection = selection.rawValue
 
         super.init(manager: manager)
         addObservers()
+    }
+    
+    func updateCourseIfNeeded(courseID: String) async {
+        if updateCourseProgress {
+            await getCourseBlocks(courseID: courseID, withProgress: false)
+            updateCourseProgress = false
+        }
+    }
+
+    func openLastVisitedBlock() {
+        guard let continueWith = continueWith,
+              let courseStructure = courseStructure else { return }
+        let chapter = courseStructure.childs[continueWith.chapterIndex]
+        let sequential = chapter.childs[continueWith.sequentialIndex]
+        let continueUnit = sequential.childs[continueWith.verticalIndex]
+        
+        var continueBlock: CourseBlock?
+        continueUnit.childs.forEach { block in
+            if block.id == continueWith.lastVisitedBlockId {
+                continueBlock = block
+            }
+        }
+        
+        trackResumeCourseClicked(
+            blockId: continueBlock?.id ?? ""
+        )
+        
+        router.showCourseUnit(
+            courseName: courseStructure.displayName,
+            blockId: continueBlock?.id ?? "",
+            courseID: courseStructure.id,
+            verticalIndex: continueWith.verticalIndex,
+            chapters: courseStructure.childs,
+            chapterIndex: continueWith.chapterIndex,
+            sequentialIndex: continueWith.sequentialIndex
+        )
     }
     
     @MainActor
@@ -144,13 +189,10 @@ public class CourseContainerViewModel: BaseCourseViewModel {
                 isShowProgress = false
                 isShowRefresh = false
                 if let courseStructure {
-                    let continueWith = try await getResumeBlock(
+                    try await getResumeBlock(
                         courseID: courseID,
                         courseStructure: courseStructure
                     )
-                    withAnimation {
-                        self.continueWith = continueWith
-                    }
                 }
             } else {
                 courseStructure = try await interactor.getLoadedCourseBlocks(courseID: courseID)
@@ -237,12 +279,22 @@ public class CourseContainerViewModel: BaseCourseViewModel {
     }
     
     @MainActor
-    private func getResumeBlock(courseID: String, courseStructure: CourseStructure) async throws -> ContinueWith? {
-        let result = try await interactor.resumeBlock(courseID: courseID)
-        return findContinueVertical(
-            blockID: result.blockID,
-            courseStructure: courseStructure
-        )
+    private func getResumeBlock(courseID: String, courseStructure: CourseStructure) async throws {
+        if let lastVisitedBlockID {
+            self.continueWith = findContinueVertical(
+                blockID: lastVisitedBlockID,
+                courseStructure: courseStructure
+            )
+            openLastVisitedBlock()
+        } else {
+            let result = try await interactor.resumeBlock(courseID: courseID)
+            withAnimation {
+                self.continueWith = findContinueVertical(
+                    blockID: result.blockID,
+                    courseStructure: courseStructure
+                )
+            }
+        }
     }
 
     @MainActor
@@ -565,6 +617,13 @@ public class CourseContainerViewModel: BaseCourseViewModel {
             selector: #selector(handleShiftDueDates),
             name: .shiftCourseDates, object: nil
         )
+        
+        completionPublisher
+              .sink { [weak self] _ in
+                  guard let self = self else { return }
+                  updateCourseProgress = true
+              }
+              .store(in: &cancellables)
     }
     
     deinit {

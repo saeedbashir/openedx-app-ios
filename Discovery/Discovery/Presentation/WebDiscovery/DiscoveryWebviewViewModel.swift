@@ -187,7 +187,7 @@ extension DiscoveryWebviewViewModel: WebViewNavigationDelegate {
             
         case .programDetail:
             guard let pathID = programDetailPathId(from: url) else { return false }
-            analytics.discoveryEvent(event: .discoveryProgramInfo, biValue: .discoveryProgramInfo)
+            analytics.discoveryScreenEvent(event: .discoveryProgramInfo, biValue: .discoveryProgramInfo)
             router.showWebDiscoveryDetails(
                 pathID: pathID,
                 discoveryType: .programDetail(pathID),
@@ -231,12 +231,14 @@ extension DiscoveryWebviewViewModel: WebViewNavigationDelegate {
         
         router.showCourseScreens(
             courseID: courseDetails.courseID,
-            isActive: nil,
+            hasAccess: nil,
             courseStart: courseDetails.courseStart,
             courseEnd: courseDetails.courseEnd,
             enrollmentStart: courseDetails.enrollmentStart,
             enrollmentEnd: courseDetails.enrollmentEnd,
-            title: courseDetails.courseTitle
+            title: courseDetails.courseTitle,
+            showDates: false,
+            lastVisitedBlockID: nil
         )
         
         return true

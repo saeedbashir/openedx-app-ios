@@ -1171,6 +1171,18 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
 		perform?(`event`, `biValue`, `parameters`)
     }
 
+    open func trackScreenEvent(_ event: AnalyticsEvent, parameters: [String: Any]?) {
+        addInvocation(.m_trackScreenEvent__eventparameters_parameters(Parameter<AnalyticsEvent>.value(`event`), Parameter<[String: Any]?>.value(`parameters`)))
+		let perform = methodPerformValue(.m_trackScreenEvent__eventparameters_parameters(Parameter<AnalyticsEvent>.value(`event`), Parameter<[String: Any]?>.value(`parameters`))) as? (AnalyticsEvent, [String: Any]?) -> Void
+		perform?(`event`, `parameters`)
+    }
+
+    open func trackScreenEvent(_ event: AnalyticsEvent, biValue: EventBIValue, parameters: [String: Any]?) {
+        addInvocation(.m_trackScreenEvent__eventbiValue_biValueparameters_parameters(Parameter<AnalyticsEvent>.value(`event`), Parameter<EventBIValue>.value(`biValue`), Parameter<[String: Any]?>.value(`parameters`)))
+		let perform = methodPerformValue(.m_trackScreenEvent__eventbiValue_biValueparameters_parameters(Parameter<AnalyticsEvent>.value(`event`), Parameter<EventBIValue>.value(`biValue`), Parameter<[String: Any]?>.value(`parameters`))) as? (AnalyticsEvent, EventBIValue, [String: Any]?) -> Void
+		perform?(`event`, `biValue`, `parameters`)
+    }
+
     open func appreview(_ event: AnalyticsEvent, biValue: EventBIValue, action: String?, rating: Int?) {
         addInvocation(.m_appreview__eventbiValue_biValueaction_actionrating_rating(Parameter<AnalyticsEvent>.value(`event`), Parameter<EventBIValue>.value(`biValue`), Parameter<String?>.value(`action`), Parameter<Int?>.value(`rating`)))
 		let perform = methodPerformValue(.m_appreview__eventbiValue_biValueaction_actionrating_rating(Parameter<AnalyticsEvent>.value(`event`), Parameter<EventBIValue>.value(`biValue`), Parameter<String?>.value(`action`), Parameter<Int?>.value(`rating`))) as? (AnalyticsEvent, EventBIValue, String?, Int?) -> Void
@@ -1195,14 +1207,30 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
 		perform?(`event`, `biValue`)
     }
 
+    open func trackScreenEvent(_ event: AnalyticsEvent) {
+        addInvocation(.m_trackScreenEvent__event(Parameter<AnalyticsEvent>.value(`event`)))
+		let perform = methodPerformValue(.m_trackScreenEvent__event(Parameter<AnalyticsEvent>.value(`event`))) as? (AnalyticsEvent) -> Void
+		perform?(`event`)
+    }
+
+    open func trackScreenEvent(_ event: AnalyticsEvent, biValue: EventBIValue) {
+        addInvocation(.m_trackScreenEvent__eventbiValue_biValue(Parameter<AnalyticsEvent>.value(`event`), Parameter<EventBIValue>.value(`biValue`)))
+		let perform = methodPerformValue(.m_trackScreenEvent__eventbiValue_biValue(Parameter<AnalyticsEvent>.value(`event`), Parameter<EventBIValue>.value(`biValue`))) as? (AnalyticsEvent, EventBIValue) -> Void
+		perform?(`event`, `biValue`)
+    }
+
 
     fileprivate enum MethodType {
         case m_trackEvent__eventparameters_parameters(Parameter<AnalyticsEvent>, Parameter<[String: Any]?>)
         case m_trackEvent__eventbiValue_biValueparameters_parameters(Parameter<AnalyticsEvent>, Parameter<EventBIValue>, Parameter<[String: Any]?>)
+        case m_trackScreenEvent__eventparameters_parameters(Parameter<AnalyticsEvent>, Parameter<[String: Any]?>)
+        case m_trackScreenEvent__eventbiValue_biValueparameters_parameters(Parameter<AnalyticsEvent>, Parameter<EventBIValue>, Parameter<[String: Any]?>)
         case m_appreview__eventbiValue_biValueaction_actionrating_rating(Parameter<AnalyticsEvent>, Parameter<EventBIValue>, Parameter<String?>, Parameter<Int?>)
         case m_videoQualityChanged__eventbivalue_bivaluevalue_valueoldValue_oldValue(Parameter<AnalyticsEvent>, Parameter<EventBIValue>, Parameter<String>, Parameter<String>)
         case m_trackEvent__event(Parameter<AnalyticsEvent>)
         case m_trackEvent__eventbiValue_biValue(Parameter<AnalyticsEvent>, Parameter<EventBIValue>)
+        case m_trackScreenEvent__event(Parameter<AnalyticsEvent>)
+        case m_trackScreenEvent__eventbiValue_biValue(Parameter<AnalyticsEvent>, Parameter<EventBIValue>)
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
@@ -1213,6 +1241,19 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
 				return Matcher.ComparisonResult(results)
 
             case (.m_trackEvent__eventbiValue_biValueparameters_parameters(let lhsEvent, let lhsBivalue, let lhsParameters), .m_trackEvent__eventbiValue_biValueparameters_parameters(let rhsEvent, let rhsBivalue, let rhsParameters)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsEvent, rhs: rhsEvent, with: matcher), lhsEvent, rhsEvent, "_ event"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsBivalue, rhs: rhsBivalue, with: matcher), lhsBivalue, rhsBivalue, "biValue"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsParameters, rhs: rhsParameters, with: matcher), lhsParameters, rhsParameters, "parameters"))
+				return Matcher.ComparisonResult(results)
+
+            case (.m_trackScreenEvent__eventparameters_parameters(let lhsEvent, let lhsParameters), .m_trackScreenEvent__eventparameters_parameters(let rhsEvent, let rhsParameters)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsEvent, rhs: rhsEvent, with: matcher), lhsEvent, rhsEvent, "_ event"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsParameters, rhs: rhsParameters, with: matcher), lhsParameters, rhsParameters, "parameters"))
+				return Matcher.ComparisonResult(results)
+
+            case (.m_trackScreenEvent__eventbiValue_biValueparameters_parameters(let lhsEvent, let lhsBivalue, let lhsParameters), .m_trackScreenEvent__eventbiValue_biValueparameters_parameters(let rhsEvent, let rhsBivalue, let rhsParameters)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsEvent, rhs: rhsEvent, with: matcher), lhsEvent, rhsEvent, "_ event"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsBivalue, rhs: rhsBivalue, with: matcher), lhsBivalue, rhsBivalue, "biValue"))
@@ -1245,6 +1286,17 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsEvent, rhs: rhsEvent, with: matcher), lhsEvent, rhsEvent, "_ event"))
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsBivalue, rhs: rhsBivalue, with: matcher), lhsBivalue, rhsBivalue, "biValue"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_trackScreenEvent__event(let lhsEvent), .m_trackScreenEvent__event(let rhsEvent)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsEvent, rhs: rhsEvent, with: matcher), lhsEvent, rhsEvent, "_ event"))
+				return Matcher.ComparisonResult(results)
+
+            case (.m_trackScreenEvent__eventbiValue_biValue(let lhsEvent, let lhsBivalue), .m_trackScreenEvent__eventbiValue_biValue(let rhsEvent, let rhsBivalue)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsEvent, rhs: rhsEvent, with: matcher), lhsEvent, rhsEvent, "_ event"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsBivalue, rhs: rhsBivalue, with: matcher), lhsBivalue, rhsBivalue, "biValue"))
+				return Matcher.ComparisonResult(results)
             default: return .none
             }
         }
@@ -1253,20 +1305,28 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
             switch self {
             case let .m_trackEvent__eventparameters_parameters(p0, p1): return p0.intValue + p1.intValue
             case let .m_trackEvent__eventbiValue_biValueparameters_parameters(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
+            case let .m_trackScreenEvent__eventparameters_parameters(p0, p1): return p0.intValue + p1.intValue
+            case let .m_trackScreenEvent__eventbiValue_biValueparameters_parameters(p0, p1, p2): return p0.intValue + p1.intValue + p2.intValue
             case let .m_appreview__eventbiValue_biValueaction_actionrating_rating(p0, p1, p2, p3): return p0.intValue + p1.intValue + p2.intValue + p3.intValue
             case let .m_videoQualityChanged__eventbivalue_bivaluevalue_valueoldValue_oldValue(p0, p1, p2, p3): return p0.intValue + p1.intValue + p2.intValue + p3.intValue
             case let .m_trackEvent__event(p0): return p0.intValue
             case let .m_trackEvent__eventbiValue_biValue(p0, p1): return p0.intValue + p1.intValue
+            case let .m_trackScreenEvent__event(p0): return p0.intValue
+            case let .m_trackScreenEvent__eventbiValue_biValue(p0, p1): return p0.intValue + p1.intValue
             }
         }
         func assertionName() -> String {
             switch self {
             case .m_trackEvent__eventparameters_parameters: return ".trackEvent(_:parameters:)"
             case .m_trackEvent__eventbiValue_biValueparameters_parameters: return ".trackEvent(_:biValue:parameters:)"
+            case .m_trackScreenEvent__eventparameters_parameters: return ".trackScreenEvent(_:parameters:)"
+            case .m_trackScreenEvent__eventbiValue_biValueparameters_parameters: return ".trackScreenEvent(_:biValue:parameters:)"
             case .m_appreview__eventbiValue_biValueaction_actionrating_rating: return ".appreview(_:biValue:action:rating:)"
             case .m_videoQualityChanged__eventbivalue_bivaluevalue_valueoldValue_oldValue: return ".videoQualityChanged(_:bivalue:value:oldValue:)"
             case .m_trackEvent__event: return ".trackEvent(_:)"
             case .m_trackEvent__eventbiValue_biValue: return ".trackEvent(_:biValue:)"
+            case .m_trackScreenEvent__event: return ".trackScreenEvent(_:)"
+            case .m_trackScreenEvent__eventbiValue_biValue: return ".trackScreenEvent(_:biValue:)"
             }
         }
     }
@@ -1287,10 +1347,14 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
 
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>, parameters: Parameter<[String: Any]?>) -> Verify { return Verify(method: .m_trackEvent__eventparameters_parameters(`event`, `parameters`))}
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, parameters: Parameter<[String: Any]?>) -> Verify { return Verify(method: .m_trackEvent__eventbiValue_biValueparameters_parameters(`event`, `biValue`, `parameters`))}
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>, parameters: Parameter<[String: Any]?>) -> Verify { return Verify(method: .m_trackScreenEvent__eventparameters_parameters(`event`, `parameters`))}
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, parameters: Parameter<[String: Any]?>) -> Verify { return Verify(method: .m_trackScreenEvent__eventbiValue_biValueparameters_parameters(`event`, `biValue`, `parameters`))}
         public static func appreview(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, action: Parameter<String?>, rating: Parameter<Int?>) -> Verify { return Verify(method: .m_appreview__eventbiValue_biValueaction_actionrating_rating(`event`, `biValue`, `action`, `rating`))}
         public static func videoQualityChanged(_ event: Parameter<AnalyticsEvent>, bivalue: Parameter<EventBIValue>, value: Parameter<String>, oldValue: Parameter<String>) -> Verify { return Verify(method: .m_videoQualityChanged__eventbivalue_bivaluevalue_valueoldValue_oldValue(`event`, `bivalue`, `value`, `oldValue`))}
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>) -> Verify { return Verify(method: .m_trackEvent__event(`event`))}
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>) -> Verify { return Verify(method: .m_trackEvent__eventbiValue_biValue(`event`, `biValue`))}
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>) -> Verify { return Verify(method: .m_trackScreenEvent__event(`event`))}
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>) -> Verify { return Verify(method: .m_trackScreenEvent__eventbiValue_biValue(`event`, `biValue`))}
     }
 
     public struct Perform {
@@ -1303,6 +1367,12 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, parameters: Parameter<[String: Any]?>, perform: @escaping (AnalyticsEvent, EventBIValue, [String: Any]?) -> Void) -> Perform {
             return Perform(method: .m_trackEvent__eventbiValue_biValueparameters_parameters(`event`, `biValue`, `parameters`), performs: perform)
         }
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>, parameters: Parameter<[String: Any]?>, perform: @escaping (AnalyticsEvent, [String: Any]?) -> Void) -> Perform {
+            return Perform(method: .m_trackScreenEvent__eventparameters_parameters(`event`, `parameters`), performs: perform)
+        }
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, parameters: Parameter<[String: Any]?>, perform: @escaping (AnalyticsEvent, EventBIValue, [String: Any]?) -> Void) -> Perform {
+            return Perform(method: .m_trackScreenEvent__eventbiValue_biValueparameters_parameters(`event`, `biValue`, `parameters`), performs: perform)
+        }
         public static func appreview(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, action: Parameter<String?>, rating: Parameter<Int?>, perform: @escaping (AnalyticsEvent, EventBIValue, String?, Int?) -> Void) -> Perform {
             return Perform(method: .m_appreview__eventbiValue_biValueaction_actionrating_rating(`event`, `biValue`, `action`, `rating`), performs: perform)
         }
@@ -1314,6 +1384,12 @@ open class CoreAnalyticsMock: CoreAnalytics, Mock {
         }
         public static func trackEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, perform: @escaping (AnalyticsEvent, EventBIValue) -> Void) -> Perform {
             return Perform(method: .m_trackEvent__eventbiValue_biValue(`event`, `biValue`), performs: perform)
+        }
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>, perform: @escaping (AnalyticsEvent) -> Void) -> Perform {
+            return Perform(method: .m_trackScreenEvent__event(`event`), performs: perform)
+        }
+        public static func trackScreenEvent(_ event: Parameter<AnalyticsEvent>, biValue: Parameter<EventBIValue>, perform: @escaping (AnalyticsEvent, EventBIValue) -> Void) -> Perform {
+            return Perform(method: .m_trackScreenEvent__eventbiValue_biValue(`event`, `biValue`), performs: perform)
         }
     }
 
@@ -1609,32 +1685,80 @@ open class DashboardInteractorProtocolMock: DashboardInteractorProtocol, Mock {
 
 
 
-    open func getMyCourses(page: Int) throws -> [CourseItem] {
-        addInvocation(.m_getMyCourses__page_page(Parameter<Int>.value(`page`)))
-		let perform = methodPerformValue(.m_getMyCourses__page_page(Parameter<Int>.value(`page`))) as? (Int) -> Void
+    open func getEnrollments(page: Int) throws -> [CourseItem] {
+        addInvocation(.m_getEnrollments__page_page(Parameter<Int>.value(`page`)))
+		let perform = methodPerformValue(.m_getEnrollments__page_page(Parameter<Int>.value(`page`))) as? (Int) -> Void
 		perform?(`page`)
 		var __value: [CourseItem]
 		do {
-		    __value = try methodReturnValue(.m_getMyCourses__page_page(Parameter<Int>.value(`page`))).casted()
+		    __value = try methodReturnValue(.m_getEnrollments__page_page(Parameter<Int>.value(`page`))).casted()
 		} catch MockError.notStubed {
-			onFatalFailure("Stub return value not specified for getMyCourses(page: Int). Use given")
-			Failure("Stub return value not specified for getMyCourses(page: Int). Use given")
+			onFatalFailure("Stub return value not specified for getEnrollments(page: Int). Use given")
+			Failure("Stub return value not specified for getEnrollments(page: Int). Use given")
 		} catch {
 		    throw error
 		}
 		return __value
     }
 
-    open func discoveryOffline() throws -> [CourseItem] {
-        addInvocation(.m_discoveryOffline)
-		let perform = methodPerformValue(.m_discoveryOffline) as? () -> Void
+    open func getEnrollmentsOffline() throws -> [CourseItem] {
+        addInvocation(.m_getEnrollmentsOffline)
+		let perform = methodPerformValue(.m_getEnrollmentsOffline) as? () -> Void
 		perform?()
 		var __value: [CourseItem]
 		do {
-		    __value = try methodReturnValue(.m_discoveryOffline).casted()
+		    __value = try methodReturnValue(.m_getEnrollmentsOffline).casted()
 		} catch MockError.notStubed {
-			onFatalFailure("Stub return value not specified for discoveryOffline(). Use given")
-			Failure("Stub return value not specified for discoveryOffline(). Use given")
+			onFatalFailure("Stub return value not specified for getEnrollmentsOffline(). Use given")
+			Failure("Stub return value not specified for getEnrollmentsOffline(). Use given")
+		} catch {
+		    throw error
+		}
+		return __value
+    }
+
+    open func getPrimaryEnrollment(pageSize: Int) throws -> PrimaryEnrollment {
+        addInvocation(.m_getPrimaryEnrollment__pageSize_pageSize(Parameter<Int>.value(`pageSize`)))
+		let perform = methodPerformValue(.m_getPrimaryEnrollment__pageSize_pageSize(Parameter<Int>.value(`pageSize`))) as? (Int) -> Void
+		perform?(`pageSize`)
+		var __value: PrimaryEnrollment
+		do {
+		    __value = try methodReturnValue(.m_getPrimaryEnrollment__pageSize_pageSize(Parameter<Int>.value(`pageSize`))).casted()
+		} catch MockError.notStubed {
+			onFatalFailure("Stub return value not specified for getPrimaryEnrollment(pageSize: Int). Use given")
+			Failure("Stub return value not specified for getPrimaryEnrollment(pageSize: Int). Use given")
+		} catch {
+		    throw error
+		}
+		return __value
+    }
+
+    open func getPrimaryEnrollmentOffline() throws -> PrimaryEnrollment {
+        addInvocation(.m_getPrimaryEnrollmentOffline)
+		let perform = methodPerformValue(.m_getPrimaryEnrollmentOffline) as? () -> Void
+		perform?()
+		var __value: PrimaryEnrollment
+		do {
+		    __value = try methodReturnValue(.m_getPrimaryEnrollmentOffline).casted()
+		} catch MockError.notStubed {
+			onFatalFailure("Stub return value not specified for getPrimaryEnrollmentOffline(). Use given")
+			Failure("Stub return value not specified for getPrimaryEnrollmentOffline(). Use given")
+		} catch {
+		    throw error
+		}
+		return __value
+    }
+
+    open func getAllCourses(filteredBy: String, page: Int) throws -> PrimaryEnrollment {
+        addInvocation(.m_getAllCourses__filteredBy_filteredBypage_page(Parameter<String>.value(`filteredBy`), Parameter<Int>.value(`page`)))
+		let perform = methodPerformValue(.m_getAllCourses__filteredBy_filteredBypage_page(Parameter<String>.value(`filteredBy`), Parameter<Int>.value(`page`))) as? (String, Int) -> Void
+		perform?(`filteredBy`, `page`)
+		var __value: PrimaryEnrollment
+		do {
+		    __value = try methodReturnValue(.m_getAllCourses__filteredBy_filteredBypage_page(Parameter<String>.value(`filteredBy`), Parameter<Int>.value(`page`))).casted()
+		} catch MockError.notStubed {
+			onFatalFailure("Stub return value not specified for getAllCourses(filteredBy: String, page: Int). Use given")
+			Failure("Stub return value not specified for getAllCourses(filteredBy: String, page: Int). Use given")
 		} catch {
 		    throw error
 		}
@@ -1643,31 +1767,53 @@ open class DashboardInteractorProtocolMock: DashboardInteractorProtocol, Mock {
 
 
     fileprivate enum MethodType {
-        case m_getMyCourses__page_page(Parameter<Int>)
-        case m_discoveryOffline
+        case m_getEnrollments__page_page(Parameter<Int>)
+        case m_getEnrollmentsOffline
+        case m_getPrimaryEnrollment__pageSize_pageSize(Parameter<Int>)
+        case m_getPrimaryEnrollmentOffline
+        case m_getAllCourses__filteredBy_filteredBypage_page(Parameter<String>, Parameter<Int>)
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
             switch (lhs, rhs) {
-            case (.m_getMyCourses__page_page(let lhsPage), .m_getMyCourses__page_page(let rhsPage)):
+            case (.m_getEnrollments__page_page(let lhsPage), .m_getEnrollments__page_page(let rhsPage)):
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsPage, rhs: rhsPage, with: matcher), lhsPage, rhsPage, "page"))
 				return Matcher.ComparisonResult(results)
 
-            case (.m_discoveryOffline, .m_discoveryOffline): return .match
+            case (.m_getEnrollmentsOffline, .m_getEnrollmentsOffline): return .match
+
+            case (.m_getPrimaryEnrollment__pageSize_pageSize(let lhsPagesize), .m_getPrimaryEnrollment__pageSize_pageSize(let rhsPagesize)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsPagesize, rhs: rhsPagesize, with: matcher), lhsPagesize, rhsPagesize, "pageSize"))
+				return Matcher.ComparisonResult(results)
+
+            case (.m_getPrimaryEnrollmentOffline, .m_getPrimaryEnrollmentOffline): return .match
+
+            case (.m_getAllCourses__filteredBy_filteredBypage_page(let lhsFilteredby, let lhsPage), .m_getAllCourses__filteredBy_filteredBypage_page(let rhsFilteredby, let rhsPage)):
+				var results: [Matcher.ParameterComparisonResult] = []
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsFilteredby, rhs: rhsFilteredby, with: matcher), lhsFilteredby, rhsFilteredby, "filteredBy"))
+				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsPage, rhs: rhsPage, with: matcher), lhsPage, rhsPage, "page"))
+				return Matcher.ComparisonResult(results)
             default: return .none
             }
         }
 
         func intValue() -> Int {
             switch self {
-            case let .m_getMyCourses__page_page(p0): return p0.intValue
-            case .m_discoveryOffline: return 0
+            case let .m_getEnrollments__page_page(p0): return p0.intValue
+            case .m_getEnrollmentsOffline: return 0
+            case let .m_getPrimaryEnrollment__pageSize_pageSize(p0): return p0.intValue
+            case .m_getPrimaryEnrollmentOffline: return 0
+            case let .m_getAllCourses__filteredBy_filteredBypage_page(p0, p1): return p0.intValue + p1.intValue
             }
         }
         func assertionName() -> String {
             switch self {
-            case .m_getMyCourses__page_page: return ".getMyCourses(page:)"
-            case .m_discoveryOffline: return ".discoveryOffline()"
+            case .m_getEnrollments__page_page: return ".getEnrollments(page:)"
+            case .m_getEnrollmentsOffline: return ".getEnrollmentsOffline()"
+            case .m_getPrimaryEnrollment__pageSize_pageSize: return ".getPrimaryEnrollment(pageSize:)"
+            case .m_getPrimaryEnrollmentOffline: return ".getPrimaryEnrollmentOffline()"
+            case .m_getAllCourses__filteredBy_filteredBypage_page: return ".getAllCourses(filteredBy:page:)"
             }
         }
     }
@@ -1681,29 +1827,68 @@ open class DashboardInteractorProtocolMock: DashboardInteractorProtocol, Mock {
         }
 
 
-        public static func getMyCourses(page: Parameter<Int>, willReturn: [CourseItem]...) -> MethodStub {
-            return Given(method: .m_getMyCourses__page_page(`page`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        public static func getEnrollments(page: Parameter<Int>, willReturn: [CourseItem]...) -> MethodStub {
+            return Given(method: .m_getEnrollments__page_page(`page`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func discoveryOffline(willReturn: [CourseItem]...) -> MethodStub {
-            return Given(method: .m_discoveryOffline, products: willReturn.map({ StubProduct.return($0 as Any) }))
+        public static func getEnrollmentsOffline(willReturn: [CourseItem]...) -> MethodStub {
+            return Given(method: .m_getEnrollmentsOffline, products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func getMyCourses(page: Parameter<Int>, willThrow: Error...) -> MethodStub {
-            return Given(method: .m_getMyCourses__page_page(`page`), products: willThrow.map({ StubProduct.throw($0) }))
+        public static func getPrimaryEnrollment(pageSize: Parameter<Int>, willReturn: PrimaryEnrollment...) -> MethodStub {
+            return Given(method: .m_getPrimaryEnrollment__pageSize_pageSize(`pageSize`), products: willReturn.map({ StubProduct.return($0 as Any) }))
         }
-        public static func getMyCourses(page: Parameter<Int>, willProduce: (StubberThrows<[CourseItem]>) -> Void) -> MethodStub {
+        public static func getPrimaryEnrollmentOffline(willReturn: PrimaryEnrollment...) -> MethodStub {
+            return Given(method: .m_getPrimaryEnrollmentOffline, products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
+        public static func getAllCourses(filteredBy: Parameter<String>, page: Parameter<Int>, willReturn: PrimaryEnrollment...) -> MethodStub {
+            return Given(method: .m_getAllCourses__filteredBy_filteredBypage_page(`filteredBy`, `page`), products: willReturn.map({ StubProduct.return($0 as Any) }))
+        }
+        public static func getEnrollments(page: Parameter<Int>, willThrow: Error...) -> MethodStub {
+            return Given(method: .m_getEnrollments__page_page(`page`), products: willThrow.map({ StubProduct.throw($0) }))
+        }
+        public static func getEnrollments(page: Parameter<Int>, willProduce: (StubberThrows<[CourseItem]>) -> Void) -> MethodStub {
             let willThrow: [Error] = []
-			let given: Given = { return Given(method: .m_getMyCourses__page_page(`page`), products: willThrow.map({ StubProduct.throw($0) })) }()
+			let given: Given = { return Given(method: .m_getEnrollments__page_page(`page`), products: willThrow.map({ StubProduct.throw($0) })) }()
 			let stubber = given.stubThrows(for: ([CourseItem]).self)
 			willProduce(stubber)
 			return given
         }
-        public static func discoveryOffline(willThrow: Error...) -> MethodStub {
-            return Given(method: .m_discoveryOffline, products: willThrow.map({ StubProduct.throw($0) }))
+        public static func getEnrollmentsOffline(willThrow: Error...) -> MethodStub {
+            return Given(method: .m_getEnrollmentsOffline, products: willThrow.map({ StubProduct.throw($0) }))
         }
-        public static func discoveryOffline(willProduce: (StubberThrows<[CourseItem]>) -> Void) -> MethodStub {
+        public static func getEnrollmentsOffline(willProduce: (StubberThrows<[CourseItem]>) -> Void) -> MethodStub {
             let willThrow: [Error] = []
-			let given: Given = { return Given(method: .m_discoveryOffline, products: willThrow.map({ StubProduct.throw($0) })) }()
+			let given: Given = { return Given(method: .m_getEnrollmentsOffline, products: willThrow.map({ StubProduct.throw($0) })) }()
 			let stubber = given.stubThrows(for: ([CourseItem]).self)
+			willProduce(stubber)
+			return given
+        }
+        public static func getPrimaryEnrollment(pageSize: Parameter<Int>, willThrow: Error...) -> MethodStub {
+            return Given(method: .m_getPrimaryEnrollment__pageSize_pageSize(`pageSize`), products: willThrow.map({ StubProduct.throw($0) }))
+        }
+        public static func getPrimaryEnrollment(pageSize: Parameter<Int>, willProduce: (StubberThrows<PrimaryEnrollment>) -> Void) -> MethodStub {
+            let willThrow: [Error] = []
+			let given: Given = { return Given(method: .m_getPrimaryEnrollment__pageSize_pageSize(`pageSize`), products: willThrow.map({ StubProduct.throw($0) })) }()
+			let stubber = given.stubThrows(for: (PrimaryEnrollment).self)
+			willProduce(stubber)
+			return given
+        }
+        public static func getPrimaryEnrollmentOffline(willThrow: Error...) -> MethodStub {
+            return Given(method: .m_getPrimaryEnrollmentOffline, products: willThrow.map({ StubProduct.throw($0) }))
+        }
+        public static func getPrimaryEnrollmentOffline(willProduce: (StubberThrows<PrimaryEnrollment>) -> Void) -> MethodStub {
+            let willThrow: [Error] = []
+			let given: Given = { return Given(method: .m_getPrimaryEnrollmentOffline, products: willThrow.map({ StubProduct.throw($0) })) }()
+			let stubber = given.stubThrows(for: (PrimaryEnrollment).self)
+			willProduce(stubber)
+			return given
+        }
+        public static func getAllCourses(filteredBy: Parameter<String>, page: Parameter<Int>, willThrow: Error...) -> MethodStub {
+            return Given(method: .m_getAllCourses__filteredBy_filteredBypage_page(`filteredBy`, `page`), products: willThrow.map({ StubProduct.throw($0) }))
+        }
+        public static func getAllCourses(filteredBy: Parameter<String>, page: Parameter<Int>, willProduce: (StubberThrows<PrimaryEnrollment>) -> Void) -> MethodStub {
+            let willThrow: [Error] = []
+			let given: Given = { return Given(method: .m_getAllCourses__filteredBy_filteredBypage_page(`filteredBy`, `page`), products: willThrow.map({ StubProduct.throw($0) })) }()
+			let stubber = given.stubThrows(for: (PrimaryEnrollment).self)
 			willProduce(stubber)
 			return given
         }
@@ -1712,19 +1897,31 @@ open class DashboardInteractorProtocolMock: DashboardInteractorProtocol, Mock {
     public struct Verify {
         fileprivate var method: MethodType
 
-        public static func getMyCourses(page: Parameter<Int>) -> Verify { return Verify(method: .m_getMyCourses__page_page(`page`))}
-        public static func discoveryOffline() -> Verify { return Verify(method: .m_discoveryOffline)}
+        public static func getEnrollments(page: Parameter<Int>) -> Verify { return Verify(method: .m_getEnrollments__page_page(`page`))}
+        public static func getEnrollmentsOffline() -> Verify { return Verify(method: .m_getEnrollmentsOffline)}
+        public static func getPrimaryEnrollment(pageSize: Parameter<Int>) -> Verify { return Verify(method: .m_getPrimaryEnrollment__pageSize_pageSize(`pageSize`))}
+        public static func getPrimaryEnrollmentOffline() -> Verify { return Verify(method: .m_getPrimaryEnrollmentOffline)}
+        public static func getAllCourses(filteredBy: Parameter<String>, page: Parameter<Int>) -> Verify { return Verify(method: .m_getAllCourses__filteredBy_filteredBypage_page(`filteredBy`, `page`))}
     }
 
     public struct Perform {
         fileprivate var method: MethodType
         var performs: Any
 
-        public static func getMyCourses(page: Parameter<Int>, perform: @escaping (Int) -> Void) -> Perform {
-            return Perform(method: .m_getMyCourses__page_page(`page`), performs: perform)
+        public static func getEnrollments(page: Parameter<Int>, perform: @escaping (Int) -> Void) -> Perform {
+            return Perform(method: .m_getEnrollments__page_page(`page`), performs: perform)
         }
-        public static func discoveryOffline(perform: @escaping () -> Void) -> Perform {
-            return Perform(method: .m_discoveryOffline, performs: perform)
+        public static func getEnrollmentsOffline(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_getEnrollmentsOffline, performs: perform)
+        }
+        public static func getPrimaryEnrollment(pageSize: Parameter<Int>, perform: @escaping (Int) -> Void) -> Perform {
+            return Perform(method: .m_getPrimaryEnrollment__pageSize_pageSize(`pageSize`), performs: perform)
+        }
+        public static func getPrimaryEnrollmentOffline(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_getPrimaryEnrollmentOffline, performs: perform)
+        }
+        public static func getAllCourses(filteredBy: Parameter<String>, page: Parameter<Int>, perform: @escaping (String, Int) -> Void) -> Perform {
+            return Perform(method: .m_getAllCourses__filteredBy_filteredBypage_page(`filteredBy`, `page`), performs: perform)
         }
     }
 
@@ -2023,6 +2220,12 @@ open class DownloadManagerProtocolMock: DownloadManagerProtocol, Mock {
 		return __value
     }
 
+    open func removeAppSupportDirectoryUnusedContent() {
+        addInvocation(.m_removeAppSupportDirectoryUnusedContent)
+		let perform = methodPerformValue(.m_removeAppSupportDirectoryUnusedContent) as? () -> Void
+		perform?()
+    }
+
 
     fileprivate enum MethodType {
         case m_publisher
@@ -2039,6 +2242,7 @@ open class DownloadManagerProtocolMock: DownloadManagerProtocol, Mock {
         case m_fileUrl__for_blockId(Parameter<String>)
         case m_resumeDownloading
         case m_isLargeVideosSize__blocks_blocks(Parameter<[CourseBlock]>)
+        case m_removeAppSupportDirectoryUnusedContent
         case p_currentDownloadTask_get
 
         static func compareParameters(lhs: MethodType, rhs: MethodType, matcher: Matcher) -> Matcher.ComparisonResult {
@@ -2095,6 +2299,8 @@ open class DownloadManagerProtocolMock: DownloadManagerProtocol, Mock {
 				var results: [Matcher.ParameterComparisonResult] = []
 				results.append(Matcher.ParameterComparisonResult(Parameter.compare(lhs: lhsBlocks, rhs: rhsBlocks, with: matcher), lhsBlocks, rhsBlocks, "blocks"))
 				return Matcher.ComparisonResult(results)
+
+            case (.m_removeAppSupportDirectoryUnusedContent, .m_removeAppSupportDirectoryUnusedContent): return .match
             case (.p_currentDownloadTask_get,.p_currentDownloadTask_get): return Matcher.ComparisonResult.match
             default: return .none
             }
@@ -2116,6 +2322,7 @@ open class DownloadManagerProtocolMock: DownloadManagerProtocol, Mock {
             case let .m_fileUrl__for_blockId(p0): return p0.intValue
             case .m_resumeDownloading: return 0
             case let .m_isLargeVideosSize__blocks_blocks(p0): return p0.intValue
+            case .m_removeAppSupportDirectoryUnusedContent: return 0
             case .p_currentDownloadTask_get: return 0
             }
         }
@@ -2135,6 +2342,7 @@ open class DownloadManagerProtocolMock: DownloadManagerProtocol, Mock {
             case .m_fileUrl__for_blockId: return ".fileUrl(for:)"
             case .m_resumeDownloading: return ".resumeDownloading()"
             case .m_isLargeVideosSize__blocks_blocks: return ".isLargeVideosSize(blocks:)"
+            case .m_removeAppSupportDirectoryUnusedContent: return ".removeAppSupportDirectoryUnusedContent()"
             case .p_currentDownloadTask_get: return "[get] .currentDownloadTask"
             }
         }
@@ -2291,6 +2499,7 @@ open class DownloadManagerProtocolMock: DownloadManagerProtocol, Mock {
         public static func fileUrl(for blockId: Parameter<String>) -> Verify { return Verify(method: .m_fileUrl__for_blockId(`blockId`))}
         public static func resumeDownloading() -> Verify { return Verify(method: .m_resumeDownloading)}
         public static func isLargeVideosSize(blocks: Parameter<[CourseBlock]>) -> Verify { return Verify(method: .m_isLargeVideosSize__blocks_blocks(`blocks`))}
+        public static func removeAppSupportDirectoryUnusedContent() -> Verify { return Verify(method: .m_removeAppSupportDirectoryUnusedContent)}
         public static var currentDownloadTask: Verify { return Verify(method: .p_currentDownloadTask_get) }
     }
 
@@ -2339,6 +2548,9 @@ open class DownloadManagerProtocolMock: DownloadManagerProtocol, Mock {
         }
         public static func isLargeVideosSize(blocks: Parameter<[CourseBlock]>, perform: @escaping ([CourseBlock]) -> Void) -> Perform {
             return Perform(method: .m_isLargeVideosSize__blocks_blocks(`blocks`), performs: perform)
+        }
+        public static func removeAppSupportDirectoryUnusedContent(perform: @escaping () -> Void) -> Perform {
+            return Perform(method: .m_removeAppSupportDirectoryUnusedContent, performs: perform)
         }
     }
 

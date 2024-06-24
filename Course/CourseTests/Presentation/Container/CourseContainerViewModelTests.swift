@@ -40,6 +40,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         
@@ -48,7 +49,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             id: "",
             courseId: "123",
             topicId: "",
-            graded: true,
+            graded: true, 
+            due: Date(),
             completion: 0,
             type: .problem,
             displayName: "",
@@ -72,7 +74,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical], 
+            sequentialProgress: nil,
+            due: Date()
         )
         let chapter = CourseChapter(
             blockId: "",
@@ -98,7 +102,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                                                                 large: "")),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
         
         let resumeBlock = ResumeBlock(blockID: "123")
@@ -148,6 +153,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         
@@ -165,7 +171,8 @@ final class CourseContainerViewModelTests: XCTestCase {
                                                                 large: "")),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
         
         Given(interactor, .getLoadedCourseBlocks(courseID: .any, willReturn: courseStructure))
@@ -207,6 +214,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         
@@ -250,6 +258,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         
@@ -290,6 +299,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         
@@ -330,6 +340,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         
@@ -363,6 +374,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -396,7 +408,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical],
+            sequentialProgress: nil,
+            due: Date()
         )
 
         let chapter = CourseChapter(
@@ -423,7 +437,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true, 
+            courseProgress: nil
         )
 
         let downloadData = DownloadDataTask(
@@ -462,6 +477,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         viewModel.courseStructure = courseStructure
@@ -500,6 +516,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -532,7 +549,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical],
+            sequentialProgress: nil,
+            due: Date()
         )
 
         let chapter = CourseChapter(
@@ -559,7 +578,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -583,6 +603,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         viewModel.courseStructure = courseStructure
@@ -621,6 +642,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -653,7 +675,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical],
+            sequentialProgress: nil,
+            due: Date()
         )
 
         let chapter = CourseChapter(
@@ -680,7 +704,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -704,6 +729,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         viewModel.courseStructure = courseStructure
@@ -743,6 +769,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -775,7 +802,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical],
+            sequentialProgress: nil,
+            due: Date()
         )
 
         let chapter = CourseChapter(
@@ -802,7 +831,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
 
         Given(connectivity, .isInternetAvaliable(getter: true))
@@ -826,6 +856,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         viewModel.courseStructure = courseStructure
@@ -858,6 +889,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -890,7 +922,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical],
+            sequentialProgress: nil,
+            due: Date()
         )
 
         let chapter = CourseChapter(
@@ -917,7 +951,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
 
         let downloadData = DownloadDataTask(
@@ -956,6 +991,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         viewModel.courseStructure = courseStructure
@@ -988,6 +1024,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -1020,7 +1057,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical],
+            sequentialProgress: nil,
+            due: Date()
         )
 
         let chapter = CourseChapter(
@@ -1047,7 +1086,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
 
         let downloadData = DownloadDataTask(
@@ -1086,6 +1126,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         viewModel.courseStructure = courseStructure
@@ -1117,6 +1158,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -1138,6 +1180,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseId: "123",
             topicId: "",
             graded: false,
+            due: Date(),
             completion: 0,
             type: .video,
             displayName: "",
@@ -1170,7 +1213,9 @@ final class CourseContainerViewModelTests: XCTestCase {
             displayName: "",
             type: .chapter,
             completion: 0,
-            childs: [vertical]
+            childs: [vertical],
+            sequentialProgress: nil,
+            due: Date()
         )
 
         let chapter = CourseChapter(
@@ -1197,7 +1242,8 @@ final class CourseContainerViewModelTests: XCTestCase {
             )),
             certificate: nil,
             org: "",
-            isSelfPaced: true
+            isSelfPaced: true,
+            courseProgress: nil
         )
 
         let downloadData = DownloadDataTask(
@@ -1236,6 +1282,7 @@ final class CourseContainerViewModelTests: XCTestCase {
             courseEnd: nil,
             enrollmentStart: nil,
             enrollmentEnd: nil,
+            lastVisitedBlockID: nil,
             coreAnalytics: CoreAnalyticsMock()
         )
         viewModel.courseStructure = courseStructure

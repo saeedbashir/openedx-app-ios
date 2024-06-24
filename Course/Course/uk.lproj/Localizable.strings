@@ -33,6 +33,7 @@
 "ALERT.DELETE_ALL_VIDEOS" = "Are you sure you want to delete all video(s) for";
 "ALERT.DELETE_VIDEOS" = "Are you sure you want to delete video(s) for";
 "ALERT.STOP_DOWNLOADING" = "Turning off the switch will stop downloading and delete all downloaded videos for";
+"ALERT.WARNING" = "Warning";
 
 "COURSE_CONTAINER.COURSE" =  "Курс";
 "COURSE_CONTAINER.VIDEOS" =  "Всі відео";
@@ -119,3 +120,8 @@
 "COURSE_DATES.RESET_DATE.ERROR_MESSAGE" = "Your dates could not be shifted. Please try again.";
 "COURSE_DATES.RESET_DATE.SUCCESS_MESSAGE" = "Your dates have been successfully shifted.";
 "COURSE_DATES.RESET_DATE.TITLE" = "Course Dates";
+
+"COURSE.DUE_TODAY" = "Закінчується сьогодні";
+"COURSE.DUE_TOMORROW" = "Закінчується завтра";
+
+"COURSE.PROGRESS_COMPLETED" = "%@ з %@ завдань виконано";

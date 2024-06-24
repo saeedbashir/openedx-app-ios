@@ -6,6 +6,7 @@
 //
 
 import Course
+import Core
 import Combine
 import Discovery
 import SwiftUI
@@ -15,7 +16,7 @@ public class PipManager: PipManagerProtocol {
     let discoveryInteractor: DiscoveryInteractorProtocol
     let courseInteractor: CourseInteractorProtocol
     let router: Router
-    let isNestedListEnabled: Bool
+    let courseDropDownNavigationEnabled: Bool
     public var isPipActive: Bool {
         controllerHolder != nil
     }
@@ -27,12 +28,12 @@ public class PipManager: PipManagerProtocol {
         router: Router,
         discoveryInteractor: DiscoveryInteractorProtocol,
         courseInteractor: CourseInteractorProtocol,
-        isNestedListEnabled: Bool
+        courseDropDownNavigationEnabled: Bool
     ) {
         self.discoveryInteractor = discoveryInteractor
         self.courseInteractor = courseInteractor
         self.router = router
-        self.isNestedListEnabled = isNestedListEnabled
+        self.courseDropDownNavigationEnabled = courseDropDownNavigationEnabled
     }
     
     public func holder(
@@ -113,7 +114,7 @@ public class PipManager: PipManagerProtocol {
             viewControllers.append(try await containerController(for: holder))
         }
         
-        if !isNestedListEnabled && holder.selectedCourseTab != CourseTab.dates.rawValue {
+        if !courseDropDownNavigationEnabled && holder.selectedCourseTab != CourseTab.dates.rawValue {
             viewControllers.append(try await courseVerticalController(for: holder))
         }
         
@@ -178,15 +179,17 @@ public class PipManager: PipManagerProtocol {
         for holder: PlayerViewControllerHolderProtocol
     ) async throws -> UIHostingController<CourseContainerView> {
         let courseDetails = try await getCourseDetails(for: holder)
-        let isActive: Bool? = nil
+        let hasAccess: Bool? = nil
         let controller = router.getCourseScreensController(
             courseID: courseDetails.courseID,
-            isActive: isActive,
+            hasAccess: hasAccess,
             courseStart: courseDetails.courseStart,
             courseEnd: courseDetails.courseEnd,
             enrollmentStart: courseDetails.enrollmentStart,
             enrollmentEnd: courseDetails.enrollmentEnd,
-            title: courseDetails.courseTitle
+            title: courseDetails.courseTitle,
+            showDates: false,
+            lastVisitedBlockID: nil
         )
         controller.rootView.viewModel.selection = holder.selectedCourseTab
         return controller

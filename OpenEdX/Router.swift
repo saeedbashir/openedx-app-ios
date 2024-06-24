@@ -359,41 +359,53 @@ public class Router: AuthorizationRouter,
     
     public func showCourseScreens(
         courseID: String,
-        isActive: Bool?,
+        hasAccess: Bool?,
         courseStart: Date?,
         courseEnd: Date?,
         enrollmentStart: Date?,
         enrollmentEnd: Date?,
-        title: String
+        title: String,
+        showDates: Bool,
+        lastVisitedBlockID: String?
     ) {
         let controller = getCourseScreensController(
             courseID: courseID,
-            isActive: isActive,
+            hasAccess: hasAccess,
             courseStart: courseStart,
             courseEnd: courseEnd,
             enrollmentStart: enrollmentStart,
             enrollmentEnd: enrollmentEnd,
-            title: title
+            title: title,
+            showDates: showDates,
+            lastVisitedBlockID: lastVisitedBlockID
         )
         navigationController.pushViewController(controller, animated: true)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            Container.shared.resolve(PushNotificationsManager.self)?.performRegistration()
+        }
     }
     
     public func getCourseScreensController(
         courseID: String,
-        isActive: Bool?,
+        hasAccess: Bool?,
         courseStart: Date?,
         courseEnd: Date?,
         enrollmentStart: Date?,
         enrollmentEnd: Date?,
-        title: String
+        title: String,
+        showDates: Bool,
+        lastVisitedBlockID: String?
     ) -> UIHostingController<CourseContainerView> {
         let vm = Container.shared.resolve(
             CourseContainerViewModel.self,
-            arguments: isActive,
+            arguments: hasAccess,
             courseStart,
             courseEnd,
             enrollmentStart,
-            enrollmentEnd
+            enrollmentEnd,
+            showDates ? CourseTab.dates : CourseTab.course,
+            lastVisitedBlockID
         )!
         
         let datesVm = Container.shared.resolve(
@@ -410,6 +422,13 @@ public class Router: AuthorizationRouter,
         )
         
         return UIHostingController(rootView: screensView)
+    }
+    
+    public func showAllCourses(courses: [CourseItem]) {
+        let vm = Container.shared.resolve(AllCoursesViewModel.self)!
+        let view = AllCoursesView(viewModel: vm, router: self)
+        let controller = UIHostingController(rootView: view)
+        navigationController.pushViewController(controller, animated: true)
     }
     
     public func showHandoutsUpdatesView(
@@ -470,7 +489,7 @@ public class Router: AuthorizationRouter,
         )!
         
         let config = Container.shared.resolve(ConfigProtocol.self)
-        let isDropdownActive = config?.uiComponents.courseNestedListEnabled ?? false
+        let isDropdownActive = config?.uiComponents.courseDropDownNavigationEnabled ?? false
 
         let view = CourseUnitView(viewModel: viewModel, isDropdownActive: isDropdownActive)
         return UIHostingController(rootView: view)
@@ -575,13 +594,12 @@ public class Router: AuthorizationRouter,
             chapterIndex: chapterIndex,
             sequentialIndex: sequentialIndex
         )
-
-        let config = Container.shared.resolve(ConfigProtocol.self)
-        let isCourseNestedListEnabled = config?.uiComponents.courseNestedListEnabled ?? false
         
         var controllers = navigationController.viewControllers
+        let config = Container.shared.resolve(ConfigProtocol.self)!
+        let courseDropDownNavigationEnabled = config.uiComponents.courseDropDownNavigationEnabled
 
-        if isCourseNestedListEnabled || currentCourseTabSelection == CourseTab.dates.rawValue {
+        if courseDropDownNavigationEnabled || currentCourseTabSelection == CourseTab.dates.rawValue {
             controllers.removeLast(1)
             controllers.append(contentsOf: [controllerUnit])
         } else {
@@ -710,6 +728,27 @@ public class Router: AuthorizationRouter,
     public func showVideoSettings() {
         let viewModel = Container.shared.resolve(SettingsViewModel.self)!
         let view = VideoSettingsView(viewModel: viewModel)
+        let controller = UIHostingController(rootView: view)
+        navigationController.pushViewController(controller, animated: true)
+    }
+    
+    public func showDatesAndCalendar() {
+        let viewModel = Container.shared.resolve(DatesAndCalendarViewModel.self)!
+        let view = DatesAndCalendarView(viewModel: viewModel)
+        let controller = UIHostingController(rootView: view)
+        navigationController.pushViewController(controller, animated: true)
+    }
+    
+    public func showSyncCalendarOptions() {
+        let viewModel = Container.shared.resolve(DatesAndCalendarViewModel.self)!
+        let view = SyncCalendarOptionsView(viewModel: viewModel)
+        let controller = UIHostingController(rootView: view)
+        navigationController.pushViewController(controller, animated: true)
+    }
+    
+    public func showCoursesToSync() {
+        let viewModel = Container.shared.resolve(DatesAndCalendarViewModel.self)!
+        let view = CoursesToSyncView(viewModel: viewModel)
         let controller = UIHostingController(rootView: view)
         navigationController.pushViewController(controller, animated: true)
     }
