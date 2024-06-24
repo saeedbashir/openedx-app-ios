@@ -164,7 +164,7 @@ extension Config: ConfigProtocol {
     }
     
     public var ecommerceURL: String? {
-        return string(for: ConfigKeys.ecommerceURL.rawValue)
+        string(for: ConfigKeys.ecommerceURL.rawValue)
     }
 }
 

@@ -164,7 +164,7 @@ public class UpgradeInfoViewModel: ObservableObject {
                         self.interactiveDismissDisabled = false
                     }
                 default:
-                    print("Upgrade state changed: \(state)")
+                    debugLog("Upgrade state changed: \(state)")
                 }
             }
         )

@@ -94,7 +94,8 @@ public struct UpgradeInfoView<Content>: View where Content: View {
                         leftImage: buttonImage,
                         imagesStyle: .attachedToText,
                         isTitleTracking: false,
-                        isLimitedOnPad: false)
+                        isLimitedOnPad: false
+                    )
                     .opacity(shouldHideButton ? 0 : 1)
                     .disabled(viewModel.isLoading)
                     

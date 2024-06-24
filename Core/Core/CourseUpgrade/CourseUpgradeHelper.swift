@@ -121,7 +121,7 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
         case .success(let courseID, let blockID):
             helperModel = CourseUpgradeHelperModel(courseID: courseID, blockID: blockID, screen: screen)
             if upgradeHadler.upgradeMode == .userInitiated {
-                removeLoader(success: true, removeView: true)
+                removeLoader(success: true, shouldRemoveView: true)
                 postSuccessNotification()
             } else {
                 showSilentRefreshAlert()
@@ -170,7 +170,7 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
                 shouldRemove = true
             }
             
-            removeLoader(success: false, removeView: shouldRemove)
+            removeLoader(success: false, shouldRemoveView: shouldRemove)
         
         default:
             break
@@ -226,7 +226,7 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
 }
 
 extension CourseUpgradeHelper {
-    func showSuccess() {
+    func trackAndResetOnSuccess() {
         analytics.trackCourseUpgradeSuccess(
             courseID: courseID ?? "",
             blockID: blockID,
@@ -338,7 +338,7 @@ extension CourseUpgradeHelper {
         case .verify, .complete:
             return .execute
         default:
-                return .unknown
+            return .unknown
         }
     }
     
@@ -360,7 +360,7 @@ extension CourseUpgradeHelper {
     
     public func removeLoader(
         success: Bool? = false,
-        removeView: Bool? = false,
+        shouldRemoveView: Bool? = false,
         completion: (() -> Void)? = nil
     ) {
         self.completion = completion
@@ -368,13 +368,13 @@ extension CourseUpgradeHelper {
             helperModel = nil
         }
         
-        if removeView == true {
+        if shouldRemoveView == true {
             Task {@MainActor in
                 await router.hideUpgradeLoaderView(animated: true)
                 helperModel = nil
                 
                 if success == true {
-                    showSuccess()
+                    trackAndResetOnSuccess()
                 } else {
                     showError()
                 }
@@ -407,30 +407,35 @@ extension CourseUpgradeHelper {
                 self?.reset()
             }
         )
-        
-        router.presentNativeAlert(
-            title: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertTitle,
-            message: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertMessage,
-            actions: actions
-        )
     }
     
     public func showRestorePurchasesAlert() {
-        guard let topController = UIApplication.topViewController() else { return }
-        let alertController = UIAlertController().showAlert(
-            withTitle: CoreLocalization.CourseUpgrade.Restore.alertTitle,
-            message: CoreLocalization.CourseUpgrade.Restore.alertMessage,
-            onViewController: topController) { _, _, _ in }
-
-        alertController.addButton(
-            withTitle: CoreLocalization.CourseUpgrade.FailureAlert.getHelp) { [weak self] _ in
+        var actions: [UIAlertAction] = []
+        
+        actions.append(
+            UIAlertAction(
+                title: CoreLocalization.CourseUpgrade.FailureAlert.getHelp,
+                style: .default
+            ) { [weak self] _ in
                 self?.launchEmailComposer(errorMessage: "Error: restore_purchases")
                 self?.trackUpgradeErrorAction(errorAction: .emailSupport, alertType: .restore)
             }
-
-        alertController.addButton(withTitle: CoreLocalization.close, style: .default) { [weak self] _ in
-            self?.trackUpgradeErrorAction(errorAction: .close, alertType: .restore)
-        }
+        )
+        
+        actions.append(
+            UIAlertAction(
+                title: CoreLocalization.close,
+                style: .default
+            ) { [weak self] _ in
+                self?.trackUpgradeErrorAction(errorAction: .close, alertType: .restore)
+            }
+        )
+        
+        router.presentNativeAlert(
+            title: CoreLocalization.CourseUpgrade.Restore.alertTitle,
+            message: CoreLocalization.CourseUpgrade.Restore.alertMessage,
+            actions: actions
+        )
     }
 }
 

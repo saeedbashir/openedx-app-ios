@@ -202,7 +202,7 @@ public struct SettingsView: View {
     
     @ViewBuilder
     private var restorePurchases: some View {
-        Text("Purchases")
+        Text(ProfileLocalization.Courseupgrade.purchases)
             .padding(.horizontal, 24)
             .font(Theme.Fonts.labelLarge)
             .foregroundColor(Theme.Colors.textSecondary)
@@ -211,12 +211,12 @@ public struct SettingsView: View {
         
         VStack(alignment: .leading, spacing: 12) {
             
-            Text("Restore purchases")
+            Text(ProfileLocalization.Courseupgrade.restorePurchases)
                 .font(Theme.Fonts.titleMedium)
                 .foregroundColor(Theme.Colors.textPrimary)
                 .accessibilityIdentifier("restore_title_text")
             
-            Text("Sign into the app store to restore access to courses you have previously paid to upgrade")
+            Text(ProfileLocalization.Courseupgrade.restorePurchasesText)
                 .font(Theme.Fonts.labelLarge)
                 .foregroundColor(Theme.Colors.textSecondary)
                 .accessibilityIdentifier("restore_message_text")
@@ -224,7 +224,7 @@ public struct SettingsView: View {
             Spacer()
             
             StyledButton(
-                "Restore purchases",
+                ProfileLocalization.Courseupgrade.restorePurchases,
                 action: {
                     Task {
                         await viewModel.restorePurchases()

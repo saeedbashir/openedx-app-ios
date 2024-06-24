@@ -42,8 +42,6 @@ public class StorekitHandler: NSObject, StoreKitHandlerProtocol {
                 switch purchase.transaction.transactionState {
                 case .purchased, .restored:
                     if purchase.needsFinishTransaction {
-                        // Deliver content from server, then:
-                        // SwiftyStoreKit.finishTransaction(purchase.transaction)
                         self?.purchases[purchase.productId] =  purchase
                     }
                 default:

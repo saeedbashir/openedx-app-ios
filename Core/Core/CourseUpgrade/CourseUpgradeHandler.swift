@@ -49,7 +49,8 @@ public class CourseUpgradeHandler: CourseUpgradeHandlerProtocol {
             helper.handleCourseUpgrade(
                 upgradeHadler: self,
                 state: upgradeState,
-                delegate: nil)
+                delegate: nil
+            )
             completion?(state)
         }
     }
@@ -69,10 +70,11 @@ public class CourseUpgradeHandler: CourseUpgradeHandlerProtocol {
         }
     }
 
-    public init(config: ConfigProtocol,
-                interactor: CourseUpgradeInteractorProtocol,
-                storeKitHandler: StoreKitHandlerProtocol,
-                helper: CourseUpgradeHelperProtocol
+    public init(
+        config: ConfigProtocol,
+        interactor: CourseUpgradeInteractorProtocol,
+        storeKitHandler: StoreKitHandlerProtocol,
+        helper: CourseUpgradeHelperProtocol
     ) {
         self.interactor = interactor
         self.storeKitHandler = storeKitHandler
@@ -127,11 +129,7 @@ public class CourseUpgradeHandler: CourseUpgradeHandlerProtocol {
             await checkout(basketID: basketID, sku: sku)
             
         } catch let error {
-            if error.isInternetError {
-                
-            } else {
-                state = .error(.basketError(error))
-            }
+            state = .error(.basketError(error))
         }
     }
     
@@ -154,11 +152,7 @@ public class CourseUpgradeHandler: CourseUpgradeHandlerProtocol {
             }
             
         } catch let error {
-            if error.isInternetError {
-                
-            } else {
-                state = .error(.checkoutError(error))
-            }
+            state = .error(.checkoutError(error))
         }
     }
     
@@ -192,11 +186,7 @@ public class CourseUpgradeHandler: CourseUpgradeHandlerProtocol {
             state = .complete
             
         } catch let error {
-            if error.isInternetError {
-                
-            } else {
-                state = .error(.verifyReceiptError(error))
-            }
+            state = .error(.verifyReceiptError(error))
         }
     }
     

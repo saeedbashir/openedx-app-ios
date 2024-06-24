@@ -154,7 +154,8 @@ extension ListDashboardViewModel {
             courseID: inprogressIAP.courseID,
             pacing: inprogressIAP.pacing,
             screen: .dashboard,
-            flowType: .silent)
+            flowType: .silent
+        )
         
         await upgradehandler.upgradeCourse(
             sku: inprogressIAP.sku,
