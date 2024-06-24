@@ -47,9 +47,11 @@ class WhitelabelApp:
         config1: # build configuration name in project
           app_bundle_id: "bundle.id.app.new1" # bundle ID which should be set
           product_name: "Mobile App Name1" # app name which should be set
+          env_config: 'prod' # env name for this configuration. possible values: prod/dev/stage (values which config_settings.yaml defines)
         config2: # build configuration name in project
           app_bundle_id: "bundle.id.app.new2" # bundle ID which should be set
           product_name: "Mobile App Name2" # app name which should be set
+          env_config: 'dev' # env name for this configuration. possible values: prod/dev/stage (values which config_settings.yaml defines)
     font:
       font_import_file_path: 'path/to/importing/Font_file.ttf' # path to ttf font file what should be imported to project
       project_font_file_path: 'path/to/font/file/in/project/font.ttf' # path to existing ttf font file in project
