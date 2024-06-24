@@ -204,7 +204,8 @@ public class SettingsViewModel: ObservableObject {
             courseID: inprogressIAP.courseID,
             pacing: inprogressIAP.pacing,
             screen: .dashboard,
-            flowType: .restore)
+            flowType: .restore
+        )
 
         await upgradeHandler.upgradeCourse(
             sku: inprogressIAP.sku,
@@ -215,16 +216,14 @@ public class SettingsViewModel: ObservableObject {
             componentID: nil,
             screen: .dashboard,
             completion: {[weak self] state in
-                print("Saeed: \(state)")
                 guard let self else { return }
                 switch state {
-                
                 case .error:
-                        self.hideRestoreProgressView()
+                    self.hideRestoreProgressView()
                 case .complete:
                     self.hideRestoreProgressView()
                 default:
-                   debugPrint("Upgrade state changed: \(state)")
+                   debugLog("Upgrade state changed: \(state)")
                 }
             }
         )

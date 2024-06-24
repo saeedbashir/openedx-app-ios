@@ -44,8 +44,11 @@ public struct SnackBarView: View {
                 .accessibilityIdentifier("snackbar_button")
             }
             
-        }.shadowCardStyle(bgColor: bgColor,
-                          textColor: Theme.Colors.white)
+        }
+        .shadowCardStyle(
+            bgColor: bgColor,
+            textColor: Theme.Colors.white
+        )
         .padding(.bottom, 10)
     }
 }

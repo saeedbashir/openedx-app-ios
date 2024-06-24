@@ -37,8 +37,8 @@ public extension UIAlertController {
             viewController: controller,
             title: title,
             message: message,
-            preferredStyle: preferredStyle
-            , cancelButtonTitle: cancelButtonTitle,
+            preferredStyle: preferredStyle,
+            cancelButtonTitle: cancelButtonTitle,
             destructiveButtonTitle: destructiveButtonTitle,
             otherButtonsTitle: otherButtonsTitle,
             tapBlock: tapBlock
@@ -78,7 +78,8 @@ public extension UIAlertController {
                     if let tap = tapBlock {
                         tap(controller, action, cancelButtonIndex)
                     }
-                })
+                }
+            )
             controller.addAction(cancelAction)
         }
         
@@ -90,7 +91,8 @@ public extension UIAlertController {
                     if let tap = tapBlock {
                         tap(controller, action, destructiveButtonIndex)
                     }
-                })
+                }
+            )
             controller.addAction(destructiveAction)
         }
         
@@ -102,7 +104,8 @@ public extension UIAlertController {
                         if let tap = tapBlock {
                             tap(controller, action, destructiveButtonIndex)
                         }
-                    })
+                    }
+                )
                 controller.addAction(otherAction)
             }
         }
@@ -208,7 +211,8 @@ public extension UIAlertController {
                 if let tap = actionBlock {
                     tap(action)
                 }
-            })
+            }
+        )
         addAction(alertAction)
     }
     

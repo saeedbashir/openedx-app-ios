@@ -955,15 +955,15 @@ extension Router {
     
     @MainActor
     public func showRestoreProgressView() {
-            let unlockView = RestoreInProgressView()
-            let controller = UIHostingController(rootView: unlockView)
-
+        let unlockView = RestoreInProgressView()
+        let controller = UIHostingController(rootView: unlockView)
+        
         controller.view.frame = CGRect(x: 0,
                                        y: 0,
                                        width: UIScreen.main.bounds.width,
                                        height: UIScreen.main.bounds.height)
         controller.view.backgroundColor = .black.withAlphaComponent(0.8)
-            controller.view.tag = 10010
+        controller.view.tag = 10010
         UIApplication.shared.window?.addSubview(controller.view)
     }
     

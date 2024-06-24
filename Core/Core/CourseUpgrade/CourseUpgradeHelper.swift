@@ -27,6 +27,17 @@ public enum UpgradeCompletionState {
     case error(UpgradeError)
 }
 
+public enum UpgradeAlertType: String {
+    case priceFetch = "price_fetch"
+    case basket
+    case checkout
+    case payment
+    case execute
+    case restore
+    case unfulfilled
+    case unknown
+}
+
 // These error actions are used to send in analytics
 public enum UpgradeErrorAction: String {
     case refreshToRetry = "refresh"
@@ -110,7 +121,7 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
         case .success(let courseID, let blockID):
             helperModel = CourseUpgradeHelperModel(courseID: courseID, blockID: blockID, screen: screen)
             if upgradeHadler.upgradeMode == .userInitiated {
-                removeLoader(success: true, removeView: true)
+                removeLoader(success: true, shouldRemoveView: true)
                 postSuccessNotification()
             } else {
                 showSilentRefreshAlert()
@@ -159,7 +170,7 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
                 shouldRemove = true
             }
             
-            removeLoader(success: false, removeView: shouldRemove)
+            removeLoader(success: false, shouldRemoveView: shouldRemove)
         
         default:
             break
@@ -215,7 +226,7 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
 }
 
 extension CourseUpgradeHelper {
-    func showSuccess() {
+    func trackAndResetOnSuccess() {
         analytics.trackCourseUpgradeSuccess(
             courseID: courseID ?? "",
             blockID: blockID,
@@ -241,7 +252,11 @@ extension CourseUpgradeHelper {
                         style: .default,
                         handler: { [weak self] _ in
                             guard let self = self else { return }
-                            self.trackUpgradeErrorAction(errorAction: .refreshToRetry, error: error)
+                            self.trackUpgradeErrorAction(
+                                errorAction: .refreshToRetry,
+                                error: error,
+                                alertType: .execute
+                            )
                             Task {
                                 await self.upgradeHadler?.reverifyPayment()
                             }
@@ -256,7 +271,11 @@ extension CourseUpgradeHelper {
                         title: CoreLocalization.CourseUpgrade.FailureAlert.refreshToRetry,
                         style: .default,
                         handler: { [weak self] _ in
-                            self?.trackUpgradeErrorAction(errorAction: .refreshToRetry, error: error)
+                            self?.trackUpgradeErrorAction(
+                                errorAction: .refreshToRetry,
+                                error: error,
+                                alertType: self?.alertType ?? .unknown
+                            )
                             self?.showLoader()
                             self?.completion?()
                             self?.completion = nil
@@ -271,7 +290,11 @@ extension CourseUpgradeHelper {
                     style: .default,
                     handler: { [weak self] _ in
                         guard let self = self else { return }
-                        self.trackUpgradeErrorAction(errorAction: .emailSupport, error: error)
+                        self.trackUpgradeErrorAction(
+                            errorAction: .emailSupport,
+                            error: error,
+                            alertType: self.alertType
+                        )
                         self.hideAlertAction()
                         Task { @MainActor in
                             await self.router.hideUpgradeLoaderView(animated: true)
@@ -289,7 +312,7 @@ extension CourseUpgradeHelper {
                         guard let self = self else { return }
                         Task { @MainActor in
                             await self.router.hideUpgradeLoaderView(animated: true)
-                            self.trackUpgradeErrorAction(errorAction: .close, error: error)
+                            self.trackUpgradeErrorAction(errorAction: .close, error: error, alertType: self.alertType)
                             self.hideAlertAction()
                         }
                     }
@@ -301,6 +324,21 @@ extension CourseUpgradeHelper {
                 message: error.localizedDescription,
                 actions: actions
             )
+        }
+    }
+    
+    private var alertType: UpgradeAlertType {
+        switch upgradeHadler?.state {
+        case .basket:
+            return .basket
+        case .checkout:
+            return .checkout
+        case .payment:
+            return .payment
+        case .verify, .complete:
+            return .execute
+        default:
+            return .unknown
         }
     }
     
@@ -322,7 +360,7 @@ extension CourseUpgradeHelper {
     
     public func removeLoader(
         success: Bool? = false,
-        removeView: Bool? = false,
+        shouldRemoveView: Bool? = false,
         completion: (() -> Void)? = nil
     ) {
         self.completion = completion
@@ -330,13 +368,13 @@ extension CourseUpgradeHelper {
             helperModel = nil
         }
         
-        if removeView == true {
+        if shouldRemoveView == true {
             Task {@MainActor in
                 await router.hideUpgradeLoaderView(animated: true)
                 helperModel = nil
                 
                 if success == true {
-                    showSuccess()
+                    trackAndResetOnSuccess()
                 } else {
                     showError()
                 }
@@ -369,7 +407,7 @@ extension CourseUpgradeHelper {
                 self?.reset()
             }
         )
-        
+
         router.presentNativeAlert(
             title: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertTitle,
             message: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertMessage,
@@ -378,32 +416,48 @@ extension CourseUpgradeHelper {
     }
     
     public func showRestorePurchasesAlert() {
-        guard let topController = UIApplication.topViewController() else { return }
-        let alertController = UIAlertController().showAlert(
-            withTitle: CoreLocalization.CourseUpgrade.Restore.alertTitle,
-            message: CoreLocalization.CourseUpgrade.Restore.alertMessage,
-            onViewController: topController) { _, _, _ in }
-
-        alertController.addButton(
-            withTitle: CoreLocalization.CourseUpgrade.FailureAlert.getHelp) { [weak self] _ in
+        var actions: [UIAlertAction] = []
+        
+        actions.append(
+            UIAlertAction(
+                title: CoreLocalization.CourseUpgrade.FailureAlert.getHelp,
+                style: .default
+            ) { [weak self] _ in
                 self?.launchEmailComposer(errorMessage: "Error: restore_purchases")
-                self?.trackUpgradeErrorAction(errorAction: .emailSupport)
+                self?.trackUpgradeErrorAction(errorAction: .emailSupport, alertType: .restore)
             }
-
-        alertController.addButton(withTitle: CoreLocalization.close, style: .default) { [weak self] _ in
-            self?.trackUpgradeErrorAction(errorAction: .close)
-        }
+        )
+        
+        actions.append(
+            UIAlertAction(
+                title: CoreLocalization.close,
+                style: .default
+            ) { [weak self] _ in
+                self?.trackUpgradeErrorAction(errorAction: .close, alertType: .restore)
+            }
+        )
+        
+        router.presentNativeAlert(
+            title: CoreLocalization.CourseUpgrade.Restore.alertTitle,
+            message: CoreLocalization.CourseUpgrade.Restore.alertMessage,
+            actions: actions
+        )
     }
 }
 
 extension CourseUpgradeHelper {
-    private func trackUpgradeErrorAction(errorAction: UpgradeErrorAction, error: UpgradeError? = nil) {
+    private func trackUpgradeErrorAction(
+        errorAction: UpgradeErrorAction,
+        error: UpgradeError? = nil,
+        alertType: UpgradeAlertType
+    ) {
         analytics.trackCourseUpgradeErrorAction(
             courseID: courseID ?? "",
             blockID: blockID,
             pacing: pacing ?? "",
             coursePrice: localizedCoursePrice,
             screen: screen,
+            alertType: alertType,
             errorAction: errorAction.rawValue,
             error: error?.formattedError ?? "",
             flowType: upgradeHadler?.upgradeMode ?? .userInitiated

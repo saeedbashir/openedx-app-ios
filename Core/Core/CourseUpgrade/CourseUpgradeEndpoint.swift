@@ -47,7 +47,7 @@ enum CourseUpgradeEndpoint: EndPointType {
     }
     
     var baseURL: String {
-        return CourseUpgradeHandler.ecommereceURL
+        CourseUpgradeHandler.ecommerceURL
     }
     
     var task: HTTPTask {
@@ -65,7 +65,8 @@ enum CourseUpgradeEndpoint: EndPointType {
             basketID: basketID,
             price: price,
             currencyCode: currencyCode,
-            receipt: receipt):
+            receipt: receipt
+        ):
             
             let params: Parameters = [
                 "basket_id": basketID,

@@ -18,6 +18,6 @@ public protocol EndPointType {
 
 public extension EndPointType {
     var baseURL: String {
-        return ""
+        ""
     }
 }
