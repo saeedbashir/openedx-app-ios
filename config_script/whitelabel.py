@@ -599,8 +599,6 @@ class WhitelabelApp:
                 fullstory_regex = "FULLSTORY_ENABLED = .*;"
                 # serach by regex and replace
                 project_file_string = self.replace_parameter_for_build_config(project_file_string, config_name, fullstory_string, fullstory_regex, errors_texts)
-            else:
-                errors_texts.append("FULLSTORY parameter is not found for mobile config in '"+config_folder+"' folder")
         return project_file_string
 
 def main():
