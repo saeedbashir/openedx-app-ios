@@ -32,6 +32,7 @@ public enum AlertViewType: Equatable {
     case removeCalendar
     case updateCalendar
     case calendarAdded
+    // after the MVP, the custom alerts will be used so keeping this
     case paymentError(buttons: [AlertViewButton])
 
     var contentPadding: CGFloat {

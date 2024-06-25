@@ -181,7 +181,8 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
         guard let state = upgradeHadler?.state,
               let courseID = courseID,
               let upgradeMode = upgradeHadler?.upgradeMode,
-              let sku = upgradeHadler?.courseSku, sku.isEmpty == false
+              let sku = upgradeHadler?.courseSku,
+              sku.isEmpty == false
         else { return }
         
         switch state {
@@ -406,6 +407,12 @@ extension CourseUpgradeHelper {
             ) { [weak self] _ in
                 self?.reset()
             }
+        )
+        
+        router.presentNativeAlert(
+            title: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertTitle,
+            message: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertMessage,
+            actions: actions
         )
     }
     
