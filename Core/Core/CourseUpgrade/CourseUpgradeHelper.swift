@@ -181,7 +181,8 @@ public class CourseUpgradeHelper: CourseUpgradeHelperProtocol {
         guard let state = upgradeHadler?.state,
               let courseID = courseID,
               let upgradeMode = upgradeHadler?.upgradeMode,
-              let sku = upgradeHadler?.courseSku, sku.isEmpty == false
+              let sku = upgradeHadler?.courseSku,
+              sku.isEmpty == false
         else { return }
         
         switch state {
