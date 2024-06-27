@@ -408,7 +408,7 @@ extension CourseUpgradeHelper {
                 self?.reset()
             }
         )
-        
+
         router.presentNativeAlert(
             title: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertTitle,
             message: CoreLocalization.CourseUpgrade.SuccessAlert.silentAlertMessage,
