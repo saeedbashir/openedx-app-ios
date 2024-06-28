@@ -11,23 +11,23 @@ public extension DataLayer {
     // MARK: - CourseEnrollments
     struct CourseEnrollments: Codable {
         public let enrollments: Enrollments
-        public let configs: ServerConfigs
+        public let configs: ServerConfigs?
 
         enum CodingKeys: String, CodingKey {
             case enrollments
             case configs
         }
 
-        public init(enrollments: Enrollments, configs: ServerConfigs) {
+        public init(enrollments: Enrollments, configs: ServerConfigs?) {
             self.enrollments = enrollments
             self.configs = configs
         }
     }
     
     struct ServerConfigs: Codable {
-        public let config: String
+        public let config: String?
         
-        public init(config: String) {
+        public init(config: String?) {
             self.config = config
         }
     }
@@ -272,7 +272,7 @@ public extension DataLayer {
 }
 
 public extension DataLayer.CourseEnrollments {
-    func domain(baseURL: String) -> ([CourseItem], DataLayer.ServerConfigs) {
+    func domain(baseURL: String) -> ([CourseItem], DataLayer.ServerConfigs?) {
         return (enrollments.results.map { result in
             let course = result.course
             

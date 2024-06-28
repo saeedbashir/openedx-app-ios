@@ -311,20 +311,20 @@ public class DashboardPersistence: DashboardPersistenceProtocol {
         }
     }
     
-    public func saveServerConfig(configs: DataLayer.ServerConfigs) {
+    public func saveServerConfig(configs: DataLayer.ServerConfigs?) {
         context.performAndWait {
             let result = try? context.fetch(CDServerConfigs.fetchRequest())
             var item: CDServerConfigs?
             
             if let result, !result.isEmpty {
                 item = result.first
-                item?.config = configs.config
+                item?.config = configs?.config
             } else {
                 item = CDServerConfigs(context: context)
             }
             
             context.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
-            item?.config = configs.config
+            item?.config = configs?.config
             do {
                 try context.save()
             } catch {

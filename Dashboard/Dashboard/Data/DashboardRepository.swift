@@ -48,7 +48,7 @@ public class DashboardRepository: DashboardRepositoryProtocol {
         persistence.saveEnrollments(items: result.0)
         persistence.saveServerConfig(configs: result.1)
         
-        serverConfig.initialize(serverConfig: result.1.config)
+        serverConfig.initialize(serverConfig: result.1?.config)
         
         return result.0
     }

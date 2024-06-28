@@ -10,7 +10,7 @@ import Core
 
 public protocol DashboardPersistenceProtocol {
     func loadServerConfig() throws -> DataLayer.ServerConfigs?
-    func saveServerConfig(configs: DataLayer.ServerConfigs)
+    func saveServerConfig(configs: DataLayer.ServerConfigs?)
     func loadEnrollments() throws -> [CourseItem]
     func saveEnrollments(items: [CourseItem])
     func loadPrimaryEnrollment() throws -> PrimaryEnrollment
