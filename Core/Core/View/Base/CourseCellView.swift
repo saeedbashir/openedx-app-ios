@@ -17,6 +17,7 @@ public enum CellType {
 public struct CourseCellView: View {
     
     @State private var showView = false
+    private var model: CourseItem
     private var courseImage: String
     private var courseName: String
     private var courseOrg: String
@@ -40,6 +41,7 @@ public struct CourseCellView: View {
         cellsCount: Int,
         upgradeAction: (() -> Void)? = nil
     ) {
+        self.model = model
         self.type = type
         self.courseImage = model.imageURL
         self.courseName = model.name
@@ -143,7 +145,11 @@ public struct CourseCellView: View {
         .opacity(showView ? 1 : 0)
         .offset(y: showView ? 0 : 20)
         .accessibilityElement(children: .ignore)
-//        .accessibilityLabel(courseName + " " + (type == .dashboard ? (courseEnd == "" ? courseStart : courseEnd) : ""))
+        .accessibilityLabel(
+            courseName + " " +
+            (type == .dashboard ? model.nextRelevantDateMessage(dateStyle: .monthDay) ?? ""
+             : "")
+        )
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now()) {
                 withAnimation(.easeInOut(duration: (index <= 5 ? 0.3 : 0.1))

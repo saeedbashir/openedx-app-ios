@@ -93,17 +93,6 @@ struct CourseCardView: View {
     
     private var courseTitle: some View {
         VStack(alignment: .leading, spacing: 3) {
-//            if let courseEndDate {
-//                Text(courseEndDate.dateToString(style: .courseEndsMonthDDYear))
-//                    .font(Theme.Fonts.labelSmall)
-//                    .foregroundStyle(Theme.Colors.textSecondaryLight)
-//                    .multilineTextAlignment(.leading)
-//            } else if let courseStartDate {
-//                Text(courseStartDate.dateToString(style: .courseStartsMonthDDYear))
-//                    .font(Theme.Fonts.labelSmall)
-//                    .foregroundStyle(Theme.Colors.textSecondaryLight)
-//                    .multilineTextAlignment(.leading)
-//            }
             if courseStartDate != nil || courseEndDate != nil || auditAccessExpires != nil {
                 CourseAccessMessageView(
                     startDate: courseStartDate,

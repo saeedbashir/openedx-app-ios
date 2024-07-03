@@ -92,3 +92,69 @@ extension CourseItem {
         && courseStart?.isInPast() ?? false
     }
 }
+
+extension CourseItem {
+    public func nextRelevantDateMessage(dateStyle: DateStringStyle) -> String? {
+        if courseStart?.isInPast() ?? false {
+            if auditAccessExpires != nil {
+                return formattedAuditExpires(dateStyle: dateStyle)
+            }
+            
+            guard let endDate = courseEnd else {
+                return nil
+            }
+            
+            let formattedEndDate = endDate.stringValue(style: dateStyle)
+            
+            return endDate.isInPast() ? CoreLocalization.Course.ended(formattedEndDate) :
+            CoreLocalization.Course.ending(formattedEndDate)
+        } else {
+            let formattedStartDate = courseStart?.stringValue(style: dateStyle) ?? ""
+            switch startType {
+            case .string where startDisplay != nil:
+                if startDisplay?.daysUntil() ?? 0 < 1 {
+                    return CoreLocalization.Course.starting(courseStart?.timeUntilDisplay() ?? "")
+                } else {
+                    return CoreLocalization.Course.starting(formattedStartDate)
+                }
+            case .timestamp where courseStart != nil:
+                return CoreLocalization.Course.starting(formattedStartDate)
+            case .empty where courseStart != nil:
+                return CoreLocalization.Course.starting(formattedStartDate)
+            default:
+                return CoreLocalization.Course.starting(CoreLocalization.Course.soon)
+            }
+        }
+    }
+    
+    private func formattedAuditExpires(dateStyle: DateStringStyle) -> String {
+        guard let auditExpiry = auditAccessExpires as Date? else { return "" }
+
+        let formattedExpiryDate = auditExpiry.stringValue(style: dateStyle)
+        let timeSpan = 7 // show number of days when less than a week
+        
+        if auditExpiry.isInPast() {
+            let days = auditExpiry.daysAgo()
+            if days < 1 {
+                return CoreLocalization.Course.Audit.expiredAgo(auditExpiry.timeAgoDisplay())
+            }
+            
+            if days <= timeSpan {
+                return CoreLocalization.Course.Audit.expiredDaysAgo(days)
+            } else {
+                return CoreLocalization.Course.Audit.expiredOn(formattedExpiryDate)
+            }
+        } else {
+            let days = auditExpiry.daysUntil()
+            if days < 1 {
+                return CoreLocalization.Course.Audit.expiresIn(auditExpiry.timeUntilDisplay())
+            }
+            
+            if days <= timeSpan {
+                return CoreLocalization.Course.Audit.expiresIn(days)
+            } else {
+                return CoreLocalization.Course.Audit.expiresOn(formattedExpiryDate)
+            }
+        }
+    }
+}

@@ -253,15 +253,6 @@ public struct PrimaryCardView: View {
                     startType: startType
                 )
             }
-//            if let courseEndDate {
-//                Text(courseEndDate.dateToString(style: .courseEndsMonthDDYear))
-//                    .font(Theme.Fonts.labelMedium)
-//                    .foregroundStyle(Theme.Colors.textSecondaryLight)
-//            } else if let courseStartDate {
-//                Text(courseStartDate.dateToString(style: .courseStartsMonthDDYear))
-//                    .font(Theme.Fonts.labelMedium)
-//                    .foregroundStyle(Theme.Colors.textSecondaryLight)
-//            }
         }
         .padding(.top, 10)
         .padding(.horizontal, 12)
