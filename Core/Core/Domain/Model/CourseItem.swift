@@ -94,13 +94,20 @@ extension CourseItem {
 }
 
 extension CourseItem {
-    public func nextRelevantDateMessage(dateStyle: DateStringStyle) -> String? {
-        if courseStart?.isInPast() ?? false {
+    public static func nextRelevantDateMessage(
+        startDate: Date?,
+        endDate: Date?,
+        auditAccessExpires: Date?,
+        startDisplay: Date?,
+        startType: DisplayStartType?,
+        dateStyle: DateStringStyle) -> String? {
+            
+        if startDate?.isInPast() ?? false {
             if auditAccessExpires != nil {
-                return formattedAuditExpires(dateStyle: dateStyle)
+                return formattedAuditExpires(dateStyle: dateStyle, auditAccessExpires: auditAccessExpires)
             }
             
-            guard let endDate = courseEnd else {
+            guard let endDate = endDate else {
                 return nil
             }
             
@@ -109,17 +116,17 @@ extension CourseItem {
             return endDate.isInPast() ? CoreLocalization.Course.ended(formattedEndDate) :
             CoreLocalization.Course.ending(formattedEndDate)
         } else {
-            let formattedStartDate = courseStart?.stringValue(style: dateStyle) ?? ""
+            let formattedStartDate = startDate?.stringValue(style: dateStyle) ?? ""
             switch startType {
             case .string where startDisplay != nil:
                 if startDisplay?.daysUntil() ?? 0 < 1 {
-                    return CoreLocalization.Course.starting(courseStart?.timeUntilDisplay() ?? "")
+                    return CoreLocalization.Course.starting(startDate?.timeUntilDisplay() ?? "")
                 } else {
                     return CoreLocalization.Course.starting(formattedStartDate)
                 }
-            case .timestamp where courseStart != nil:
+            case .timestamp where startDate != nil:
                 return CoreLocalization.Course.starting(formattedStartDate)
-            case .empty where courseStart != nil:
+            case .empty where startDate != nil:
                 return CoreLocalization.Course.starting(formattedStartDate)
             default:
                 return CoreLocalization.Course.starting(CoreLocalization.Course.soon)
@@ -127,7 +134,10 @@ extension CourseItem {
         }
     }
     
-    private func formattedAuditExpires(dateStyle: DateStringStyle) -> String {
+    static private func formattedAuditExpires(
+        dateStyle: DateStringStyle,
+        auditAccessExpires: Date?
+    ) -> String {
         guard let auditExpiry = auditAccessExpires as Date? else { return "" }
 
         let formattedExpiryDate = auditExpiry.stringValue(style: dateStyle)

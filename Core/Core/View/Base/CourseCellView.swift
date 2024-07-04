@@ -26,9 +26,6 @@ public struct CourseCellView: View {
     private var type: CellType
     private var index: Double
     private var cellsCount: Int
-    private let auditAccessExpires: Date?
-    private let startDisplay: Date?
-    private let startType: DisplayStartType?
     
     private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
     private var isUpgradeable: Bool
@@ -52,9 +49,6 @@ public struct CourseCellView: View {
         self.cellsCount = cellsCount
         self.isUpgradeable = model.isUpgradeable
         self.upgradeAction = upgradeAction
-        self.auditAccessExpires = model.auditAccessExpires
-        self.startDisplay = model.startDisplay
-        self.startType = model.startType
     }
     
     public var body: some View {
@@ -94,13 +88,13 @@ public struct CourseCellView: View {
                     Spacer()
                     if type == .dashboard {
                         HStack {
-                            if courseStart != nil || courseEnd != nil || auditAccessExpires != nil {
+                            if courseStart != nil || courseEnd != nil || model.auditAccessExpires != nil {
                                 CourseAccessMessageView(
                                     startDate: courseStart,
                                     endDate: courseEnd,
-                                    auditAccessExpires: auditAccessExpires,
-                                    startDisplay: startDisplay,
-                                    startType: startType,
+                                    auditAccessExpires: model.auditAccessExpires,
+                                    startDisplay: model.startDisplay,
+                                    startType: model.startType,
                                     dateStyle: .monthDay
                                 )
                             }
@@ -147,7 +141,13 @@ public struct CourseCellView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             courseName + " " +
-            (type == .dashboard ? model.nextRelevantDateMessage(dateStyle: .monthDay) ?? ""
+            (type == .dashboard ? CourseItem.nextRelevantDateMessage(
+                startDate: model.courseStart,
+                endDate: model.courseEnd,
+                auditAccessExpires: model.auditAccessExpires,
+                startDisplay: model.startDisplay,
+                startType: model.startType,
+                dateStyle: .monthDay) ?? ""
              : "")
         )
         .onAppear {
