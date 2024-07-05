@@ -48,7 +48,8 @@ public struct CourseAccessMessageView: View {
                 startDisplay: startDisplay,
                 startType: startType,
                 dateStyle: dateStyle
-            ) ?? "")
+            ) ?? ""
+        )
         .font(font)
         .foregroundStyle(textColor)
     }
