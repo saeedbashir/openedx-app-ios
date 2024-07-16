@@ -24,6 +24,7 @@ public struct CourseContainerView: View {
     @State private var coordinate: CGFloat = .zero
     @State private var lastCoordinate: CGFloat = .zero
     @State private var collapsed: Bool = false
+    @State private var viewHeight: CGFloat = .zero
     @Environment(\.isHorizontal) private var isHorizontal
     @Namespace private var animationNamespace
     private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
@@ -93,6 +94,7 @@ public struct CourseContainerView: View {
                     selection: $viewModel.selection,
                     coordinate: $coordinate,
                     collapsed: $collapsed,
+                    viewHeight: $viewHeight,
                     dateTabIndex: CourseTab.dates.rawValue
                 )
             } else {
@@ -190,6 +192,7 @@ public struct CourseContainerView: View {
                         selection: $viewModel.selection,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
+                        viewHeight: $viewHeight,
                         dateTabIndex: CourseTab.dates.rawValue
                     )
                     .tabItem {
@@ -207,6 +210,7 @@ public struct CourseContainerView: View {
                         selection: $viewModel.selection,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
+                        viewHeight: $viewHeight,
                         dateTabIndex: CourseTab.dates.rawValue
                     )
                     .tabItem {
@@ -220,6 +224,7 @@ public struct CourseContainerView: View {
                         courseID: courseID,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
+                        viewHeight: $viewHeight,
                         viewModel: courseDatesViewModel
                     )
                     .tabItem {
@@ -233,6 +238,7 @@ public struct CourseContainerView: View {
                         courseID: courseID,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
+                        viewHeight: $viewHeight,
                         viewModel: Container.shared.resolve(DiscussionTopicsViewModel.self,
                                                             argument: title)!,
                         router: Container.shared.resolve(DiscussionRouter.self)!
@@ -248,6 +254,7 @@ public struct CourseContainerView: View {
                         courseID: courseID,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
+                        viewHeight: $viewHeight,
                         viewModel: Container.shared.resolve(HandoutsViewModel.self, argument: courseID)!
                     )
                     .tabItem {

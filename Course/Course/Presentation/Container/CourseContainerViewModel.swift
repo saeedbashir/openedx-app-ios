@@ -197,8 +197,6 @@ public class CourseContainerViewModel: BaseCourseViewModel {
             self.courseStructure = courseStructure
             if isInternetAvaliable {
                 NotificationCenter.default.post(name: .getCourseDates, object: courseID)
-                isShowProgress = false
-                isShowRefresh = false
                 if let courseStructure {
                     try await getResumeBlock(
                         courseID: courseID,
