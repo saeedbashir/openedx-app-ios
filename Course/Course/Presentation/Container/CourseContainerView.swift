@@ -12,7 +12,6 @@ import Swinject
 import Theme
 
 public struct CourseContainerView: View {
-    
     @ObservedObject
     public var viewModel: CourseContainerViewModel
     @ObservedObject
@@ -27,16 +26,17 @@ public struct CourseContainerView: View {
     @State private var viewHeight: CGFloat = .zero
     @Environment(\.isHorizontal) private var isHorizontal
     @Namespace private var animationNamespace
+    
     private var idiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
-    
     private let coordinateBoundaryLower: CGFloat = -115
-    
+    private let courseRawImage: String?
+    private let org: String?
+    private let coursewareAccess: CoursewareAccess?
     private var coordinateBoundaryHigher: CGFloat {
         let topInset = UIApplication.shared.windowInsets.top
         guard topInset > 0 else {
             return 40
         }
-
         return topInset
     }
     
@@ -52,22 +52,21 @@ public struct CourseContainerView: View {
         viewModel: CourseContainerViewModel,
         courseDatesViewModel: CourseDatesViewModel,
         courseID: String,
-        title: String
+        title: String,
+        org: String?,
+        courseRawImage: String?,
+        coursewareAccess: CoursewareAccess?
     ) {
         self.viewModel = viewModel
-        Task {
-            await withTaskGroup(of: Void.self) { group in
-                group.addTask {
-                    await viewModel.getCourseBlocks(courseID: courseID)
-                }
-                group.addTask {
-                    await viewModel.getCourseDeadlineInfo(courseID: courseID, withProgress: false)
-                }
-            }
-        }
         self.courseID = courseID
         self.title = title
         self.courseDatesViewModel = courseDatesViewModel
+        self.courseRawImage = courseRawImage
+        self.org = org
+        self.coursewareAccess = coursewareAccess
+        Task {
+            await viewModel.reload(courseID: courseID)
+        }
     }
     
     public var body: some View {
@@ -118,12 +117,20 @@ public struct CourseContainerView: View {
                                ? coordinate
                                : (collapsed ? coordinateBoundaryLower : .zero))
                         )
-                        backButton(containerWidth: proxy.size.width)
                     }
-                }.ignoresSafeArea(edges: idiom == .pad ? .leading : .top)
-                    .onAppear {
-                        self.collapsed = isHorizontal
-                    }
+                    .offset(
+                        y: ignoreOffset
+                        ? (collapsed ? coordinateBoundaryLower : .zero)
+                        : ((coordinateBoundaryLower...coordinateBoundaryHigher).contains(coordinate)
+                           ? coordinate
+                           : (collapsed ? coordinateBoundaryLower : .zero))
+                    )
+                    backButton(containerWidth: proxy.size.width)
+                }
+            }
+            .ignoresSafeArea(edges: idiom == .pad ? .leading : .top)
+            .onAppear {
+                self.collapsed = isHorizontal
             }
         }
         
@@ -179,25 +186,136 @@ public struct CourseContainerView: View {
         }
     }
     
+    private var actualAccess: CoursewareAccess? {
+        viewModel.courseStructure?.coursewareAccessDetails?.coursewareAccess ?? coursewareAccess
+    }
+    
     private var tabs: some View {
         TabView(selection: $viewModel.selection) {
-            ForEach(CourseTab.allCases) { tab in
-                switch tab {
-                case .course:
-                    CourseOutlineView(
-                        viewModel: viewModel,
-                        title: title,
-                        courseID: courseID,
-                        isVideo: false,
-                        selection: $viewModel.selection,
+            if let courseStart = viewModel.courseStart, courseStart > Date() {
+                UpgradeCourseView(
+                    type: viewModel.type(for: actualAccess) ?? .startDateError(date: courseStart),
+                    coordinate: $coordinate,
+                    collapsed: $collapsed,
+                    shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                    shouldHideMenuBar: $viewModel.shouldHideMenuBar,
+                    backAction: {
+                        viewModel.router.back()
+                    },
+                    findAction: {
+                        viewModel.router.backToRoot(animated: true)
+                        viewModel.router.showTabScreen(tab: .discovery)
+                    }
+                )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .onAppear {
+                        ignoreOffset = true
+                    }
+            } else {
+                if let type = viewModel.type(for: actualAccess) {
+                    UpgradeCourseView(
+                        type: type,
                         coordinate: $coordinate,
                         collapsed: $collapsed,
-                        viewHeight: $viewHeight,
-                        dateTabIndex: CourseTab.dates.rawValue
+                        shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                        shouldHideMenuBar: $viewModel.shouldHideMenuBar,
+                        backAction: {
+                            viewModel.router.back()
+                        },
+                        findAction: {
+                            viewModel.router.backToRoot(animated: true)
+                            viewModel.router.showTabScreen(tab: .discovery)
+                        }
                     )
-                    .tabItem {
-                        tab.image
-                        Text(tab.title)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .onAppear {
+                            ignoreOffset = true
+                        }
+                } else {
+                    ForEach(CourseTab.allCases) { tab in
+                        switch tab {
+                        case .course:
+                            CourseOutlineView(
+                                viewModel: viewModel,
+                                title: title,
+                                courseID: courseID,
+                                isVideo: false,
+                                selection: $viewModel.selection,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                dateTabIndex: CourseTab.dates.rawValue
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .videos:
+                            CourseOutlineView(
+                                viewModel: viewModel,
+                                title: title,
+                                courseID: courseID,
+                                isVideo: true,
+                                selection: $viewModel.selection,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                dateTabIndex: CourseTab.dates.rawValue
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .dates:
+                            CourseDatesView(
+                                courseID: courseID,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                viewModel: courseDatesViewModel,
+                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                                shouldHideMenuBar: $viewModel.shouldHideMenuBar
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .discussion:
+                            DiscussionTopicsView(
+                                courseID: courseID,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                viewModel: Container.shared.resolve(DiscussionTopicsViewModel.self,
+                                                                    argument: title)!,
+                                router: Container.shared.resolve(DiscussionRouter.self)!,
+                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                                shouldHideMenuBar: $viewModel.shouldHideMenuBar
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        case .handounds:
+                            HandoutsView(
+                                courseID: courseID,
+                                coordinate: $coordinate,
+                                collapsed: $collapsed,
+                                viewModel: Container.shared.resolve(HandoutsViewModel.self, argument: courseID)!,
+                                shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                                shouldHideMenuBar: $viewModel.shouldHideMenuBar
+                            )
+                            .tabItem {
+                                tab.image
+                                Text(tab.title)
+                            }
+                            .tag(tab)
+                            .accentColor(Theme.Colors.accentColor)
+                        }
                     }
                     .tag(tab)
                     .accentColor(Theme.Colors.accentColor)
@@ -367,7 +485,10 @@ struct CourseScreensView_Previews: PreviewProvider {
                 analytics: CourseAnalyticsMock()
             ),
             courseID: "",
-            title: "Title of Course"
+            title: "Title of Course",
+            org: "Org",
+            courseRawImage: nil,
+            coursewareAccess: nil
         )
     }
 }

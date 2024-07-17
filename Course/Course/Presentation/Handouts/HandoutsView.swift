@@ -18,19 +18,23 @@ struct HandoutsView: View {
     
     @StateObject
     private var viewModel: HandoutsViewModel
-    
+    @Binding private var shouldShowUpgradeButton: Bool
+    @Binding private var shouldHideMenuBar: Bool
     public init(
         courseID: String,
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
-        viewHeight: Binding<CGFloat>,
-        viewModel: HandoutsViewModel
+        viewModel: HandoutsViewModel,
+        shouldShowUpgradeButton: Binding<Bool>,
+        shouldHideMenuBar: Binding<Bool>
     ) {
         self.courseID = courseID
         self._coordinate = coordinate
         self._collapsed = collapsed
         self._viewHeight = viewHeight
         self._viewModel = StateObject(wrappedValue: { viewModel }())
+        self._shouldShowUpgradeButton = shouldShowUpgradeButton
+        self._shouldHideMenuBar = shouldHideMenuBar
     }
     
     public var body: some View {
@@ -42,7 +46,8 @@ struct HandoutsView: View {
                         DynamicOffsetView(
                             coordinate: $coordinate,
                             collapsed: $collapsed,
-                            viewHeight: $viewHeight
+                            shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                            shouldHideMenuBar: $shouldHideMenuBar
                         )
                         if viewModel.isShowProgress {
                             HStack(alignment: .center) {
@@ -83,6 +88,19 @@ struct HandoutsView: View {
                                         biValue: .courseAnnouncement,
                                         courseID: courseID
                                     )
+                                HandoutsItemCell(type: .announcements, onTapAction: {
+                                    if !viewModel.updates.isEmpty {
+                                        viewModel.router.showHandoutsUpdatesView(
+                                            handouts: nil,
+                                            announcements: viewModel.updates,
+                                            router: viewModel.router,
+                                            cssInjector: viewModel.cssInjector)
+                                        viewModel.analytics.trackCourseScreenEvent(
+                                            .courseAnnouncement,
+                                            biValue: .courseAnnouncement,
+                                            courseID: courseID
+                                        )
+                                    }
                                 })
                             }.padding(.horizontal, 32)
                             Spacer(minLength: 84)
@@ -146,8 +164,9 @@ struct HandoutsView_Previews: PreviewProvider {
             courseID: "",
             coordinate: .constant(0),
             collapsed: .constant(false),
-            viewHeight: .constant(0),
-            viewModel: viewModel
+            viewModel: viewModel,
+            shouldShowUpgradeButton: .constant(false),
+            shouldHideMenuBar: .constant(false)
         )
     }
 }

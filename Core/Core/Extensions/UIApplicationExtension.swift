@@ -10,17 +10,12 @@ import Theme
 
 public extension UIApplication {
     
-    var windows: [UIWindow]? {
-        let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        return scene?.windows
-    }
-
-    var keyWindow: UIWindow? {
-        windows?.first { $0.isKeyWindow }
+    var window: UIWindow? {
+        UIApplication.shared.windows.first { $0.isKeyWindow }
     }
     
     func endEditing(force: Bool = true) {
-        windows?.forEach { $0.endEditing(force) }
+        windows.forEach { $0.endEditing(force) }
     }
     
     class func topViewController(
@@ -41,10 +36,11 @@ public extension UIApplication {
     }
     
     var windowInsets: UIEdgeInsets {
-        guard let window = windows?.first else {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first else {
             return .zero
         }
-
+        
         return window.safeAreaInsets
     }
 }

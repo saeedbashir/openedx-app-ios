@@ -238,7 +238,8 @@ public class DownloadManager: DownloadManagerProtocol {
     public func cancelDownloading(task: DownloadDataTask) async throws {
         downloadRequest?.cancel()
         do {
-            if let fileUrl = fileUrl(for: task.id) {
+            try await persistence.deleteDownloadDataTask(id: task.id)
+            if let fileUrl = await fileUrl(for: task.id) {
                 try FileManager.default.removeItem(at: fileUrl)
             }
             try await persistence.deleteDownloadDataTask(id: task.id)
@@ -365,15 +366,19 @@ public class DownloadManager: DownloadManagerProtocol {
 
         downloadRequest?.responseData { [weak self] _ in
             guard let self else { return }
-            self.persistence.updateDownloadState(
-                id: download.id,
-                state: .finished,
-                resumeData: nil
-            )
-            self.currentDownloadTask?.state = .finished
-            self.currentDownloadEventPublisher.send(.finished(download))
-            Task {
-                try? await self.newDownload()
+            
+            if let data = data.value, let url = self.videosFolderUrl {
+                self.saveFile(fileName: download.fileName, data: data, folderURL: url)
+                self.persistence.updateDownloadState(
+                    id: download.id,
+                    state: .finished,
+                    resumeData: nil
+                )
+                self.currentDownloadTask?.state = .finished
+                self.currentDownloadEventPublisher.send(.finished(download))
+                Task {
+                    try? await self.newDownload()
+                }
             }
         }
     }
@@ -394,7 +399,8 @@ public class DownloadManager: DownloadManagerProtocol {
     private func cancel(tasks: [DownloadDataTask]) async {
         for task in tasks {
             do {
-                if let fileUrl = fileUrl(for: task.id) {
+                try await persistence.deleteDownloadDataTask(id: task.id)
+                if let fileUrl = await fileUrl(for: task.id) {
                     try FileManager.default.removeItem(at: fileUrl)
                 }
                 try await persistence.deleteDownloadDataTask(id: task.id)

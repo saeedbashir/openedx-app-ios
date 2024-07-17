@@ -19,20 +19,24 @@ public struct CourseDatesView: View {
     private var viewModel: CourseDatesViewModel
     @Binding private var coordinate: CGFloat
     @Binding private var collapsed: Bool
-    @Binding private var viewHeight: CGFloat
+    @Binding private var shouldShowUpgradeButton: Bool
+    @Binding private var shouldHideMenuBar: Bool
     
     public init(
         courseID: String,
         coordinate: Binding<CGFloat>,
         collapsed: Binding<Bool>,
-        viewHeight: Binding<CGFloat>,
-        viewModel: CourseDatesViewModel
+        viewModel: CourseDatesViewModel,
+        shouldShowUpgradeButton: Binding<Bool>,
+        shouldHideMenuBar: Binding<Bool>
     ) {
         self.courseID = courseID
         self._coordinate = coordinate
         self._collapsed = collapsed
         self._viewHeight = viewHeight
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self._shouldShowUpgradeButton = shouldShowUpgradeButton
+        self._shouldHideMenuBar = shouldHideMenuBar
     }
     
     public var body: some View {
@@ -51,7 +55,9 @@ public struct CourseDatesView: View {
                         collapsed: $collapsed,
                         viewHeight: $viewHeight,
                         courseDates: courseDates,
-                        courseID: courseID
+                        courseID: courseID,
+                        shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                        shouldHideMenuBar: $shouldHideMenuBar
                     )
                     .padding(.top, 10)
                 } else {
@@ -182,6 +188,8 @@ struct CourseDateListView: View {
     @Binding var viewHeight: CGFloat
     var courseDates: CourseDates
     let courseID: String
+    @Binding var shouldShowUpgradeButton: Bool
+    @Binding var shouldHideMenuBar: Bool
     
     var body: some View {
         GeometryReader { proxy in
@@ -190,7 +198,8 @@ struct CourseDateListView: View {
                     DynamicOffsetView(
                         coordinate: $coordinate,
                         collapsed: $collapsed,
-                        viewHeight: $viewHeight
+                        shouldShowUpgradeButton: $shouldShowUpgradeButton,
+                        shouldHideMenuBar: $shouldHideMenuBar
                     )
                     VStack(alignment: .leading, spacing: 0) {
                         if !courseDates.hasEnded {
@@ -538,8 +547,10 @@ struct CourseDatesView_Previews: PreviewProvider {
             courseID: "",
             coordinate: .constant(0),
             collapsed: .constant(false),
-            viewHeight: .constant(0),
-            viewModel: viewModel)
+            viewModel: viewModel,
+            shouldShowUpgradeButton: .constant(false),
+            shouldHideMenuBar: .constant(false)
+        )
     }
 }
 #endif

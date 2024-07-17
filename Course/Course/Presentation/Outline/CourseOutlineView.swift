@@ -72,7 +72,8 @@ public struct CourseOutlineView: View {
                         DynamicOffsetView(
                             coordinate: $coordinate,
                             collapsed: $collapsed,
-                            viewHeight: $viewHeight
+                            shouldShowUpgradeButton: $viewModel.shouldShowUpgradeButton,
+                            shouldHideMenuBar: $viewModel.shouldHideMenuBar
                         )
                         RefreshProgressView(isShowRefresh: $viewModel.isShowRefresh)
                         VStack(alignment: .leading) {
@@ -120,6 +121,12 @@ public struct CourseOutlineView: View {
                                     ) {
                                         viewModel.openLastVisitedBlock()
                                     }
+                                    
+                                if let courseStart = viewModel.courseStart {
+                                    Text(courseStart > Date() ? CourseLocalization.Outline.courseHasntStarted : "")
+                                        .frame(maxWidth: .infinity)
+                                        .frame(maxHeight: .infinity)
+                                        .padding(.top, 100)
                                 }
                                 
                                 if let course = isVideo
@@ -208,6 +215,7 @@ public struct CourseOutlineView: View {
                             maxHeight: .infinity)
                 }
             }
+            .paymentSnackbar()
         }
         .onAppear {
             Task {
